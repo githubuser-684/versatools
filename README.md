@@ -1,8 +1,20 @@
-# Versatools
+<p align="center">
+	<img src="https://cdn.discordapp.com/icons/1119803301295292458/eb9f9cd395ce2dbac016a4f5e7513054.webp" alt="Versatools" height="90" />
+</p>
 
-Best FREE opensource Roblox exploiting tools written in Python.
+<h4 align="center">VERSATOOLS - FREE MULTITOOL | BOT FOLLOWERS/GROUP JOINS & MORE</h4>
+<p align="center">
+	Best FREE opensource Roblox exploiting tools written in Python.
+</p>
 
-How to setup:
+<p align="center">
+	<a href="#Installation">Installation</a> •
+	<a href="https://discord.com/invite/kaz2XVGAya">Discord</a> •
+	<a href="#Contributing">Contributing</a>
+</p>
+<br/>
+
+## Installation
 
 First clone this repository:
 

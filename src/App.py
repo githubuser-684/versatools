@@ -7,11 +7,11 @@ class App():
     def __init__(self):
         self.cache_directory = os.path.join(os.path.dirname(__file__), "../.versacache")
         self.files_directory = os.path.join(os.path.dirname(__file__), "../files")
-
-        Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
-            
         self.proxies_file_path = os.path.join(self.files_directory, "proxies.txt")
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")
+
+        Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
+        Utils.ensure_files_exist([self.proxies_file_path, self.cookies_file_path])
 
     def clear_terminal(self) -> None:
         os.system('cls' if os.name == 'nt' else 'clear')

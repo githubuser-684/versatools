@@ -28,3 +28,10 @@ class Utils():
         for directory in directories:
             if not os.path.exists(directory):
                 os.makedirs(directory)
+
+    @staticmethod
+    def ensure_files_exist(files):
+        for file in files:
+            if not os.path.exists(file):
+                with open(file, 'w'):
+                    pass

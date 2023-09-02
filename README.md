@@ -16,9 +16,9 @@
 
 ## Installation
 
-Download the latest release from [here](https://github.com/GarryyBD/versatools/releases)
+This installation is designed for Windows. If you want to run it on Linux, compile it from source. For MacOS, DM garryybd on Discord.
 
-Extract the zip file and run `main.exe`
+Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Extract the zip file and run `main.exe`
 
 ## Compiling from source
 

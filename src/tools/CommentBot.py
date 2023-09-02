@@ -13,16 +13,9 @@ class CommentBot(Tool):
         self.use_proxy = self.config["use_proxy"]
 
     def run(self):
+        asset_id = input("Asset ID to comment: ")    
+        cookies = self.get_cookies(self.max_generations)
 
-        asset_id = input("Asset ID to comment: ")
-            
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-
-        if self.max_generations < len(cookies):
-            cookies = cookies[:self.max_generations]
-            
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)

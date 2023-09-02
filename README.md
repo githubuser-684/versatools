@@ -9,7 +9,7 @@
 
 <p align="center">
 	<a href="#installation">Installation</a> •
-	<a href="#filetemplates">Files templates</a> •
+	<a href="#file-templates">File templates</a> •
 	<a href="https://discord.com/invite/kaz2XVGAya">Discord server</a>
 </p>
 <br/>

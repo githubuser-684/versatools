@@ -92,13 +92,13 @@ class Tool(Proxy, ABC):
         f = open(self.cookies_file_path, 'r+')
         cookies = f.read().splitlines()
         f.close()
-        
-        if amount is not None and amount < len(cookies):
-            cookies = cookies[:self.max_generations]
 
         # ignore duplicates
         cookies = [*set(cookies)]
         random.shuffle(cookies)
+
+        if amount is not None and amount < len(cookies):
+            cookies = cookies[:self.max_generations]
 
         return cookies
 

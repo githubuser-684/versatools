@@ -8,10 +8,9 @@
 </p>
 
 <p align="center">
-	<a href="#Installation">Installation</a> •
-	<a href="#Template for other files">Files templates</a> •
-	<a href="https://discord.com/invite/kaz2XVGAya">Discord</a> •
-	<a href="#Contributing">Contributing</a>
+	<a href="#installation">Installation</a> •
+	<a href="#filetemplates">Files templates</a> •
+	<a href="https://discord.com/invite/kaz2XVGAya">Discord server</a>
 </p>
 <br/>
 
@@ -35,7 +34,7 @@ Then install the requirements:
 pip install -r requirements.txt
 ```
 
-Then copy paste the <a href="#files/config.json">template config</a> in the location `files/config.json`
+Then copy paste the <a href="#filesconfigjson">template config</a> in the location `files/config.json`
 
 Finally, run the program:
 
@@ -49,7 +48,7 @@ To run unit tests:
 python -m unittest discover src
 ```
 
-## Template for other files
+## File templates
 
 ### files/config.json
 

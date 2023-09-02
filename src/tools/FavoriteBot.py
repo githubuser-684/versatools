@@ -12,19 +12,11 @@ class FavoriteBot(Tool):
         self.use_proxy = self.config["use_proxy"]
         self.timeout = self.config["timeout"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):
         asset_id = input("Asset ID to favorite/unfavorite: ")
-        
         unfavorite = input('Enter "a" to unfavorite: ') == "a"
     
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-
-        if self.max_generations < len(cookies):
-            cookies = cookies[:self.max_generations]
+        cookies = self.get_cookies(self.max_generations)
             
         req_sent = 0
         req_failed = 0
@@ -64,11 +56,9 @@ class FavoriteBot(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
-        
-        # wait for 1 second
+
         time.sleep(self.timeout)
     
         return (response.status_code == 200), response.text

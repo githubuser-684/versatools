@@ -1,25 +1,19 @@
 import os
 import concurrent.futures
 import requests
-import time
 from Tool import Tool
 
 class CookieRefresher(Tool):
     def __init__(self, app):
         super().__init__("Cookie Refresher", "Refresh your .ROBLOSECURITY cookies!", 7, app)
 
-        self.cookies_file_path = self.app.cookies_file_path
+        self.use_proxy = self.config["use_proxy"]
+        self.max_workers = self.config["max_workers"]
+
         self.new_cookies_file_path = os.path.join(self.files_directory, "refreshed-cookies.txt")
 
     def run(self):
-        use_proxy = self.config["use_proxy"]
-        max_workers = self.config["max_workers"]
-
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-        # remove duplicates
-        cookies = [*set(cookies)]
+        cookies = self.get_cookies()
 
         f = open(self.new_cookies_file_path, 'w')
         f.seek(0)
@@ -31,8 +25,8 @@ class CookieRefresher(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            results = [executor.submit(self.refresh_cookie, cookie, use_proxy) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            results = [executor.submit(self.refresh_cookie, cookie, self.use_proxy) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 error, cookie = future.result()
@@ -53,8 +47,8 @@ class CookieRefresher(Tool):
         Refresh a ROBLOSECURITY cookie
         Returns a tuple with the error and the new cookie
         """
-        
-        for _ in range(10):
+        err = None
+        for _ in range(3):
             try:
                 user_agent = self.get_random_user_agent()
                 proxies = self.get_random_proxies() if use_proxy else None
@@ -70,10 +64,10 @@ class CookieRefresher(Tool):
                 data = requests.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
 
                 break
-            except:
-                time.sleep(4)
+            except Exception as e:
+                err = e
         else:
-            return "Error refreshing cookie. too many tries", None
+            return f"Error refreshing cookie. {err}", None
 
         try:
             cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]

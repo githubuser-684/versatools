@@ -1,19 +1,14 @@
 import os
 from tools import *
 from Tool import Tool
+from utils import Utils
 
 class App():
     def __init__(self):
         self.cache_directory = os.path.join(os.path.dirname(__file__), "../.versacache")
         self.files_directory = os.path.join(os.path.dirname(__file__), "../files")
 
-        # ensure cache dir exists
-        if not os.path.exists(self.cache_directory):
-            os.makedirs(self.cache_directory)
-
-        # ensure files dir exists
-        if not os.path.exists(self.files_directory):
-            os.makedirs(self.files_directory)
+        Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
             
         self.proxies_file_path = os.path.join(self.files_directory, "proxies.txt")
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")

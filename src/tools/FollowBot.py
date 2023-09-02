@@ -1,4 +1,3 @@
-import time
 import requests
 from Tool import Tool
 import concurrent.futures
@@ -13,17 +12,10 @@ class FollowBot(Tool):
         self.max_workers = self.config["max_workers"]
         self.use_proxy = self.config["use_proxy"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):
         user_id = input("User ID to increase followers count: ")
 
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-
-        if self.max_generations < len(cookies):
-            cookies = cookies[:self.max_generations]
+        cookies = self.get_cookies(self.max_generations)
 
         req_worked = 0
         req_failed = 0
@@ -44,7 +36,6 @@ class FollowBot(Tool):
                 print("\033[1A\033[K\033[1A\033[K\033[1;32mNew followers: "+str(req_worked)+"\033[0;0m | \033[1;31mFailed: "+str(req_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_req) + "\033[0;0m")
                 print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_followed else "\033[1;31mFailed: " + response_text + "\033[0;0m")
 
-    
     def send_follow_request(self, captcha_service:str, user_id:str | int, cookie:str):
         err = None
         for _ in range(3):
@@ -63,7 +54,6 @@ class FollowBot(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
         

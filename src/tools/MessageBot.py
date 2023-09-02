@@ -1,4 +1,3 @@
-import time
 import requests
 from Tool import Tool
 import concurrent.futures
@@ -40,9 +39,7 @@ class MessageBot(Tool):
     def spam_specific_user(self, subject, body):
         recipient_id = input("Recipient ID: ")
 
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
+        cookies = self.get_cookies()
 
         msg_sent = 0
         msg_failed = 0
@@ -64,7 +61,6 @@ class MessageBot(Tool):
                 print("\033[1A\033[K\033[1A\033[K\033[1;32mSent: "+str(msg_sent)+"\033[0;0m | \033[1;31mFailed: "+str(msg_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_cookies) + "\033[0;0m")
                 print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_sent else "\033[1;31mFailed: " + response_text + "\033[0;0m")          
 
-    
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
         err = None
         for _ in range(3):
@@ -82,7 +78,6 @@ class MessageBot(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
     

@@ -1,4 +1,3 @@
-import time
 import requests
 from Tool import Tool
 import concurrent.futures
@@ -18,12 +17,7 @@ class GroupJoinBot(Tool):
     def run(self):
         group_id = input("Group ID to increase members count: ")
 
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-        
-        if self.max_generations < len(cookies):
-            cookies = cookies[:self.max_generations]
+        cookies = self.get_cookies(self.max_generations)
 
         req_worked = 0
         req_failed = 0
@@ -64,7 +58,6 @@ class GroupJoinBot(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
         

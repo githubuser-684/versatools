@@ -22,7 +22,6 @@ class TestTool(unittest.TestCase):
         except:
             pass
 
-        # should returns error when file doesn't exist        
         with self.assertRaises(FileNotFoundError, msg="Should returns error when file doesn't exist"):
             self.tool.check_proxies_file_format(self.test_file_path, False)
 
@@ -127,14 +126,14 @@ class TestTool(unittest.TestCase):
     def test_get_proxies(self):
         proxies = self.tool.get_proxies("http", "8.8.8.8", 80, "admin", "1234")
         self.assertEqual(proxies, {
-                "http": f"http://8.8.8.8:80@admin:1234/",
-                "https": f"http://8.8.8.8:80@admin:1234/"
+            "http": f"http://admin:1234@8.8.8.8:80/",
+            "https": f"http://admin:1234@8.8.8.8:80/"
         })
 
         proxies = self.tool.get_proxies("socks4", "8.8.8.8", 80)
         self.assertEqual(proxies, {
-                "http": f"socks4://8.8.8.8:80/",
-                "https": f"socks4://8.8.8.8:80/"
+            "http": f"socks4://8.8.8.8:80/",
+            "https": f"socks4://8.8.8.8:80/"
         })
 
         with self.assertRaises(Exception):

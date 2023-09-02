@@ -1,6 +1,10 @@
 import sys, traceback
+import os
 
 class Suppressor():
+    """
+    Context manager to suppress stdout (or any other stream)
+    """
     def __enter__(self):
         self.stdout = sys.stdout
         sys.stdout = self
@@ -14,3 +18,13 @@ class Suppressor():
     def write(self, x): pass
 
     def flush(self): pass
+
+class Utils():
+    """
+    Utility functions
+    """
+    @staticmethod
+    def ensure_directories_exist(directories):
+        for directory in directories:
+            if not os.path.exists(directory):
+                os.makedirs(directory)

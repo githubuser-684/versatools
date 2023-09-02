@@ -7,18 +7,16 @@ from CaptchaSolver import CaptchaSolver
 
 class CookieGenerator(Tool):
     def __init__(self, app):
-        super().__init__("Cookie Generator", "Generates Roblox Cookies. Captcha solver needed", 2, app)
+        super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
         
-        self.file_path = self.app.cookies_file_path
+        self.max_generations = self.config["max_generations"]
+        self.captcha_solver = self.config["captcha_solver"]
+        self.use_proxy = self.config["use_proxy"]
+        self.max_workers = self.config["max_workers"]
 
     def run(self):
-        max_generations = self.config["max_generations"]
-        captcha_solver = self.config["captcha_solver"]
-        use_proxy = self.config["use_proxy"]
-        max_workers = self.config["max_workers"]
-        
         # open cookies.txt for writing in it
-        f = open(self.file_path, 'a')
+        f = open(self.cookies_file_path, 'a')
 
         worked_gen = 0
         failed_gen = 0
@@ -26,16 +24,16 @@ class CookieGenerator(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             while True:
-                if (max_generations is None):
+                if (self.max_generations is None):
                     gen = 1000
                 else:
-                    gen = max_generations - worked_gen
+                    gen = self.max_generations - worked_gen
                     if gen == 0:
                         break
 
-                results = [executor.submit(self.generate_cookie, captcha_solver, use_proxy) for gen in range(gen)]
+                results = [executor.submit(self.generate_cookie, self.captcha_solver, self.use_proxy) for gen in range(gen)]
 
                 for future in concurrent.futures.as_completed(results):
                     error, cookie = future.result()
@@ -81,11 +79,11 @@ class CookieGenerator(Tool):
         return str(random.randint(2006, 2010)).zfill(2) + "-" + str(random.randint(1, 12)).zfill(2) + "-" + str(random.randint(1, 27)).zfill(2) + "T05:00:00.000Z"
     
     def send_signup_request(self, user_agent:str, csrf_token:str, username:str, password:str, birthday:str, is_girl:bool, proxies:dict=None):
-        req_url = "https://auth.roblox.com:443/v2/signup"
+        req_url = "https://auth.roblox.com/v2/signup"
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
         return requests.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
-    
+
     def generate_cookie(self, captcha_service:str, use_proxy:bool) -> tuple:
         """
         Generates a ROBLOSECURITY cookie

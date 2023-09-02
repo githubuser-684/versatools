@@ -10,14 +10,10 @@ class StatusChanger(Tool):
         self.max_workers = self.config["max_workers"]
         self.use_proxy = self.config["use_proxy"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):
         new_status = input("New status: ")
 
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
+        cookies = self.get_cookies()
 
         req_worked = 0
         req_failed = 0
@@ -56,7 +52,6 @@ class StatusChanger(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
         

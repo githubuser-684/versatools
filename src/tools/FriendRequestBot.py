@@ -1,4 +1,3 @@
-import time
 from Tool import Tool
 import requests
 import concurrent.futures
@@ -16,12 +15,7 @@ class FriendRequestBot(Tool):
     def run(self):
         user_id = input("User ID to send friend requests to: ")
 
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-
-        if self.max_generations < len(cookies):
-            cookies = cookies[:self.max_generations]
+        cookies = self.get_cookies(self.max_generations)
 
         req_sent = 0
         req_failed = 0
@@ -43,7 +37,6 @@ class FriendRequestBot(Tool):
                 print("\033[1A\033[K\033[1A\033[K\033[1;32mSent: "+str(req_sent)+"\033[0;0m | \033[1;31mFailed: "+str(req_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_req) + "\033[0;0m")
                 print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_sent else "\033[1;31mFailed: " + response_text + "\033[0;0m")
         
-    
     def send_friend_request(self, user_id, cookie):
         err = None
         for _ in range(3):
@@ -60,7 +53,6 @@ class FriendRequestBot(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
     

@@ -1,8 +1,8 @@
 import os
 import requests
-import time
 from Tool import Tool
 import concurrent.futures
+from utils import Utils
 
 class AssetsDownloader(Tool):
     def __init__(self, app):
@@ -13,19 +13,10 @@ class AssetsDownloader(Tool):
         self.use_proxy = self.config["use_proxy"]
 
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
-
-        # ensure assets dir exists
-        if not os.path.exists(self.assets_files_directory):
-            os.makedirs(self.assets_files_directory)
-
         self.shirts_files_directory = os.path.join(self.files_directory, "./assets/shirts")
         self.pants_files_directory = os.path.join(self.files_directory, "./assets/pants")
 
-        # ensure shirts/pants dir exists
-        if not os.path.exists(self.shirts_files_directory):
-            os.makedirs(self.shirts_files_directory)
-        if not os.path.exists(self.pants_files_directory):
-            os.makedirs(self.pants_files_directory)
+        Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
     def run(self):
         print("1. Download shirts")
@@ -76,12 +67,12 @@ class AssetsDownloader(Tool):
 
         while (len(assets) < amount):
             proxies = self.get_random_proxies() if self.use_proxy else None
-            csrf_token = self.get_csrf_token(proxies)
             user_agent = self.get_random_user_agent()
 
             req_url = f"https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory={asset_name}{'&cursor='+cursor if cursor else ''}"
             req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
-
+            
+            err = None
             for _ in range(3):
                 try:
                     response = requests.get(req_url, headers=req_headers, proxies=proxies)
@@ -89,10 +80,10 @@ class AssetsDownloader(Tool):
                     data = result["data"]
                     cursor = result["nextPageCursor"]
                     break
-                except:
-                    time.sleep(2)
+                except Exception as e:
+                    err = e
             else:
-                raise Exception("Error fetching assets. too many tries")
+                raise Exception(f"Error fetching assets. {err}")
         
             assets += data
         
@@ -115,4 +106,4 @@ class AssetsDownloader(Tool):
         with open(asset_path, 'wb') as f:
             f.write(image)
         
-        return True, "lol"
+        return True, "Generated in files/assets"

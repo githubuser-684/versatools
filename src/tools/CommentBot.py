@@ -1,7 +1,6 @@
 import requests
 from Tool import Tool
 import concurrent.futures
-import time
 from CaptchaSolver import CaptchaSolver
 
 class CommentBot(Tool):
@@ -12,8 +11,6 @@ class CommentBot(Tool):
         self.captcha_solver = self.config["captcha_solver"]
         self.max_workers = self.config["max_workers"]
         self.use_proxy = self.config["use_proxy"]
-
-        self.cookies_file_path = self.app.cookies_file_path
 
     def run(self):
 
@@ -65,7 +62,6 @@ class CommentBot(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
     

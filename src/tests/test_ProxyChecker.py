@@ -1,5 +1,4 @@
 import unittest
-import os
 from tools.ProxyChecker import ProxyChecker
 from App import App
 
@@ -29,16 +28,16 @@ class TestProxyChecker(unittest.TestCase):
 
     def test_write_proxy_line(self):
         line = self.tool.write_proxy_line("http", "8.8.8.8", 80, "admin", "1234")
-        self.assertEqual(line, "http:8.8.8.8:80:admin:1234\n")
+        self.assertEqual(line, "http:8.8.8.8:80:admin:1234")
 
         line = self.tool.write_proxy_line("http", "8.8.8.8", 80)
-        self.assertEqual(line, "http:8.8.8.8:80\n")
+        self.assertEqual(line, "http:8.8.8.8:80")
 
         line = self.tool.write_proxy_line(None, "8.8.8.8", 80, "admin", "1234")
-        self.assertEqual(line, "8.8.8.8:80:admin:1234\n")
+        self.assertEqual(line, "8.8.8.8:80:admin:1234")
 
         line = self.tool.write_proxy_line(None, "8.8.8.8", 80)
-        self.assertEqual(line, "8.8.8.8:80\n")
+        self.assertEqual(line, "8.8.8.8:80")
 
         with self.assertRaises(ValueError, msg="Should raise error when username is provided but password is not"):
             self.tool.write_proxy_line("http", "8.8.8.8", 80, "admin", None)

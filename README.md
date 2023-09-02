@@ -58,7 +58,7 @@ Here are default values)
 		"max_workers": null
 	},
 	"CookieChecker": {
-		"delete_invalid_cookies": true,
+		"delete_invalid_cookies": false,
 		"use_proxy": true,
 		"max_workers": null
 	},
@@ -94,7 +94,7 @@ Here are default values)
 		"max_generations": 10,
 		"use_proxy": true,
 		"max_workers": 50,
-		"timeout": 0.056
+		"timeout": 0
 	},
 	"DisplayNameChanger": {
 		"use_proxy": true,

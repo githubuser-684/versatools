@@ -1,4 +1,3 @@
-import time
 import requests
 from Tool import Tool
 import concurrent.futures
@@ -32,12 +31,7 @@ class GameVote(Tool):
         
         vote = choice == 1
         
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
-
-        if self.max_generations < len(cookies):
-            cookies = cookies[:self.max_generations]
+        cookies = self.get_cookies(self.max_generations)
 
         req_sent = 0
         req_failed = 0
@@ -72,12 +66,10 @@ class GameVote(Tool):
                 req_cookies = {".ROBLOSECURITY": cookie}
                 req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-
                 response = requests.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
     

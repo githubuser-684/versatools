@@ -1,6 +1,4 @@
-import requests
 import base64
-import time
 from anticaptchaofficial.funcaptchaproxyless import *
 from anticaptchaofficial.funcaptchaproxyon import *
 from twocaptcha import TwoCaptcha
@@ -20,7 +18,7 @@ class CaptchaSolver:
         reqpk_headers = {"User-Agent": user_agent, "Accept": "*/*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty",  "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Te": "trailers", "Connection": "close", }
         reqpk_response = requests.get(reqpk_url, headers=reqpk_headers, proxies=proxies)
         public_key = reqpk_response.json()["funCaptchaPublicKeys"][action_type]
-        
+
         return public_key
     
     def solve_captcha(self, response:requests.Response, action_type:str, user_agent:str, csrf_token:str, proxies:dict = None) -> requests.Response:
@@ -30,9 +28,11 @@ class CaptchaSolver:
         """
         status_code = response.status_code
         response_headers = response.headers
+        response_text = response.text
 
-        # if captcha not required, return response back.
-        if status_code != 403:
+        if status_code != 423: # rate limited
+            raise Exception(response_text)
+        elif status_code != 403:
             return response
 
         # get captcha data
@@ -153,17 +153,18 @@ class CaptchaSolver:
 
         req_cookies = response.request._cookies.get_dict()
 
-        for _ in range(10):
+        err = None
+        for _ in range(3):
             try:
                 final_response = requests.post(req_url, headers=req_headers, json=req_json, data=req_data, cookies=req_cookies, proxies=proxies)
                 break
-            except:
-                time.sleep(5)
+            except Exception as e:
+                err = e
         else:
-            raise Exception("Error sending captcha validation. too many tries")
+            raise Exception(f"Error sending captcha validation. {err}")
         
-        if (str(final_response.status_code).startswith(str(4))):
-            raise Exception("Captcha was not solved correctly. Response: " + final_response.text)
+        if (final_response.status_code >= 400):
+            raise Exception(final_response.text)
         else:
             return final_response
 
@@ -175,7 +176,7 @@ class CaptchaSolver:
             balance = solver.get_balance()
         elif (self.captcha_service == "2captcha"):
             solver = TwoCaptcha(self.api_key)
-            balance = solver.get_balance()
+            balance = solver.balance()
         elif (self.captcha_service == "capsolver"):
             capsolver.api_key = self.api_key
 

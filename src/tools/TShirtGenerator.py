@@ -9,6 +9,7 @@ from Tool import Tool
 class TShirtGenerator(Tool):
     def __init__(self, app):
         super().__init__("T-Shirt Generator", "Generate a t-shirt from a query", 2, app)
+        
         self.cache_img_path = os.path.join(self.cache_directory, "original-image")
         self.img_path = os.path.join(self.files_directory, "rblx-t-shirt.png")
 

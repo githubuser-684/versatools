@@ -1,4 +1,3 @@
-import time
 import requests
 from Tool import Tool
 import concurrent.futures
@@ -10,15 +9,11 @@ class DisplayNameChanger(Tool):
         self.max_workers = self.config["max_workers"]
         self.use_proxy = self.config["use_proxy"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):
         print("\033[1;31mWarning: Display names can only be changed once every week\033[0;30m")
         new_display_name = input("New display name: ")
             
-        f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
-        f.close()
+        cookies = self.get_cookies()
 
         req_sent = 0
         req_failed = 0
@@ -58,9 +53,7 @@ class DisplayNameChanger(Tool):
                 break
             except Exception as e:
                 err = str(e)
-                time.sleep(2)
         else:
             return False, err
-        
         
         return (response.status_code == 200), response.text

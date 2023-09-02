@@ -60,7 +60,7 @@ class Tool(Proxy, ABC):
         """
         Generates a random user agent
         """
-        ua = UserAgent()
+        ua = UserAgent(use_external_data=True)
         return ua.random
 
     def get_csrf_token(self, proxies:dict = None, cookie:str = None) -> str:

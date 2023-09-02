@@ -1,5 +1,5 @@
 import os
-from tools import *
+from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader, CommentBot
 from Tool import Tool
 from utils import Utils
 
@@ -31,7 +31,7 @@ class App():
 
         print(self.get_logo())
         print("\033[1;32mWelcome to Versatools")
-        print("\033[0;0mBest FREE opensource Roblox exploiting tools written in Python\n")
+        print("\033[0;0mBest FREE opensource Roblox botting tools written in Python\n")
         print("\033[1;31mOur tools:")
 
         tools = self.get_tools_list()

@@ -4,7 +4,7 @@
 
 <h4 align="center">VERSATOOLS - FREE MULTITOOL | BOT FOLLOWERS/GROUP JOINS & MORE</h4>
 <p align="center">
-	Best FREE opensource Roblox exploiting tools written in Python.
+	Best FREE opensource Roblox botting tools written in Python.
 </p>
 
 <p align="center">

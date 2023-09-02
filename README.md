@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://cdn.discordapp.com/icons/1119803301295292458/eb9f9cd395ce2dbac016a4f5e7513054.webp" alt="Versatools" height="90" />
+	<a href="https://discord.com/invite/kaz2XVGAya"><img src="https://cdn.discordapp.com/icons/1119803301295292458/eb9f9cd395ce2dbac016a4f5e7513054.webp" alt="Versatools" height="90" /></a>
 </p>
 
 <h4 align="center">VERSATOOLS - FREE MULTITOOL | BOT FOLLOWERS/GROUP JOINS & MORE</h4>
@@ -9,12 +9,19 @@
 
 <p align="center">
 	<a href="#Installation">Installation</a> •
+	<a href="#Template for other files">Files templates</a> •
 	<a href="https://discord.com/invite/kaz2XVGAya">Discord</a> •
 	<a href="#Contributing">Contributing</a>
 </p>
 <br/>
 
 ## Installation
+
+Download the latest release from [here](https://github.com/GarryyBD/versatools/releases)
+
+Extract the zip file and run `main.exe`
+
+## Compiling from source
 
 First clone this repository:
 
@@ -28,7 +35,23 @@ Then install the requirements:
 pip install -r requirements.txt
 ```
 
-Then copy paste the following config in the location `files/config.json`:
+Then copy paste the <a href="#files/config.json">template config</a> in the location `files/config.json`
+
+Finally, run the program:
+
+```bash
+python src/main.py
+```
+
+To run unit tests:
+
+```bash
+python -m unittest discover src
+```
+
+## Template for other files
+
+### files/config.json
 
 (All attributes are mandatory. Removing them will break the program.
 Here are default values)
@@ -120,23 +143,13 @@ Here are default values)
 }
 ```
 
-Finally, run the program:
+### files/cookies.txt
 
-```bash
-python src/main.py
-```
+Add your cookies in this file. You can generate them using our Cookie Generator tool.
 
-To run unit tests:
-
-```bash
-python -m unittest discover src
-```
-
-## Template for other files
+### files/proxies.txt
 
 You can use this template to add your proxies. We currently support HTTP, SOCKS4 and SOCKS5 proxies.
-
-`files/proxies.txt`
 
 ```
 http:8.8.8.8:5001
@@ -151,9 +164,3 @@ or you can decide to not specify the type of proxy and let the proxy checker che
 8.8.8.8:5002
 8.8.8.8:5003:username:password
 ```
-
-## Contributing
-
-If you want to contribute to this project, you can fork this repository and make a pull request. We will review it and if it is good, we will merge it.
-
-ALL CONTRIBUTIONS ARE WELCOME!

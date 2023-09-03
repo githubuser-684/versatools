@@ -41,13 +41,14 @@ class CookieGenerator(Tool):
                     if error == None:
                         worked_gen += 1
                         f.write(cookie+"\n")
+                        response_text = cookie
                     else:
                         failed_gen += 1
+                        response_text = error
 
                     total_gen += 1
 
-                    print("\033[1A\033[K\033[1A\033[K\033[1;32mWorking: "+str(worked_gen)+"\033[0;0m | \033[1;31mFailed: "+str(failed_gen)+"\033[0;0m | \033[1;34mTotal: "+str(total_gen) + "\033[0;0m")
-                    print("\033[1;31m" + str(error) + "\033[0;0m" if error != None else "\033[1;32mGenerated: " + cookie + "\033[0;0m")
+                    self.print_status(worked_gen, failed_gen, total_gen, response_text, error == None, "Generated")
         f.close()
 
     def get_csrf_token(self, proxies:dict = None) -> str:

@@ -11,7 +11,7 @@ class CommentBot(Tool):
         self.captcha_solver = self.config["captcha_solver"]
         self.max_workers = self.config["max_workers"]
         self.use_proxy = self.config["use_proxy"]
-
+    
     def run(self):
         asset_id = input("Asset ID to comment: ")    
         cookies = self.get_cookies(self.max_generations)
@@ -33,9 +33,8 @@ class CommentBot(Tool):
                 else:
                     req_failed += 1
 
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mNew comment: "+str(req_sent)+"\033[0;0m | \033[1;31mFailed: "+str(req_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_req) + "\033[0;0m")
-                print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_success else "\033[1;31mFailed: " + response_text + "\033[0;0m")
-    
+                self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Commented")
+
     def send_comment(self, captcha_service, asset_id, cookie):
         err = None
         for _ in range(3):

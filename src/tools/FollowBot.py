@@ -33,8 +33,8 @@ class FollowBot(Tool):
                     req_worked += 1
                 else:
                     req_failed += 1
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mNew followers: "+str(req_worked)+"\033[0;0m | \033[1;31mFailed: "+str(req_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_req) + "\033[0;0m")
-                print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_followed else "\033[1;31mFailed: " + response_text + "\033[0;0m")
+
+                self.print_status(req_worked, req_failed, total_req, response_text, is_followed, "New followers")
 
     def send_follow_request(self, captcha_service:str, user_id:str | int, cookie:str):
         err = None

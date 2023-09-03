@@ -58,8 +58,7 @@ class MessageBot(Tool):
                 else:
                     msg_failed += 1
 
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mSent: "+str(msg_sent)+"\033[0;0m | \033[1;31mFailed: "+str(msg_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_cookies) + "\033[0;0m")
-                print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_sent else "\033[1;31mFailed: " + response_text + "\033[0;0m")          
+                self.print_status(msg_sent, msg_failed, total_cookies, response_text, is_sent, "Messages sent")
 
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
         err = None

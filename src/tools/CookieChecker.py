@@ -31,7 +31,7 @@ class CookieChecker(Tool):
             results = [executor.submit(self.test_cookie, cookie, self.use_proxy) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
-                is_working, cookie, user_id, username, robux_balance, error = future.result()
+                is_working, cookie, response_text = future.result()
 
                 if is_working:
                     working_cookies += 1
@@ -41,8 +41,7 @@ class CookieChecker(Tool):
                 if not (self.delete_invalid_cookies and not is_working):
                     f.write(cookie + "\n") 
 
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mWorking: "+str(working_cookies)+"\033[0;0m | \033[1;31mFailed: "+str(failed_cookies)+"\033[0;0m | \033[1;34mTotal: "+str(total_cookies) + "\033[0;0m")
-                print("\033[1;32mWorked: UserID: " + str(user_id) + " Username: " + username + " Robux Balance: " + str(robux_balance) + "\033[0;0m" if is_working else f"\033[1;31m{error}\033[0;0m")          
+                self.print_status(working_cookies, failed_cookies, total_cookies, response_text, is_working, "Working")
 
         f.close()
         os.replace(self.cache_file_path, self.cookies_file_path)
@@ -63,7 +62,7 @@ class CookieChecker(Tool):
             except Exception as e:
                 err = e
         else:
-            return False, cookie, None, None, None, f"Error {err} testing cookie. {err}"
+            return False, cookie, f"Error {err} testing cookie. {err}"
 
         try:
             result = response.json()
@@ -72,6 +71,6 @@ class CookieChecker(Tool):
             username = result["UserName"]
             robux_balance = result["RobuxBalance"]
         except Exception as e:
-            return False, cookie, None, None, None, str(e)
+            return False, cookie, str(e)
 
-        return True, cookie, user_id, username, robux_balance, None
+        return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance}"

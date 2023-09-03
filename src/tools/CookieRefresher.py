@@ -34,11 +34,13 @@ class CookieRefresher(Tool):
                 if error == None:
                     req_sent += 1
                     f.write(cookie+"\n")
+                    response_text = cookie
                 else:
                     req_failed += 1
+                    response_text = error
 
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mRefreshed: "+str(req_sent)+"\033[0;0m | \033[1;31mFailed: "+str(req_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_req) + "\033[0;0m")
-                print("\033[1;31m" + str(error) + "\033[0;0m" if error != None else "\033[1;32mNew cookie: " + cookie + "\033[0;0m")
+                self.print_status(req_sent, req_failed, total_req, response_text, error == None, "Generated")
+
         f.close()
         os.replace(self.new_cookies_file_path, self.cookies_file_path)
 

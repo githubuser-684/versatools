@@ -34,9 +34,8 @@ class FriendRequestBot(Tool):
                 else:
                     req_failed += 1
 
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mSent: "+str(req_sent)+"\033[0;0m | \033[1;31mFailed: "+str(req_failed)+"\033[0;0m | \033[1;34mTotal: "+str(total_req) + "\033[0;0m")
-                print("\033[1;32mWorked: " + response_text + "\033[0;0m" if is_sent else "\033[1;31mFailed: " + response_text + "\033[0;0m")
-        
+                self.print_status(req_sent, req_failed, total_req, response_text, is_sent, "New requests")
+
     def send_friend_request(self, user_id, cookie):
         err = None
         for _ in range(3):

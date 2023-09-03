@@ -60,8 +60,7 @@ class ProxyChecker(Tool):
                 if not (delete_proxies and not is_working):
                     f.write(line + "\n") 
 
-                print("\033[1A\033[K\033[1A\033[K\033[1;32mWorking: "+str(working_proxies)+"\033[0;0m | \033[1;31mFailed: "+str(failed_proxies)+"\033[0;0m | \033[1;34mTotal: "+str(total_proxies) + "\033[0;0m")
-                print("\033[1;32mWorked: " + line + "\033[0;0m" if is_working else "\033[1;31mFailed: " + line + "\033[0;0m")          
+                self.print_status(working_proxies, failed_proxies, total_proxies, line, is_working, "Working")
 
         f.close()
         os.replace(self.cache_file_path, self.proxies_file_path)

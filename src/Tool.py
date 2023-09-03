@@ -23,7 +23,7 @@ class Tool(Proxy, ABC):
         self.files_directory = app.files_directory
         self.cookies_file_path = app.cookies_file_path
         self.proxies_file_path = app.proxies_file_path
-        self.config_file_path = os.path.join(self.files_directory, "config.json")
+        self.config_file_path = app.config_file_path
 
         self.load_config()
 

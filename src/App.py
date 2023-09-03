@@ -9,9 +9,11 @@ class App():
         self.files_directory = os.path.join(os.path.dirname(__file__), "../files")
         self.proxies_file_path = os.path.join(self.files_directory, "proxies.txt")
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")
+        self.config_file_path = os.path.join(self.files_directory, "config.json")
 
         Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
         Utils.ensure_files_exist([self.proxies_file_path, self.cookies_file_path])
+        self.ensure_config_file_exists()
 
     def clear_terminal(self) -> None:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -73,6 +75,17 @@ class App():
         """
         tools = [t(self) for t in Tool.__subclasses__()]
         return tools
+    
+    def ensure_config_file_exists(self):
+        """
+        Ensure config file exists.
+        If it doesn't create it, copy paste from templates/config.json
+        """
+        config_file_path = os.path.join(self.files_directory, "config.json")
+        if (not os.path.exists(config_file_path)):
+            f = open(config_file_path, "w")
+            f.write(open(os.path.join(os.path.dirname(__file__), "./templates/config.json"), "r").read())
+            f.close()
 
     def __str__(self) -> str:
         return "Versatools main class"

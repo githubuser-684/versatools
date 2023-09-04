@@ -50,8 +50,7 @@ class App():
     
             for i, tool in enumerate(tools):
                 if (choice.isnumeric() and i + 1 == int(choice)):
-                    tool.load_config()
-                    tool.run()
+                    self.launch_tool(tool)
                     lastToolExecuted = tool
                     askAgain = False
             if askAgain:
@@ -62,13 +61,16 @@ class App():
             if (not choice.isnumeric()):
                 print("\033[0;33mPlease enter a number\033[0;0m")
             elif (int(choice) == 1):
-                lastToolExecuted.load_config() # reload config in case it was changed
-                lastToolExecuted.run()
+                self.launch_tool(lastToolExecuted)
             elif (int(choice) == 2):
                 self.run()
             else:
                 print("\033[0;33mInvalid choice\033[0;0m")
     
+    def launch_tool(self, tool):
+        tool.load_config() # reload config in case it was changed
+        tool.run()
+
     def get_tools_list(self):
         """
         Returns a list of all instances of tools

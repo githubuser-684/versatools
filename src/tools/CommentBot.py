@@ -29,14 +29,17 @@ class CommentBot(Tool):
             for future in concurrent.futures.as_completed(results):
                 try:
                     is_success, response_text = future.result()
-                    req_sent += 1
                 except Exception as e:
                     is_success, response_text = False, str(e)
+                
+                if is_success:
+                    req_sent += 1
+                else:
                     req_failed += 1
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Commented")
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception()
     def send_comment(self, captcha_service, asset_id, cookie):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.use_proxy else None
@@ -50,5 +53,5 @@ class CommentBot(Tool):
         init_res = requests.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
 
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, csrf_token, proxies)
-    
+
         return (response.status_code == 200), response.text

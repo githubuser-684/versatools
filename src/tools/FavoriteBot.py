@@ -31,14 +31,17 @@ class FavoriteBot(Tool):
             for future in concurrent.futures.as_completed(results):
                 try:
                     is_success, response_text = future.result()
-                    req_sent += 1
                 except Exception as e:
                     is_success, response_text = False, str(e)
+
+                if is_success:
+                    req_sent += 1
+                else:
                     req_failed += 1
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "New favorites")  
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception()
     def send_favorite(self, asset_id, cookie, unfavorite: bool):
         proxies = self.get_random_proxies() if self.use_proxy else None
         user_agent = self.get_random_user_agent()

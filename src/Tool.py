@@ -73,6 +73,10 @@ class Tool(Proxy, ABC):
         response = requests.post("https://auth.roblox.com/v2/logout", headers=headers, proxies=proxies)
 
         csrf_token = response.headers.get("x-csrf-token")
+
+        if csrf_token == None:
+            raise Exception("CSRF TOKEN not found. Invalid cookie probably")
+        
         return csrf_token
     
     def get_user_info(self, cookie, proxies, user_agent):

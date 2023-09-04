@@ -10,7 +10,7 @@ class CaptchaSolver:
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception()
     def get_rblx_public_key(self, user_agent:str, action_type:str, proxies:dict = None) -> str:
         """
         Gets the public key for the specified action type
@@ -22,7 +22,7 @@ class CaptchaSolver:
 
         return public_key
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception()
     def solve_captcha(self, response:requests.Response, action_type:str, user_agent:str, csrf_token:str, proxies:dict = None) -> requests.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.

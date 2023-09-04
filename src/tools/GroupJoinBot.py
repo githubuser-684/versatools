@@ -32,14 +32,17 @@ class GroupJoinBot(Tool):
             for future in concurrent.futures.as_completed(results):
                 try:
                     has_joined, response_text = future.result()
-                    req_worked += 1
                 except Exception as e:
                     has_joined, response_text =  False, str(e)
+                
+                if has_joined:
+                    req_worked += 1
+                else:
                     req_failed += 1
                 
                 self.print_status(req_worked, req_failed, total_req, response_text, has_joined, "New joins")
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception()
     def send_group_join_request(self, captcha_service:str, group_id:str | int, cookie:str):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.use_proxy else None

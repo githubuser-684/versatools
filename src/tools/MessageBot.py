@@ -54,14 +54,17 @@ class MessageBot(Tool):
             for future in concurrent.futures.as_completed(results):
                 try:
                     is_sent, response_text = future.result()
-                    msg_sent += 1
                 except Exception as e:
                     is_sent, response_text = False, str(e)
+                
+                if is_sent:
+                    msg_sent += 1
+                else:
                     msg_failed += 1
 
                 self.print_status(msg_sent, msg_failed, total_cookies, response_text, is_sent, "Messages sent")
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception()
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
         proxies = self.get_random_proxies() if self.use_proxy else None
         user_agent = self.get_random_user_agent()

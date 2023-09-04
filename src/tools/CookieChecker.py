@@ -17,9 +17,10 @@ class CookieChecker(Tool):
     def run(self):
         cookies = self.get_cookies()
 
-        f = open(self.cache_file_path, 'w')
-        f.seek(0)
-        f.truncate()
+        if self.delete_invalid_cookies:
+            f = open(self.cache_file_path, 'w')
+            f.seek(0)
+            f.truncate()
 
         working_cookies = 0
         failed_cookies = 0
@@ -34,20 +35,24 @@ class CookieChecker(Tool):
             for future in concurrent.futures.as_completed(results):
                 try:
                     is_working, cookie, response_text = future.result()
-                    working_cookies += 1
                 except Exception as e:
                     is_working, response_text = False, str(e)
+                
+                if is_working:
+                    working_cookies += 1
+                else:
                     failed_cookies += 1
 
-                if not (self.delete_invalid_cookies and not is_working):
-                    f.write(cookie + "\n") 
+                if self.delete_invalid_cookies and is_working:
+                    f.write(cookie + "\n")
 
                 self.print_status(working_cookies, failed_cookies, total_cookies, response_text, is_working, "Working")
 
-        f.close()
-        os.replace(self.cache_file_path, self.cookies_file_path)
+        if self.delete_invalid_cookies:
+            f.close()
+            os.replace(self.cache_file_path, self.cookies_file_path)
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception(1)
     def test_cookie(self, cookie, use_proxy):
         user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None

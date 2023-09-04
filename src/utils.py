@@ -20,22 +20,25 @@ class Utils():
                     pass
     
     @staticmethod
-    def retry_on_exception(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            """
-            Retry executing function x times until there's no exception
-            """
-            retries = 3
-            err = None
-            for _ in range(retries):
-                try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    err = str(e)
-            else:
-                raise Exception(f"Error {err} while running {func.__name__}. Tried {retries} times")
-        return wrapper
+    def retry_on_exception(retries = 3):
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                """
+                Retry executing function x times until there's no exception
+                """
+                err = None
+                for _ in range(retries):
+                    try:
+                        return func(*args, **kwargs)
+                    except Exception as e:
+                        err = str(e)
+                        if err == "Expecting value: line 3 column 1 (char 4)":
+                            err = "JSON decode error. Probably that cookie is invalid"
+                else:
+                    raise Exception(f"Error {err} while running {func.__name__}. Tried {retries} times")
+            return wrapper
+        return decorator
     
 class Suppressor():
     """

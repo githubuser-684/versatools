@@ -45,7 +45,7 @@ class CookieRefresher(Tool):
         f.close()
         os.replace(self.new_cookies_file_path, self.cookies_file_path)
 
-    @Utils.retry_on_exception
+    @Utils.retry_on_exception(1)
     def refresh_cookie(self, cookie:str, use_proxy:bool) -> tuple:
         """
         Refresh a ROBLOSECURITY cookie
@@ -53,10 +53,7 @@ class CookieRefresher(Tool):
         """
         user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None
-
-        req_url = "https://auth.roblox.com/v2/logout"
-        req_request = requests.post(req_url, cookies={'.ROBLOSECURITY': cookie}, proxies=proxies)
-        xcsrf_token = req_request.headers["x-csrf-token"]
+        xcsrf_token = self.get_csrf_token(proxies, cookie)
 
         # Creating a new cookie
         reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
@@ -64,5 +61,5 @@ class CookieRefresher(Tool):
 
         data = requests.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
         cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
-    
+
         return cookie

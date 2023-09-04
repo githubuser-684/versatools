@@ -83,11 +83,18 @@ class Tool(Proxy, ABC):
         response = requests.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
         result = response.json()
 
-        return result["UserID"], result["UserName"], result["RobuxBalance"], result["ThumbnailUrl"], result["IsAnyBuildersClubMember"], result["IsPremium"]
+        return {
+            "UserID": result["UserID"],
+            "UserName": result["UserName"],
+            "RobuxBalance": result["RobuxBalance"],
+            "ThumbnailUrl": result["ThumbnailUrl"],
+            "IsAnyBuildersClubMember": result["IsAnyBuildersClubMember"],
+            "IsPremium": result["IsPremium"]
+        }
     
     def clear_line(self, line: str) -> str:
         return line.replace("\n", "").replace(" ", "").replace("\t", "")
-    
+
     def get_cookies(self, amount = None) -> list:
         f = open(self.cookies_file_path, 'r+')
         cookies = f.read().splitlines()
@@ -101,7 +108,7 @@ class Tool(Proxy, ABC):
             cookies = cookies[:self.max_generations]
 
         return cookies
-    
+
     def print_status(self, req_worked, req_failed, total_req, response_text, has_worked, action_verb):
         print(f"\033[1A\033[K\033[1A\033[K\033[1;32m{action_verb}: {str(req_worked)}\033[0;0m | \033[1;31mFailed: {str(req_failed)}\033[0;0m | \033[1;34mTotal: {str(total_req)}\033[0;0m")
         print(f"\033[1;32mWorked: {response_text}\033[0;0m" if has_worked else f"\033[1;31mFailed: {response_text}\033[0;0m")

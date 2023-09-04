@@ -21,7 +21,7 @@ class AssetsDownloader(Tool):
     def run(self):
         print("1. Download shirts")
         print("2. Download pants")
-        
+
         askAgain = True
         while askAgain:
             choice = input("\033[0;0mEnter your choice: ")
@@ -33,14 +33,14 @@ class AssetsDownloader(Tool):
             if askAgain:
                 print("\033[0;33mInvalid choice\033[0;0m")
 
-        if (choice == 1):
-            assets = self.get_assets("ClassicShirts", self.max_generations)
-            directory = self.shirts_files_directory
-
-        if (choice == 2):
-            assets = self.get_assets("ClassicPants", self.max_generations)
-            directory = self.pants_files_directory
+        try:
+            assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.max_generations)
+        except Exception as e:
+            print(f"\033[1;31m{str(e)}\033[0;0m")
+            return
         
+        directory = self.shirts_files_directory if choice == 1 else self.pants_files_directory
+
         req_worked = 0
         req_failed = 0
         total_req = len(assets)
@@ -51,56 +51,55 @@ class AssetsDownloader(Tool):
             results = [executor.submit(self.download_asset, asset, directory) for asset in assets]
 
             for future in concurrent.futures.as_completed(results):
-                has_downloaded, response_text = future.result()
-
-                if has_downloaded:
+                try:
+                    has_downloaded, response_text = future.result()
                     req_worked += 1
-                else:
+                except Exception as e:
+                    has_downloaded, response_text = False, str(e)
                     req_failed += 1
 
                 self.print_status(req_worked, req_failed, total_req, response_text, has_downloaded, "Downloaded")
 
-    def get_assets(self, asset_name, amount):
+    @Utils.retry_on_exception
+    def get_assets_page(self, asset_name, cursor):
+        proxies = self.get_random_proxies() if self.use_proxy else None
+        user_agent = self.get_random_user_agent()
+
+        req_url = f"https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory={asset_name}{'&cursor='+cursor if cursor else ''}"
+        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        
+        response = requests.get(req_url, headers=req_headers, proxies=proxies)
+        result = response.json()
+        data = result["data"]
+        cursor = result["nextPageCursor"]
+
+        return data, cursor
+
+    def get_assets_amount(self, asset_name, amount):
+        """
+        Get x amount of assets
+        """
         assets = []
         cursor = None
 
         while (len(assets) < amount):
-            proxies = self.get_random_proxies() if self.use_proxy else None
-            user_agent = self.get_random_user_agent()
-
-            req_url = f"https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory={asset_name}{'&cursor='+cursor if cursor else ''}"
-            req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
-            
-            err = None
-            for _ in range(3):
-                try:
-                    response = requests.get(req_url, headers=req_headers, proxies=proxies)
-                    result = response.json()
-                    data = result["data"]
-                    cursor = result["nextPageCursor"]
-                    break
-                except Exception as e:
-                    err = e
-            else:
-                raise Exception(f"Error fetching assets. {err}")
+            data, cursor = self.get_assets_page(asset_name, cursor)
         
             assets += data
         
         assets = assets[:amount]
         return assets
-    
+
+    @Utils.retry_on_exception
     def download_asset(self, asset, directory):
         asset_id = asset["id"]
         proxies = self.get_random_proxies() if self.use_proxy else None
 
-        try:
-            assetdelivery = requests.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}', proxies=proxies).json()['location']
-            assetid = str(requests.get(assetdelivery, proxies=proxies).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
-            png = requests.get(f'https://assetdelivery.roblox.com/v1/assetId/{assetid}', proxies=proxies).json()['location']
-            image = requests.get(png, proxies=proxies).content
-            asset_path = os.path.join(directory, f"{asset_id}.png")
-        except Exception as e:
-            return False, str(e)
+        assetdelivery = requests.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}', proxies=proxies).json()['location']
+        assetid = str(requests.get(assetdelivery, proxies=proxies).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
+        png = requests.get(f'https://assetdelivery.roblox.com/v1/assetId/{assetid}', proxies=proxies).json()['location']
+        image = requests.get(png, proxies=proxies).content
+        asset_path = os.path.join(directory, f"{asset_id}.png")
         
         with open(asset_path, 'wb') as f:
             f.write(image)

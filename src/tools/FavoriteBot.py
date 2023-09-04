@@ -2,6 +2,7 @@ import requests
 from Tool import Tool
 import concurrent.futures
 import time
+from utils import Utils
 
 class FavoriteBot(Tool):
     def __init__(self, app):
@@ -28,35 +29,30 @@ class FavoriteBot(Tool):
             results = [executor.submit(self.send_favorite, asset_id, cookie, unfavorite) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
-                is_success, response_text = future.result()
-
-                if is_success:
+                try:
+                    is_success, response_text = future.result()
                     req_sent += 1
-                else:
+                except Exception as e:
+                    is_success, response_text = False, str(e)
                     req_failed += 1
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "New favorites")  
-    
+
+    @Utils.retry_on_exception
     def send_favorite(self, asset_id, cookie, unfavorite: bool):
-        err = None
-        for _ in range(3):
-            try:
-                proxies = self.get_random_proxies() if self.use_proxy else None
-                user_agent = self.get_random_user_agent()
-                csrf_token = self.get_csrf_token(proxies, cookie)
-                user_id, username, robux_balance, thumbnail_url, is_any_builders_club_member, is_premium = self.get_user_info(cookie, proxies, user_agent)
-                send = requests.delete if unfavorite else requests.post
+        proxies = self.get_random_proxies() if self.use_proxy else None
+        user_agent = self.get_random_user_agent()
+        csrf_token = self.get_csrf_token(proxies, cookie)
+        user_info = self.get_user_info(cookie, proxies, user_agent)
+        user_id = user_info.get("UserID")
 
-                req_url = f"https://catalog.roblox.com:443/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
-                req_cookies = {".ROBLOSECURITY": cookie}
-                req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        send = requests.delete if unfavorite else requests.post
 
-                response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-                break
-            except Exception as e:
-                err = str(e)
-        else:
-            return False, err
+        req_url = f"https://catalog.roblox.com:443/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
+        req_cookies = {".ROBLOSECURITY": cookie}
+        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+
+        response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
         time.sleep(self.timeout)
     

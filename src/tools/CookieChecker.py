@@ -2,6 +2,7 @@ import os
 import concurrent.futures
 import requests
 from Tool import Tool
+from utils import Utils
 
 class CookieChecker(Tool):
     def __init__(self, app):
@@ -31,13 +32,13 @@ class CookieChecker(Tool):
             results = [executor.submit(self.test_cookie, cookie, self.use_proxy) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
-                is_working, cookie, response_text = future.result()
-
-                if is_working:
+                try:
+                    is_working, cookie, response_text = future.result()
                     working_cookies += 1
-                else:
+                except Exception as e:
+                    is_working, response_text = False, str(e)
                     failed_cookies += 1
-                
+
                 if not (self.delete_invalid_cookies and not is_working):
                     f.write(cookie + "\n") 
 
@@ -46,31 +47,21 @@ class CookieChecker(Tool):
         f.close()
         os.replace(self.cache_file_path, self.cookies_file_path)
 
+    @Utils.retry_on_exception
     def test_cookie(self, cookie, use_proxy):
-        err = None
-        for _ in range(10):
-            try:
-                user_agent = self.get_random_user_agent()
-                proxies = self.get_random_proxies() if use_proxy else None
+        user_agent = self.get_random_user_agent()
+        proxies = self.get_random_proxies() if use_proxy else None
 
-                req_url = "https://www.roblox.com:443/mobileapi/userinfo"
-                req_cookies = { ".ROBLOSECURITY": cookie }
-                req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_url = "https://www.roblox.com/mobileapi/userinfo"
+        req_cookies = { ".ROBLOSECURITY": cookie }
+        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-                response = requests.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-                break
-            except Exception as e:
-                err = e
-        else:
-            return False, cookie, f"Error {err} testing cookie. {err}"
+        response = requests.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
-        try:
-            result = response.json()
+        result = response.json()
 
-            user_id = result["UserID"]
-            username = result["UserName"]
-            robux_balance = result["RobuxBalance"]
-        except Exception as e:
-            return False, cookie, str(e)
+        user_id = result["UserID"]
+        username = result["UserName"]
+        robux_balance = result["RobuxBalance"]
 
         return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance}"

@@ -3,13 +3,14 @@ from anticaptchaofficial.funcaptchaproxyless import *
 from anticaptchaofficial.funcaptchaproxyon import *
 from twocaptcha import TwoCaptcha
 import capsolver
-from utils import Suppressor
+from utils import Suppressor, Utils
 
 class CaptchaSolver:
     def __init__(self, captcha_service:str, api_key:str):
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
-    
+
+    @Utils.retry_on_exception
     def get_rblx_public_key(self, user_agent:str, action_type:str, proxies:dict = None) -> str:
         """
         Gets the public key for the specified action type
@@ -20,7 +21,8 @@ class CaptchaSolver:
         public_key = reqpk_response.json()["funCaptchaPublicKeys"][action_type]
 
         return public_key
-    
+
+    @Utils.retry_on_exception
     def solve_captcha(self, response:requests.Response, action_type:str, user_agent:str, csrf_token:str, proxies:dict = None) -> requests.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
@@ -153,15 +155,7 @@ class CaptchaSolver:
 
         req_cookies = response.request._cookies.get_dict()
 
-        err = None
-        for _ in range(3):
-            try:
-                final_response = requests.post(req_url, headers=req_headers, json=req_json, data=req_data, cookies=req_cookies, proxies=proxies)
-                break
-            except Exception as e:
-                err = e
-        else:
-            raise Exception(f"Error sending captcha validation. {err}")
+        final_response = requests.post(req_url, headers=req_headers, json=req_json, data=req_data, cookies=req_cookies, proxies=proxies)
         
         if (final_response.status_code >= 400):
             raise Exception(final_response.text)

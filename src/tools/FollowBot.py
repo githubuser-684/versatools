@@ -1,4 +1,4 @@
-import requests
+import httpx
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
@@ -40,7 +40,6 @@ class FollowBot(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, is_followed, "New followers")
 
-    @Utils.retry_on_exception()
     def send_follow_request(self, captcha_service:str, user_id:str | int, cookie:str):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.use_proxy else None
@@ -51,7 +50,7 @@ class FollowBot(Tool):
         req_cookies = {".ROBLOSECURITY": cookie}
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-        init_res = requests.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", user_agent, csrf_token, proxies)
+        init_res = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", user_agent, proxies)
         
         return (response.status_code == 200), response.text

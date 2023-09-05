@@ -4,6 +4,7 @@ from anticaptchaofficial.funcaptchaproxyon import *
 from twocaptcha import TwoCaptcha
 import capsolver
 from utils import Suppressor, Utils
+import httpx
 
 class CaptchaSolver:
     def __init__(self, captcha_service:str, api_key:str):
@@ -17,13 +18,12 @@ class CaptchaSolver:
         """
         reqpk_url = "https://apis.rbxcdn.com/captcha/v1/metadata"
         reqpk_headers = {"User-Agent": user_agent, "Accept": "*/*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty",  "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Te": "trailers", "Connection": "close", }
-        reqpk_response = requests.get(reqpk_url, headers=reqpk_headers, proxies=proxies)
+        reqpk_response = httpx.get(reqpk_url, headers=reqpk_headers, proxies=proxies)
         public_key = reqpk_response.json()["funCaptchaPublicKeys"][action_type]
 
         return public_key
 
-    @Utils.retry_on_exception()
-    def solve_captcha(self, response:requests.Response, action_type:str, user_agent:str, csrf_token:str, proxies:dict = None) -> requests.Response:
+    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, proxies:dict = None) -> httpx.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -32,9 +32,9 @@ class CaptchaSolver:
         response_headers = response.headers
         response_text = response.text
 
-        if status_code != 423: # rate limited
+        if status_code == 423: # rate limited
             raise Exception(response_text)
-        elif status_code != 403:
+        elif status_code != 403: # no captcha
             return response
 
         # get captcha data
@@ -105,7 +105,7 @@ class CaptchaSolver:
 
             token = solution["token"]
         elif (self.captcha_service == "capbypass"):
-            captcha_response = requests.post('https://capbypass.com/api/createTask', json={
+            captcha_response = httpx.post('https://capbypass.com/api/createTask', json={
                 "clientKey": self.api_key,
                 "task": {
                     "type":"FunCaptchaTask",
@@ -129,10 +129,10 @@ class CaptchaSolver:
         metadata_base64 = base64.b64encode(metadata.encode()).decode()
 
         # send request again but with captcha token
-        req_url = response.request.url
+        req_url = str(response.request.url)
 
-        req_headers = response.request.headers
-        req_headers['X-Csrf-Token'] = csrf_token
+        req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
+        del req_headers["content-length"]
         req_headers['Rblx-Challenge-Id'] = rblx_challenge_id
         req_headers["Rblx-Challenge-Type"] = "captcha"
         req_headers["Rblx-Challenge-Metadata"] = metadata_base64
@@ -141,21 +141,22 @@ class CaptchaSolver:
         req_json = {}
         req_data = {}
         
-        if isinstance(response.request.body, bytes):
-            req_json = json.loads(bytes.decode(response.request.body))
-        elif isinstance(response.request.body, str):
-            pairs = response.request.body.split('&')
+        req_content = bytes.decode(response.request._content)
+
+        if response.request.headers.get("content-type") == "application/x-www-form-urlencoded":
+            req_data = req_content
+            pairs = req_data.split('&')
             for pair in pairs:
                 key, value = pair.split('=')
                 req_data[key] = value
+        else:
+            req_json = json.loads(req_content) if req_content != "" else {}
 
         req_json["captchaToken"] = token
         req_json["captchaId"] = unified_captcha_id
         req_json["captchaProvider"] = "PROVIDER_ARKOSE_LABS"
 
-        req_cookies = response.request._cookies.get_dict()
-
-        final_response = requests.post(req_url, headers=req_headers, json=req_json, data=req_data, cookies=req_cookies, proxies=proxies)
+        final_response = httpx.post(req_url, headers=req_headers, json=req_json, data=req_data, proxies=proxies)
         
         if (final_response.status_code >= 400):
             raise Exception(final_response.text)
@@ -182,7 +183,7 @@ class CaptchaSolver:
                 'clientKey': self.api_key,
             }
 
-            response = requests.post(req_url, json=req_data)
+            response = httpx.post(req_url, json=req_data)
             balance = response.json()["balance"]
             return balance
         else:

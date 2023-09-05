@@ -1,6 +1,6 @@
 import time
 from Tool import Tool
-import requests
+import httpx
 import concurrent.futures
 from utils import Utils
 
@@ -49,6 +49,6 @@ class StatusChanger(Tool):
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_data = {"description": new_status }
 
-        response = requests.post(req_url, headers=req_headers, cookies=req_cookies, data=req_data, proxies=proxies)
+        response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, data=req_data, proxies=proxies)
         
         return (response.status_code == 200), response.text

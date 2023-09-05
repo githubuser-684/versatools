@@ -1,4 +1,4 @@
-import requests
+import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -51,6 +51,6 @@ class DisplayNameChanger(Tool):
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_json = {"newDisplayName": new_display_name}
 
-        response = requests.patch(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+        response = httpx.patch(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
         return (response.status_code == 200), response.text

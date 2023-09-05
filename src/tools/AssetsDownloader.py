@@ -1,8 +1,8 @@
 import os
-import requests
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
+import httpx
 
 class AssetsDownloader(Tool):
     def __init__(self, app):
@@ -38,7 +38,7 @@ class AssetsDownloader(Tool):
         except Exception as e:
             print(f"\033[1;31m{str(e)}\033[0;0m")
             return
-        
+
         directory = self.shirts_files_directory if choice == 1 else self.pants_files_directory
 
         req_worked = 0
@@ -71,7 +71,7 @@ class AssetsDownloader(Tool):
         req_url = f"https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory={asset_name}{'&cursor='+cursor if cursor else ''}"
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         
-        response = requests.get(req_url, headers=req_headers, proxies=proxies)
+        response = httpx.get(req_url, headers=req_headers, proxies=proxies)
         result = response.json()
         data = result["data"]
         cursor = result["nextPageCursor"]
@@ -98,12 +98,13 @@ class AssetsDownloader(Tool):
         asset_id = asset["id"]
         proxies = self.get_random_proxies() if self.use_proxy else None
 
-        assetdelivery = requests.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}', proxies=proxies).json()['location']
-        assetid = str(requests.get(assetdelivery, proxies=proxies).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
-        png = requests.get(f'https://assetdelivery.roblox.com/v1/assetId/{assetid}', proxies=proxies).json()['location']
-        image = requests.get(png, proxies=proxies).content
-        asset_path = os.path.join(directory, f"{asset_id}.png")
-        
+        with httpx.Client(proxies=proxies) as client:
+            assetdelivery = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}').json()['location']
+            assetid = str(client.get(assetdelivery).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
+            png = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{assetid}').json()['location']
+            image = client.get(png).content
+            asset_path = os.path.join(directory, f"{asset_id}.png")
+
         with open(asset_path, 'wb') as f:
             f.write(image)
         

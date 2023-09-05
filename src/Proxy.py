@@ -1,4 +1,4 @@
-import requests
+import httpx
 from abc import ABC, abstractmethod
 import random
 
@@ -14,7 +14,7 @@ class Proxy(ABC):
         Checks if a proxy is working
         """
         try:
-            response = requests.get('https://www.roblox.com', proxies=proxies, timeout=timeout)
+            response = httpx.get('https://www.roblox.com', proxies=proxies, timeout=timeout)
             if (response.status_code != 200):
                 return False
         except:
@@ -151,21 +151,15 @@ class Proxy(ABC):
             raise ValueError("Invalid Parameters. If proxy has auth, make sure to provide username and password")
 
         if auth:
-            proxies = {
-                "http": f"{proxy_type}://{proxy_user}:{proxy_pass}@{proxy_ip}:{proxy_port}/",
-                "https": f"{proxy_type}://{proxy_user}:{proxy_pass}@{proxy_ip}:{proxy_port}/"
-            }
+            proxies = { "all://": f"{proxy_type}://{proxy_user}:{proxy_pass}@{proxy_ip}:{proxy_port}/" }
         else:
-            proxies = {
-                "http": f"{proxy_type}://{proxy_ip}:{proxy_port}/",
-                "https": f"{proxy_type}://{proxy_ip}:{proxy_port}/"
-            }
-        
+            proxies = { "all://": f"{proxy_type}://{proxy_ip}:{proxy_port}/" }
+
         return proxies
     
     def get_random_proxies(self) -> dict:
         """
-        Gets random proxies dict from proxies.txt file for requests module
+        Gets random proxies dict from proxies.txt file for httpx module
         """
 
         # make sure proxies list is correctly formatted
@@ -178,7 +172,7 @@ class Proxy(ABC):
         # get random line
         random_line = proxies_list[random.randint(0, len(proxies_list) - 1)]
         random_line = self.clear_line(random_line)
-        # get proxies dict for requests module
+        # get proxies dict for httpx module
         proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(random_line)
         proxies = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
         

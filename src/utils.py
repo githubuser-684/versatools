@@ -33,7 +33,7 @@ class Utils():
                         return func(*args, **kwargs)
                     except Exception as e:
                         err = str(e)
-                        if err == "Expecting value: line 3 column 1 (char 4)":
+                        if "Expecting value: line" in err:
                             err = "JSON decode error. Probably that cookie is invalid"
                 else:
                     raise Exception(f"Error {err} while running {func.__name__}. Tried {retries} times")

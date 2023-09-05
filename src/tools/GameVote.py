@@ -1,4 +1,4 @@
-import requests
+import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -66,6 +66,6 @@ class GameVote(Tool):
         req_cookies = {".ROBLOSECURITY": cookie}
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-        response = requests.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
     
         return (response.status_code == 200 and response.json()["Success"]), response.text

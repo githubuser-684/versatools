@@ -1,5 +1,5 @@
 import os
-import requests
+import httpx
 import random
 import urllib.request
 from PIL import Image
@@ -29,7 +29,7 @@ class TShirtGenerator(Tool):
         }
 
         try:
-            response = requests.get(url, headers=headers, params=querystring)
+            response = httpx.get(url, headers=headers, params=querystring)
 
             if (response.status_code == 429):
                 raise Exception("\033[1;31mRate limited by Image Search Api. If you require more API requests, you can consider upgrading your plan here: https://rapidapi.com/emailmatteoutile/api/image-search-api2/pricing\033[0;0m")

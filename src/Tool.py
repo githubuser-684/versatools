@@ -1,10 +1,9 @@
-import os
 import json
 import random
-import requests
+import httpx
 from abc import ABC, abstractmethod
-from fake_useragent import UserAgent
 from Proxy import Proxy
+from fake_useragent import UserAgent
 
 class Tool(Proxy, ABC):
     def __init__(self, name: str, description: str, color: int, app: object):
@@ -70,7 +69,7 @@ class Tool(Proxy, ABC):
 
         headers = {'Cookie': ".ROBLOSECURITY=" + cookie } if cookie else None
 
-        response = requests.post("https://auth.roblox.com/v2/logout", headers=headers, proxies=proxies)
+        response = httpx.post("https://auth.roblox.com/v2/logout", headers=headers, proxies=proxies)
 
         csrf_token = response.headers.get("x-csrf-token")
 
@@ -84,7 +83,7 @@ class Tool(Proxy, ABC):
         req_cookies = { ".ROBLOSECURITY": cookie }
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         
-        response = requests.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
         result = response.json()
 
         return {

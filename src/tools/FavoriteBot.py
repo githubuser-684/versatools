@@ -1,4 +1,4 @@
-import requests
+import httpx
 from Tool import Tool
 import concurrent.futures
 import time
@@ -49,7 +49,7 @@ class FavoriteBot(Tool):
         user_info = self.get_user_info(cookie, proxies, user_agent)
         user_id = user_info.get("UserID")
 
-        send = requests.delete if unfavorite else requests.post
+        send = httpx.delete if unfavorite else httpx.post
 
         req_url = f"https://catalog.roblox.com:443/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
         req_cookies = {".ROBLOSECURITY": cookie}

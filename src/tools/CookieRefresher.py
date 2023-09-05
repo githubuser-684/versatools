@@ -1,6 +1,6 @@
 import os
 import concurrent.futures
-import requests
+import httpx
 from Tool import Tool
 from utils import Utils
 
@@ -35,12 +35,13 @@ class CookieRefresher(Tool):
                     req_sent += 1
                     f.write(cookie+"\n")
                     response_text = cookie
+                    has_worked = True
                 except Exception as e:
-                    error = str(e)
+                    has_worked = False
                     req_failed += 1
-                    response_text = error
+                    response_text = str(e)
 
-                self.print_status(req_sent, req_failed, total_req, response_text, error == None, "Generated")
+                self.print_status(req_sent, req_failed, total_req, response_text, has_worked, "Generated")
 
         f.close()
         os.replace(self.new_cookies_file_path, self.cookies_file_path)
@@ -59,7 +60,7 @@ class CookieRefresher(Tool):
         reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": xcsrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-        data = requests.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
+        data = httpx.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
         cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
 
         return cookie

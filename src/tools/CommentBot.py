@@ -1,4 +1,4 @@
-import requests
+import httpx
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
@@ -39,7 +39,6 @@ class CommentBot(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Commented")
 
-    @Utils.retry_on_exception()
     def send_comment(self, captcha_service, asset_id, cookie):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.use_proxy else None
@@ -50,8 +49,8 @@ class CommentBot(Tool):
         req_cookies = { ".ROBLOSECURITY": cookie }
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_data = {"assetId": str(asset_id), "text": "cute"}
-        init_res = requests.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
+        init_res = httpx.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
 
-        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, csrf_token, proxies)
+        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, proxies)
 
         return (response.status_code == 200), response.text

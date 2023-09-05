@@ -1,4 +1,4 @@
-import requests
+import httpx
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
@@ -42,7 +42,6 @@ class GroupJoinBot(Tool):
                 
                 self.print_status(req_worked, req_failed, total_req, response_text, has_joined, "New joins")
 
-    @Utils.retry_on_exception()
     def send_group_join_request(self, captcha_service:str, group_id:str | int, cookie:str):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.use_proxy else None
@@ -54,7 +53,7 @@ class GroupJoinBot(Tool):
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_json={"redemptionToken": "", "sessionId": ""}
 
-        init_res = requests.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
-        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", user_agent, csrf_token, proxies)
+        init_res = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", user_agent, proxies)
         
         return (response.status_code == 200), response.text

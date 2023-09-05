@@ -1,7 +1,7 @@
 import random
 import string
 import concurrent.futures
-import requests
+import httpx
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
 from utils import Utils
@@ -34,17 +34,18 @@ class CookieGenerator(Tool):
                     worked_gen += 1
                     f.write(cookie+"\n")
                     response_text = cookie
+                    has_worked = True
                 except Exception as e:
-                    error = str(e)
+                    has_worked = False
                     failed_gen += 1
-                    response_text = error
+                    response_text = str(e)
 
-                self.print_status(worked_gen, failed_gen, total_gen, response_text, error == None, "Generated")
+                self.print_status(worked_gen, failed_gen, total_gen, response_text, has_worked, "Generated")
         f.close()
 
     @Utils.retry_on_exception()
     def get_csrf_token(self, proxies:dict = None) -> str:
-        csrf_response = requests.post("https://auth.roblox.com/v2/login", proxies=proxies)
+        csrf_response = httpx.post("https://auth.roblox.com/v2/login", proxies=proxies)
         csrf_token = csrf_response.headers.get("x-csrf-token")
         return csrf_token
     
@@ -76,9 +77,8 @@ class CookieGenerator(Tool):
         req_url = "https://auth.roblox.com/v2/signup"
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
-        return requests.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
+        return httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
 
-    @Utils.retry_on_exception()
     def generate_cookie(self, captcha_service:str, use_proxy:bool) -> tuple:
         """
         Generates a ROBLOSECURITY cookie
@@ -95,7 +95,7 @@ class CookieGenerator(Tool):
         is_girl = random.choice([True, False])
         
         sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, proxies)
-        sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", user_agent, csrf_token, proxies)
+        sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", user_agent, proxies)
 
         cookie = sign_up_res.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
         

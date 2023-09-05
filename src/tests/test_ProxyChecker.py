@@ -20,8 +20,7 @@ class TestProxyChecker(unittest.TestCase):
         
     def test_test_proxy(self):
         is_working = self.tool.test_proxy({
-            "http": f"http://10.8.8.8@admin:1234/",
-            "https": f"http://10.8.8.8@admin:1234/"
+            "all://": f"http://10.8.8.8@admin:1234/"
         }, 1)
 
         self.assertEqual(is_working, False)

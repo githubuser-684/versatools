@@ -99,7 +99,7 @@ class Proxy(ABC):
         
         # if 0 proxy found, display error message
         if len(lines) == 0:
-            raise Exception("\033[1;31mNo proxy found in files/proxies.txt. Please add some and try again\033[0;0m")
+            raise Exception("No proxy found in files/proxies.txt. Please add some and try again")
 
         return True
     

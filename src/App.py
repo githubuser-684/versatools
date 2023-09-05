@@ -1,5 +1,5 @@
 import os
-from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader, CommentBot
+from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot
 from Tool import Tool
 from utils import Utils
 
@@ -70,7 +70,11 @@ class App():
     
     def launch_tool(self, tool):
         tool.load_config() # reload config in case it was changed
-        tool.run()
+        try:
+            tool.run()
+        except Exception as e:
+            print(f"\033[1;31m{str(e)}\033[0;0m")
+            return
 
     def get_tools_list(self):
         """
@@ -86,7 +90,7 @@ class App():
         """
         config_file_path = os.path.join(self.files_directory, "config.json")
         if (not os.path.exists(config_file_path)):
-            raise Exception("Config file not found. Make sure to add one in files/")
+            raise Exception("\033[1;31mConfig file not found. Make sure to add one in files/\033[0;0m")
 
     def __str__(self) -> str:
         return "Versatools main class"

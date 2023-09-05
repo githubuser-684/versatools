@@ -14,18 +14,8 @@ class ProxyChecker(Tool):
         max_workers = self.config["max_workers"]
 
         # make sure format of the file is good
-        try:
-            self.check_proxies_file_format(self.proxies_file_path, False)
-        except SyntaxError as e:
-            print("\033[1;31m" + str(e) + "\033[0;0m")
-            return
-        except FileNotFoundError as e:
-            print("\033[1;31m" + str(e) + "\033[0;0m")
-            return
-        except Exception as e:
-            print("\033[1;31m" + str(e) + "\033[0;0m")
-            return
-             
+        self.check_proxies_file_format(self.proxies_file_path, False)
+
         # get proxies lines
         f = open(self.proxies_file_path, 'r+')
         lines = f.read().splitlines()
@@ -71,11 +61,8 @@ class ProxyChecker(Tool):
         """
 
         line = self.clear_line(line)
-        try:
-            proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(line)
-        except ValueError as e:
-            print("\033[1;31m" + str(e) + "\033[0;0m")
-            return
+
+        proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(line)
 
         if (proxy_type_provided):
             proxies = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)

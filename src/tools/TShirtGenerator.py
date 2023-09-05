@@ -28,24 +28,18 @@ class TShirtGenerator(Tool):
         	"X-RapidAPI-Host": "image-search-api2.p.rapidapi.com"
         }
 
-        try:
-            response = httpx.get(url, headers=headers, params=querystring)
+        response = httpx.get(url, headers=headers, params=querystring)
 
-            if (response.status_code == 429):
-                raise Exception("\033[1;31mRate limited by Image Search Api. If you require more API requests, you can consider upgrading your plan here: https://rapidapi.com/emailmatteoutile/api/image-search-api2/pricing\033[0;0m")
+        if (response.status_code == 429):
+            raise Exception("Rate limited by Image Search Api. If you require more API requests, you can consider upgrading your plan here: https://rapidapi.com/emailmatteoutile/api/image-search-api2/pricing")
 
-            if (response.status_code == 403):
-                raise Exception("\033[1;31mYou are not subscribed to API. Please subscribe here: https://rapidapi.com/emailmatteoutile/api/image-search-api2\033[0;0m")
-        
-        except Exception as e:
-            print("\033[1;31m" + str(e) + "\033[0;0m")
-            return
-        
+        if (response.status_code == 403):
+            raise Exception("You are not subscribed to API. Please subscribe here: https://rapidapi.com/emailmatteoutile/api/image-search-api2")
+    
         try:
             images = response.json()["images"]
         except:
-            print(f"\033[1;31mUnable to search the image... \n\n{response.text}\033[0;0m")
-            return
+            raise Exception(f"Unable to search the image... \n\n{response.text}")
         
         # retrieve random image from API
         image = images[random.randint(0, len(images) - 1)]

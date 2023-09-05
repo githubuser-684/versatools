@@ -33,12 +33,7 @@ class AssetsDownloader(Tool):
             if askAgain:
                 print("\033[0;33mInvalid choice\033[0;0m")
 
-        try:
-            assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.max_generations)
-        except Exception as e:
-            print(f"\033[1;31m{str(e)}\033[0;0m")
-            return
-
+        assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.max_generations)
         directory = self.shirts_files_directory if choice == 1 else self.pants_files_directory
 
         req_worked = 0

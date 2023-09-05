@@ -82,13 +82,11 @@ class App():
     def ensure_config_file_exists(self):
         """
         Ensure config file exists.
-        If it doesn't create it, copy paste from templates/config.json
+        If it doesn't create it, warn user
         """
         config_file_path = os.path.join(self.files_directory, "config.json")
         if (not os.path.exists(config_file_path)):
-            f = open(config_file_path, "w")
-            f.write(open(os.path.join(self.templates_directory, "./config.json"), "r").read())
-            f.close()
+            raise Exception("Config file not found. Make sure to add one in files/")
 
     def __str__(self) -> str:
         return "Versatools main class"

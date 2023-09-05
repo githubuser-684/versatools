@@ -34,6 +34,13 @@ Then install the requirements:
 pip install -r requirements.txt
 ```
 
+Tres put config.json in files/:
+
+```bash
+mkdire files
+cp templates/config.json files/config.json
+```
+
 Finally, run the program:
 
 ```bash

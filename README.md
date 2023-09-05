@@ -53,7 +53,7 @@ python -m unittest discover src
 (All attributes are mandatory. Removing them will break the program.
 Here are default values)
 
-View config.json template [here](https://github.com/GarryyBD/versatools/blob/main/src/templates/config.json)
+View config.json template [here](https://github.com/GarryyBD/versatools/blob/main/files/templates/config.json)
 
 ### files/cookies.txt
 

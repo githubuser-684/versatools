@@ -7,6 +7,7 @@ class App():
     def __init__(self):
         self.cache_directory = os.path.join(os.path.dirname(__file__), "../.versacache")
         self.files_directory = os.path.join(os.path.dirname(__file__), "../files")
+        self.templates_directory = os.path.join(os.path.dirname(__file__), "../templates")
         self.proxies_file_path = os.path.join(self.files_directory, "proxies.txt")
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")
         self.config_file_path = os.path.join(self.files_directory, "config.json")
@@ -86,7 +87,7 @@ class App():
         config_file_path = os.path.join(self.files_directory, "config.json")
         if (not os.path.exists(config_file_path)):
             f = open(config_file_path, "w")
-            f.write(open(os.path.join(self.files_directory, "./templates/config.json"), "r").read())
+            f.write(open(os.path.join(self.templates_directory, "./config.json"), "r").read())
             f.close()
 
     def __str__(self) -> str:

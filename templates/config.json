@@ -80,5 +80,8 @@
 		"captcha_solver": "capbypass",
 		"use_proxy": true,
 		"max_workers": 50
+	},
+	"Gen2018Acc": {
+		"use_proxy": false
 	}
 }

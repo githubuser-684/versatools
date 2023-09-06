@@ -16,9 +16,9 @@
 
 ## Installation
 
-This installation is designed for Windows. If you want to run it on Linux, compile it from source. For MacOS, DM garryybd on Discord.
+This installation is designed for Windows. If you want to run it on Mac/Linux, compile it from source.
 
-Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Extract the zip file and run `main.exe`
+Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Extract the zip file and run `versatools-setup.exe`
 
 ## Compiling from source
 
@@ -57,10 +57,7 @@ python -m unittest discover src
 
 ### files/config.json
 
-(All attributes are mandatory. Removing them will break the program.
-Here are default values)
-
-View config.json template [here](https://github.com/GarryyBD/versatools/blob/main/templates/config.json)
+All attributes are mandatory. Removing them will break the program.
 
 ### files/cookies.txt
 

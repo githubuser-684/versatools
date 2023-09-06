@@ -9,7 +9,6 @@ class App():
     def __init__(self):
         self.cache_directory = os.path.join(os.path.dirname(__file__), "../.versacache")
         self.files_directory = os.path.join(os.path.dirname(__file__), "../files")
-        self.templates_directory = os.path.join(os.path.dirname(__file__), "../templates")
         self.proxies_file_path = os.path.join(self.files_directory, "proxies.txt")
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")
         self.config_file_path = os.path.join(self.files_directory, "config.json")

@@ -18,7 +18,7 @@
 
 This installation is designed for Windows. If you want to run it on Mac/Linux, compile it from source.
 
-Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Extract the zip file and run `versatools-setup.exe`
+Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Install `versatools-setup.exe`
 
 ## Compiling from source
 

@@ -2,6 +2,8 @@ import os
 from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot,Gen2018Acc
 from Tool import Tool
 from utils import Utils
+import json
+from templates.config import config
 
 class App():
     def __init__(self):
@@ -86,11 +88,12 @@ class App():
     def ensure_config_file_exists(self):
         """
         Ensure config file exists.
-        If it doesn't create it, warn user
+        If doesn't exist, create it with default config
         """
         config_file_path = os.path.join(self.files_directory, "config.json")
         if (not os.path.exists(config_file_path)):
-            raise Exception("\033[1;31mConfig file not found. Make sure to add one in files/\033[0;0m")
+            with open(config_file_path, "w") as json_file:
+                json.dump(config, json_file, indent=4)
 
     def __str__(self) -> str:
         return "Versatools main class"

@@ -5,6 +5,8 @@ import httpx
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
 from utils import Utils
+from data.adjectives import adjectives
+from data.nouns import nouns
 
 class CookieGenerator(Tool):
     def __init__(self, app):
@@ -50,15 +52,23 @@ class CookieGenerator(Tool):
         return csrf_token
     
     def generate_username(self):
-        """
-        Generates a random unique username
-        """
-        usernames = ['NebulaDreamer','ChromaStrike','LuminyLegend','CipherWhisper','ZenithEclipse','StelSerenade','PhantomNova','VanguardValor','RadiantRhythm','ElysianEnigma','LuminousLore','ArcaneAria','EtherealEssence','SeraphicShadow','RadiantSpecter','MysticWhisper','EmberSylph','AstralSymphony','ZephyrWanderer','EnigmaEcho','NexusVortex','ShadowSilhouette','AstralWhisper','LuminescentLuna','CipherSorcerer','RadiantReverie','EmberEthereal','SereneSpecter','ArcaneAurora','MysticMarauder','NebulaNight','Celestial','ChromaticChaos','ZenithZephyr','ElysianEnchant','LumiLabyrinth','PhantomPulse','VanVortex']
-        
-        generated_username = usernames[random.randint(0, len(usernames)-1)] + str(random.randint(0,9999))
+        word1 = random.choice(adjectives)
+        word2 = random.choice(nouns)
+        word1 = word1.title()
+        word2 = word2.title()
+        generated_username = '{}{}{}'.format(word1, word2, random.randint(1, 99))
 
         return generated_username
     
+    def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, proxies:dict=None):
+        req_url = "https://auth.roblox.com/v1/usernames/validate"
+        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_json={"birthday": birthday, "context": "Signup", "username": username}
+
+        response = httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
+
+        return response.json()["message"] == "Username is valid", response.json()["message"]
+
     def generate_password(self):
         """
         Generates a random and complex password
@@ -89,11 +99,24 @@ class CookieGenerator(Tool):
         proxies = self.get_random_proxies() if use_proxy else None
         csrf_token = self.get_csrf_token(proxies)
 
-        username = self.generate_username()
-        password = self.generate_password()
         birthday = self.generate_birthday()
+
+        retry_count = 0
+        while retry_count < 3:
+            username = self.generate_username()
+            is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, proxies)
+
+            if is_username_valid:
+                break
+            
+            retry_count += 1
+
+        if not is_username_valid:
+            raise Exception(f"Failed to generate a valid username after 3 retries. ({response_text})")
+
+        password = self.generate_password()
         is_girl = random.choice([True, False])
-        
+
         sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, proxies)
         sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", user_agent, proxies)
 

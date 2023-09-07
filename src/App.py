@@ -3,7 +3,7 @@ from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,TSh
 from Tool import Tool
 from utils import Utils
 import json
-from templates.config import config
+from data.config import config
 
 class App():
     def __init__(self):

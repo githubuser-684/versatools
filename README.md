@@ -16,11 +16,11 @@
 
 ## Installation
 
-This installation is designed for Windows. If you want to run it on Mac/Linux, compile it from source.
+This installation is designed for Windows. If you want to use Versatools on Mac/Linux, run it from source.
 
 Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Install `versatools-setup.exe`
 
-## Compiling from source
+## Running from source
 
 First clone this repository:
 
@@ -34,13 +34,6 @@ Then install the requirements:
 pip install -r requirements.txt
 ```
 
-Tres put config.json in files/:
-
-```bash
-mkdire files
-cp templates/config.json files/config.json
-```
-
 Finally, run the program:
 
 ```bash
@@ -51,6 +44,12 @@ To run unit tests:
 
 ```bash
 python -m unittest discover src
+```
+
+To package the program into an exe:
+
+```bash
+pyinstaller src/main.py
 ```
 
 ## File templates

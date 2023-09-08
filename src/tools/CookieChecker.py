@@ -8,16 +8,16 @@ class CookieChecker(Tool):
     def __init__(self, app):
         super().__init__("Cookie Checker", "Checks if cookies are valid and shuffle and unduplicate them.", 1, app)
 
-        self.delete_invalid_cookies = self.config["delete_invalid_cookies"]
-        self.use_proxy = self.config["use_proxy"]
-        self.max_workers = self.config["max_workers"]
+        self.config["delete_invalid_cookies"]
+        self.config["use_proxy"]
+        self.config["max_workers"]
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-cookies.txt")
     
     def run(self):
         cookies = self.get_cookies()
 
-        if self.delete_invalid_cookies:
+        if self.config["delete_invalid_cookies"]:
             f = open(self.cache_file_path, 'w')
             f.seek(0)
             f.truncate()
@@ -29,8 +29,8 @@ class CookieChecker(Tool):
         print("Please wait... \n ")
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            results = [executor.submit(self.test_cookie, cookie, self.use_proxy) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            results = [executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -43,12 +43,12 @@ class CookieChecker(Tool):
                 else:
                     failed_cookies += 1
 
-                if self.delete_invalid_cookies and is_working:
+                if self.config["delete_invalid_cookies"] and is_working:
                     f.write(cookie + "\n")
 
                 self.print_status(working_cookies, failed_cookies, total_cookies, response_text, is_working, "Working")
 
-        if self.delete_invalid_cookies:
+        if self.config["delete_invalid_cookies"]:
             f.close()
             os.replace(self.cache_file_path, self.cookies_file_path)
 

@@ -8,15 +8,15 @@ class FollowBot(Tool):
     def __init__(self, app):
         super().__init__("Follow Bot", "Increase Followers count of a user", 4, app)
 
-        self.max_generations = self.config["max_generations"]
-        self.captcha_solver = self.config["captcha_solver"]
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
+        self.config["max_generations"]
+        self.config["captcha_solver"]
+        self.config["max_workers"]
+        self.config["use_proxy"]
 
     def run(self):
         user_id = input("User ID to increase followers count: ")
 
-        cookies = self.get_cookies(self.max_generations)
+        cookies = self.get_cookies(self.config["max_generations"])
 
         req_worked = 0
         req_failed = 0
@@ -24,8 +24,8 @@ class FollowBot(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            results = [executor.submit(self.send_follow_request, self.captcha_solver, user_id, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            results = [executor.submit(self.send_follow_request, self.config["captcha_solver"], user_id, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -42,7 +42,7 @@ class FollowBot(Tool):
 
     def send_follow_request(self, captcha_service:str, user_id:str | int, cookie:str):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 

@@ -6,9 +6,9 @@ from utils import Utils
 class DisplayNameChanger(Tool):
     def __init__(self, app):
         super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
-        
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
+
+        self.config["max_workers"]
+        self.config["use_proxy"]
 
     def run(self):
         print("\033[1;31mWarning: Display names can only be changed once every week\033[0;0m")
@@ -22,7 +22,7 @@ class DisplayNameChanger(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
             results = [executor.submit(self.change_display_name, new_display_name, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
@@ -40,7 +40,7 @@ class DisplayNameChanger(Tool):
 
     @Utils.retry_on_exception()
     def change_display_name(self, new_display_name, cookie):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
         user_info = self.get_user_info(cookie, proxies, user_agent)

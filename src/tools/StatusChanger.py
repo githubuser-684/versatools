@@ -8,9 +8,6 @@ class StatusChanger(Tool):
     def __init__(self, app):
         super().__init__("Status Changer", "Change the status of a large number of accounts", 7, app)
 
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
-
     def run(self):
         new_status = input("New status: ")
 
@@ -22,7 +19,7 @@ class StatusChanger(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
             results = [executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
@@ -40,7 +37,7 @@ class StatusChanger(Tool):
 
     @Utils.retry_on_exception()
     def change_status(self, new_status, cookie):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 

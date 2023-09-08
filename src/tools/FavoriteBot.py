@@ -7,17 +7,17 @@ from utils import Utils
 class FavoriteBot(Tool):
     def __init__(self, app):
         super().__init__("Favorite Bot", "Increase/Decrease stars count of an asset", 2, app)
-        
-        self.max_generations = self.config["max_generations"]
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
-        self.timeout = self.config["timeout"]
+
+        self.config["max_generations"]
+        self.config["max_workers"]
+        self.config["use_proxy"]
+        self.config["timeout"]
 
     def run(self):
         asset_id = input("Asset ID to favorite/unfavorite: ")
         unfavorite = input('Enter "a" to unfavorite: ') == "a"
     
-        cookies = self.get_cookies(self.max_generations)
+        cookies = self.get_cookies(self.config["max_generations"])
             
         req_sent = 0
         req_failed = 0
@@ -25,7 +25,7 @@ class FavoriteBot(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
             results = [executor.submit(self.send_favorite, asset_id, cookie, unfavorite) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
@@ -43,7 +43,7 @@ class FavoriteBot(Tool):
 
     @Utils.retry_on_exception()
     def send_favorite(self, asset_id, cookie, unfavorite: bool):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
         user_info = self.get_user_info(cookie, proxies, user_agent)
@@ -57,6 +57,6 @@ class FavoriteBot(Tool):
 
         response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
-        time.sleep(self.timeout)
+        time.sleep(self.config["timeout"])
     
         return (response.status_code == 200), response.text

@@ -8,7 +8,7 @@ class Gen2018Acc(Tool):
     def __init__(self, app):
         super().__init__("Gen 2018 Acc", "2018 old roblox account generator", 6, app)
 
-        self.use_proxy = self.config["use_proxy"]
+        self.config["use_proxy"]
 
     def run(self):
         user_id = 73223429
@@ -30,7 +30,7 @@ class Gen2018Acc(Tool):
 
     @Utils.retry_on_exception()
     def get_followers_count(self, user_id):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers/count"
@@ -42,7 +42,7 @@ class Gen2018Acc(Tool):
 
     @Utils.retry_on_exception()
     def get_followers(self, user_id, cursor, follower_per_page):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
         burp0_url = f"https://friends.roblox.com/v1/users/{user_id}/followers?sortOrder=Desc&limit={follower_per_page}{'&cursor='+cursor if cursor else ''}"

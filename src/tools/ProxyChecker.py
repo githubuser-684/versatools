@@ -7,12 +7,12 @@ class ProxyChecker(Tool):
         super().__init__("Proxy Checker", "Checks proxies from a list of HTTP and SOCKS proxies", 1, app)
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-proxies.txt")
-    
-    def run(self):
-        delete_proxies = self.config["delete_failed_proxies"]
-        timeout = self.config["timeout"]
-        max_workers = self.config["max_workers"]
 
+        self.config["delete_failed_proxies"]
+        self.config["timeout"]
+        self.config["max_workers"]
+
+    def run(self):
         # make sure format of the file is good
         self.check_proxies_file_format(self.proxies_file_path, False)
 
@@ -34,8 +34,8 @@ class ProxyChecker(Tool):
         print("Please wait... \n ")
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            results = [executor.submit(self.test_proxy_line, line, timeout) for line in lines]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            results = [executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]
 
             for future in concurrent.futures.as_completed(results):
                 is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = future.result()
@@ -47,7 +47,7 @@ class ProxyChecker(Tool):
                 
                 line = self.write_proxy_line(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
-                if not (delete_proxies and not is_working):
+                if not (self.config["delete_failed_proxies"] and not is_working):
                     f.write(line + "\n") 
 
                 self.print_status(working_proxies, failed_proxies, total_proxies, line, is_working, "Working")

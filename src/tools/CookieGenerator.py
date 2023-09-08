@@ -11,11 +11,11 @@ from data.nouns import nouns
 class CookieGenerator(Tool):
     def __init__(self, app):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
-        
-        self.max_generations = self.config["max_generations"]
-        self.captcha_solver = self.config["captcha_solver"]
-        self.use_proxy = self.config["use_proxy"]
-        self.max_workers = self.config["max_workers"]
+
+        self.config["max_generations"]
+        self.config["captcha_solver"]
+        self.config["use_proxy"]
+        self.config["max_workers"]
 
     def run(self):
         # open cookies.txt for writing in it
@@ -23,12 +23,12 @@ class CookieGenerator(Tool):
 
         worked_gen = 0
         failed_gen = 0
-        total_gen = self.max_generations
+        total_gen = self.config["max_generations"]
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            results = [executor.submit(self.generate_cookie, self.captcha_solver, self.use_proxy) for gen in range(self.max_generations)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            results = [executor.submit(self.generate_cookie, self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(results):
                 try:

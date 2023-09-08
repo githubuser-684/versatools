@@ -8,9 +8,9 @@ class AssetsDownloader(Tool):
     def __init__(self, app):
         super().__init__("Assets Downloader", "Download most trending assets from Roblox catalog", 1, app)
 
-        self.max_generations = self.config["max_generations"]
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
+        self.config["max_generations"]
+        self.config["max_workers"]
+        self.config["use_proxy"]
 
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
         self.shirts_files_directory = os.path.join(self.files_directory, "./assets/shirts")
@@ -33,7 +33,7 @@ class AssetsDownloader(Tool):
             if askAgain:
                 print("\033[0;33mInvalid choice\033[0;0m")
 
-        assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.max_generations)
+        assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.config["max_generations"])
         directory = self.shirts_files_directory if choice == 1 else self.pants_files_directory
 
         req_worked = 0
@@ -42,7 +42,7 @@ class AssetsDownloader(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
             results = [executor.submit(self.download_asset, asset, directory) for asset in assets]
 
             for future in concurrent.futures.as_completed(results):
@@ -60,7 +60,7 @@ class AssetsDownloader(Tool):
 
     @Utils.retry_on_exception()
     def get_assets_page(self, asset_name, cursor):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
         req_url = f"https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory={asset_name}{'&cursor='+cursor if cursor else ''}"
@@ -91,7 +91,7 @@ class AssetsDownloader(Tool):
     @Utils.retry_on_exception()
     def download_asset(self, asset, directory):
         asset_id = asset["id"]
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
 
         with httpx.Client(proxies=proxies) as client:
             assetdelivery = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}').json()['location']

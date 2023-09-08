@@ -7,8 +7,8 @@ class MessageBot(Tool):
     def __init__(self, app):
         super().__init__("Message Bot", "Spam someone with the same message or send messages to a large audience", 6, app)
         
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
+        self.config["max_workers"]
+        self.config["use_proxy"]
 
         self.cookies_file_path = self.app.cookies_file_path
 
@@ -48,7 +48,7 @@ class MessageBot(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
             results = [executor.submit(self.send_message, subject, body, recipient_id, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
@@ -66,7 +66,7 @@ class MessageBot(Tool):
 
     @Utils.retry_on_exception()
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 

@@ -8,8 +8,8 @@ class CookieRefresher(Tool):
     def __init__(self, app):
         super().__init__("Cookie Refresher", "Refresh your .ROBLOSECURITY cookies!", 7, app)
 
-        self.use_proxy = self.config["use_proxy"]
-        self.max_workers = self.config["max_workers"]
+        self.config["use_proxy"]
+        self.config["max_workers"]
 
         self.new_cookies_file_path = os.path.join(self.files_directory, "refreshed-cookies.txt")
 
@@ -26,8 +26,8 @@ class CookieRefresher(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            results = [executor.submit(self.refresh_cookie, cookie, self.use_proxy) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            results = [executor.submit(self.refresh_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:

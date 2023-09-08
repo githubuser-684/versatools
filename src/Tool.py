@@ -46,14 +46,14 @@ class Tool(Proxy, ABC):
         try:
             props = x[(self.name).replace(" ", "")]
             for prop in props:
-                self.__dict__["config"][prop] = props[prop]
+                self.config[prop] = props[prop]
         except KeyError:
             # ignore if tool has no config
             pass
         # inject captcha tokens
         props = x["FunCaptchaSolvers"]
         for prop in props:
-            self.__dict__["captcha_tokens"][prop.replace("_token", "")] = props[prop]
+            self.captcha_tokens[prop.replace("_token", "")] = props[prop]
     
     def get_random_user_agent(self) -> str:
         """

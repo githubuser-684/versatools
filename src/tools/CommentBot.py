@@ -7,15 +7,15 @@ from utils import Utils
 class CommentBot(Tool):
     def __init__(self, app):
         super().__init__("Comment Bot", "Increase/Decrease comments count of an asset", 2, app)
-        
-        self.max_generations = self.config["max_generations"]
-        self.captcha_solver = self.config["captcha_solver"]
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
     
+        self.config["max_generations"]
+        self.config["captcha_solver"]
+        self.config["max_workers"]
+        self.config["use_proxy"]
+
     def run(self):
         asset_id = input("Asset ID to comment: ")    
-        cookies = self.get_cookies(self.max_generations)
+        cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0
         req_failed = 0
@@ -23,8 +23,8 @@ class CommentBot(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            results = [executor.submit(self.send_comment, self.captcha_solver, asset_id, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            results = [executor.submit(self.send_comment, self.config["captcha_solver"], asset_id, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -41,7 +41,7 @@ class CommentBot(Tool):
 
     def send_comment(self, captcha_service, asset_id, cookie):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 

@@ -7,9 +7,9 @@ class GameVote(Tool):
     def __init__(self, app):
         super().__init__("Game Vote", "Increase Like/Dislike count of a game", 1, app)
 
-        self.max_generations = self.config["max_generations"]
-        self.max_workers = self.config["max_workers"]
-        self.use_proxy = self.config["use_proxy"]
+        self.config["max_generations"] 
+        self.config["max_workers"]
+        self.config["use_proxy"]
 
         self.cookies_file_path = self.app.cookies_file_path
 
@@ -32,7 +32,7 @@ class GameVote(Tool):
         
         vote = choice == 1
         
-        cookies = self.get_cookies(self.max_generations)
+        cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0
         req_failed = 0
@@ -40,7 +40,7 @@ class GameVote(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
             results = [executor.submit(self.send_game_vote, game_id, vote, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
@@ -58,7 +58,7 @@ class GameVote(Tool):
 
     @Utils.retry_on_exception()
     def send_game_vote(self, game_id, vote, cookie):
-        proxies = self.get_random_proxies() if self.use_proxy else None
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 

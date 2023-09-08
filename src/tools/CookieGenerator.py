@@ -56,7 +56,7 @@ class CookieGenerator(Tool):
         word2 = random.choice(nouns)
         word1 = word1.title()
         word2 = word2.title()
-        generated_username = '{}{}{}'.format(word1, word2, random.randint(1, 99))
+        generated_username = '{}{}{}'.format(word1, word2, random.randint(1, 9999))
 
         return generated_username
     

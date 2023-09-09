@@ -45,6 +45,7 @@ class CookieChecker(Tool):
 
                 if self.config["delete_invalid_cookies"] and is_working:
                     f.write(cookie + "\n")
+                    f.flush()
 
                 self.print_status(working_cookies, failed_cookies, total_cookies, response_text, is_working, "Working")
 

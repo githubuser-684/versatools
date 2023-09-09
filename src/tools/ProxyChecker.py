@@ -48,7 +48,8 @@ class ProxyChecker(Tool):
                 line = self.write_proxy_line(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
                 if not (self.config["delete_failed_proxies"] and not is_working):
-                    f.write(line + "\n") 
+                    f.write(line + "\n")
+                    f.flush()
 
                 self.print_status(working_proxies, failed_proxies, total_proxies, line, is_working, "Working")
 

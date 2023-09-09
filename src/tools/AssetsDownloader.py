@@ -102,5 +102,6 @@ class AssetsDownloader(Tool):
 
         with open(asset_path, 'wb') as f:
             f.write(image)
+            f.flush()
         
         return True, "Generated in files/assets"

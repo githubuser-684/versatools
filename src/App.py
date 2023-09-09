@@ -43,8 +43,6 @@ class App():
         for i, tool in enumerate(tools):
             print(f"\033[1;3{tool.color}m   {str(i + 1)}. {tool.name}")
             print(f"      {tool.description}")
-        
-        print("\033[1;30m\nWARNING: Don't close after SIGINT (Ctrl+C) signal. Let the program finish the tasks and to get the data.")
 
         askAgain = True
         while askAgain:

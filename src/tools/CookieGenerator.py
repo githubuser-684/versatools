@@ -35,6 +35,7 @@ class CookieGenerator(Tool):
                     cookie = future.result()
                     worked_gen += 1
                     f.write(cookie+"\n")
+                    f.flush()
                     response_text = cookie
                     has_worked = True
                 except Exception as e:

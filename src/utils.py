@@ -1,4 +1,4 @@
-import sys, traceback
+import sys
 import os
 import functools
 

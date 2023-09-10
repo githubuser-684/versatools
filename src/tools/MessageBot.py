@@ -2,6 +2,7 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
+import random
 
 class MessageBot(Tool):
     def __init__(self, app):
@@ -65,16 +66,33 @@ class MessageBot(Tool):
                 self.print_status(msg_sent, msg_failed, total_cookies, response_text, is_sent, "Messages sent")
 
     @Utils.retry_on_exception()
+    def allow_sending_msgs(self, cookie, proxies, user_agent, csrf_token):
+        req_url = "https://apis.roblox.com/user-settings-api/v1/user-settings"
+        req_cookies = {".ROBLOSECURITY": cookie, "RBXEventTrackerV2":f"browserid={random.randint(190000000,200000000)}"}
+        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_json={"whoCanMessageMe": "All"}
+
+        response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+    
+        if (response.status_code != 200):
+            raise Exception(response.text)
+
+    @Utils.retry_on_exception()
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 
-        req_url = "https://privatemessages.roblox.com:443/v1/messages/send"
+        req_url = "https://privatemessages.roblox.com/v1/messages/send"
         req_cookies = {".ROBLOSECURITY": cookie}
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
         req_json={"body": body, "recipientid": recipient_id, "subject": subject}
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
-    
+
+        if (not response.json()["success"] and response.json()["shortMessage"] == "SenderPrivacySettingsTooHigh"):
+            self.allow_sending_msgs(cookie, proxies, user_agent, csrf_token)
+            # send again
+            response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+
         return (response.status_code == 200 and response.json()["success"]), response.text

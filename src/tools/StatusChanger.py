@@ -41,9 +41,9 @@ class StatusChanger(Tool):
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
 
-        req_url = "https://accountinformation.roblox.com:443/v1/description"
+        req_url = "https://accountinformation.roblox.com/v1/description"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
         req_data = {"description": new_status }
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, data=req_data, proxies=proxies)

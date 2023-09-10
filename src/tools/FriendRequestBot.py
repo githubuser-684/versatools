@@ -48,7 +48,7 @@ class FriendRequestBot(Tool):
 
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/request-friendship"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
     

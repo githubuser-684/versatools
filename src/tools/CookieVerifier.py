@@ -44,7 +44,7 @@ class CookieVerifier(Tool):
     def is_verified(self, cookie, user_agent, proxies):
         req_url = "https://accountsettings.roblox.com/v1/email"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent)
 
         response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
@@ -87,7 +87,7 @@ class CookieVerifier(Tool):
     def set_roblox_email(self, cookie, user_agent, proxies, csrf_token, email_addr):
         req_url = "https://accountsettings.roblox.com/v1/email"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"emailAddress": email_addr}
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
@@ -132,7 +132,7 @@ class CookieVerifier(Tool):
 
         req_url = "https://accountinformation.roblox.com/v1/email/verify"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json = {"ticket": ticket}
         response = httpx.post(req_url, json=req_json, headers=req_headers, cookies=req_cookies, proxies=proxies)
 

@@ -63,7 +63,7 @@ class CookieGenerator(Tool):
     
     def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, proxies:dict=None):
         req_url = "https://auth.roblox.com/v1/usernames/validate"
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "context": "Signup", "username": username}
 
         response = httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
@@ -86,7 +86,7 @@ class CookieGenerator(Tool):
     @Utils.retry_on_exception()
     def send_signup_request(self, user_agent:str, csrf_token:str, username:str, password:str, birthday:str, is_girl:bool, proxies:dict=None):
         req_url = "https://auth.roblox.com/v2/signup"
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
         return httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
 

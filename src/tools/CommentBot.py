@@ -51,10 +51,10 @@ class CommentBot(Tool):
 
         req_url = "https://www.roblox.com/comments/post"
         req_cookies = { ".ROBLOSECURITY": cookie }
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
         req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
+    
         init_res = httpx.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
-
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, proxies)
 
         return (response.status_code == 200), response.text

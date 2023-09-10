@@ -34,7 +34,7 @@ class Gen2018Acc(Tool):
         user_agent = self.get_random_user_agent()
 
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers/count"
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent)
         
         response = httpx.get(req_url, headers=req_headers, proxies=proxies)
 
@@ -45,9 +45,10 @@ class Gen2018Acc(Tool):
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
-        burp0_url = f"https://friends.roblox.com/v1/users/{user_id}/followers?sortOrder=Desc&limit={follower_per_page}{'&cursor='+cursor if cursor else ''}"
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
-        response = httpx.get(burp0_url, headers=req_headers, proxies=proxies)
+        req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers?sortOrder=Desc&limit={follower_per_page}{'&cursor='+cursor if cursor else ''}"
+        req_headers = self.get_roblox_headers(user_agent)
+
+        response = httpx.get(req_url, headers=req_headers, proxies=proxies)
         response_json = response.json()
 
         return response_json["nextPageCursor"], response_json["data"]

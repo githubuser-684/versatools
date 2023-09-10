@@ -51,9 +51,9 @@ class FavoriteBot(Tool):
 
         send = httpx.delete if unfavorite else httpx.post
 
-        req_url = f"https://catalog.roblox.com:443/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
+        req_url = f"https://catalog.roblox.com/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
         response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 

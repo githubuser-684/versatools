@@ -59,7 +59,7 @@ class CookieRefresher(Tool):
 
         # Creating a new cookie
         reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "X-Csrf-Token": xcsrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = self.get_roblox_headers(user_agent, xcsrf_token)
 
         data = httpx.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
         cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]

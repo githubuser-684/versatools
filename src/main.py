@@ -6,8 +6,4 @@ if __name__ == "__main__":
 
     app = App()
 
-    while True:
-        try:
-            app.run()
-        except:
-            pass
+    app.run()

@@ -126,7 +126,7 @@ class Tool(Proxy, ABC):
         if self.executor is not None:
             self.executor.shutdown(wait=True, cancel_futures=True)
 
-        raise KeyboardInterrupt("CTRL + C was pressed. Exiting...")
+        raise KeyboardInterrupt()
 
     def __str__(self) -> str:
         return "A Versatools tool. " + self.description

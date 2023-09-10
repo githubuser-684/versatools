@@ -73,6 +73,8 @@ class App():
 
         try:
             tool.run()
+        except KeyboardInterrupt:
+            return
         except Exception as e:
             print(f"\033[1;31m{str(e)}\033[0;0m")
             return

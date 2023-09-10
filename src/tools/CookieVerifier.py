@@ -147,7 +147,7 @@ class CookieVerifier(Tool):
         # make sure email is not already verified
         is_verified = self.is_verified(cookie, user_agent, proxies)
         if is_verified:
-            return False, "Email already verified"
+            return True, "Email is already verified"
 
         address, token = self.create_address(proxies)
 

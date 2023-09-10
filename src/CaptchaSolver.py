@@ -144,8 +144,7 @@ class CaptchaSolver:
         req_content = bytes.decode(response.request._content)
 
         if response.request.headers.get("content-type") == "application/x-www-form-urlencoded":
-            req_data = req_content
-            pairs = req_data.split('&')
+            pairs = req_content.split('&')
             for pair in pairs:
                 key, value = pair.split('=')
                 req_data[key] = value

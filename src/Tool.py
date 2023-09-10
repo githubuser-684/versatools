@@ -113,7 +113,7 @@ class Tool(Proxy, ABC):
             raise Exception("No cookies found. Make sure to generate some first")
 
         if amount is not None and amount < len(cookies):
-            cookies = cookies[:self.max_generations]
+            cookies = cookies[:amount]
 
         return cookies
 

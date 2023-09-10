@@ -95,7 +95,8 @@ class App():
         config_file_path = os.path.join(self.files_directory, "config.json")
         if (not os.path.exists(config_file_path)):
             with open(config_file_path, "w") as json_file:
-                json.dump(config, json_file, indent=4)
+                ordered_config = dict(sorted(config.items(), key=lambda x: x[0]))
+                json.dump(ordered_config, json_file, indent=4)
 
     def __str__(self) -> str:
         return "Versatools main class"

@@ -26,6 +26,10 @@ config = {
 		"use_proxy": True,
 		"max_workers": None
 	},
+    "CookieVerifier": {
+		"use_proxy": True,
+		"max_workers": None
+	},
 	"T-ShirtGenerator": {
 		"//image_search_api_url": "https://rapidapi.com/emailmatteoutile/api/image-search-api2",
 		"image_search_api_key": "xx"

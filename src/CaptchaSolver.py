@@ -5,6 +5,7 @@ from twocaptcha import TwoCaptcha
 import capsolver
 from utils import Suppressor, Utils
 import httpx
+from urllib.parse import unquote
 
 class CaptchaSolver:
     def __init__(self, captcha_service:str, api_key:str):
@@ -147,7 +148,7 @@ class CaptchaSolver:
             pairs = req_content.split('&')
             for pair in pairs:
                 key, value = pair.split('=')
-                req_data[key] = value
+                req_data[key] = unquote(value).replace('+', ' ')
         else:
             req_json = json.loads(req_content) if req_content != "" else {}
 

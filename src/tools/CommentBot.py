@@ -2,7 +2,8 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
-from utils import Utils
+from data.comments import comments
+import random
 
 class CommentBot(Tool):
     def __init__(self, app):
@@ -39,6 +40,9 @@ class CommentBot(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Commented")
 
+    def get_random_message(self):
+        return random.choice(comments)
+
     def send_comment(self, captcha_service, asset_id, cookie):
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
@@ -48,7 +52,7 @@ class CommentBot(Tool):
         req_url = "https://www.roblox.com/comments/post"
         req_cookies = { ".ROBLOSECURITY": cookie }
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded", "X-Csrf-Token": csrf_token, "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
-        req_data = {"assetId": str(asset_id), "text": "cute"}
+        req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
         init_res = httpx.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
 
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, proxies)

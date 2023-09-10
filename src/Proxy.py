@@ -1,5 +1,5 @@
 import httpx
-from abc import ABC, abstractmethod
+from abc import ABC
 import random
 
 class Proxy(ABC):

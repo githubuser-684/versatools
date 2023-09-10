@@ -2,7 +2,6 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
-from utils import Utils
 
 class FollowBot(Tool):
     def __init__(self, app):

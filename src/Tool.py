@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from Proxy import Proxy
 from fake_useragent import UserAgent
 import signal
-import time
 
 class Tool(Proxy, ABC):
     def __init__(self, name: str, description: str, color: int, app: object):

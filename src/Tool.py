@@ -110,6 +110,9 @@ class Tool(Proxy, ABC):
         cookies = [*set(cookies)]
         random.shuffle(cookies)
 
+        if len(cookies) == 0:
+            raise Exception("No cookies found. Make sure to generate some first")
+
         if amount is not None and amount < len(cookies):
             cookies = cookies[:self.max_generations]
 

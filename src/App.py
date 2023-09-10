@@ -84,7 +84,8 @@ class App():
         Returns a list of all instances of tools
         """
         tools = [t(self) for t in Tool.__subclasses__()]
-        return tools
+        sorted_tools = sorted(tools, key=lambda x: x.name)
+        return sorted_tools
     
     def ensure_config_file_exists(self):
         """

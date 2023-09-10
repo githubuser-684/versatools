@@ -139,6 +139,7 @@ class CookieVerifier(Tool):
         if response.status_code != 200:
             raise Exception(f"Failed to click verification link {response.text}")
 
+    @Utils.retry_on_exception()
     def verify_cookie(self, cookie:str):
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()

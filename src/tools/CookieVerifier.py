@@ -51,31 +51,35 @@ class CookieVerifier(Tool):
         return response.json()["verified"]
 
     @Utils.retry_on_exception()
-    def create_address(self):
+    def create_address(self, proxies):
         # get domain
         req_url = "https://api.mail.tm/domains"
-        response = httpx.get(req_url)
+        response = httpx.get(req_url, proxies=proxies)
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to get domain {response.text} Code: {response.status_code}")
+        
         domain = response.json()["hydra:member"][0]["domain"]
 
         # create email address
         address = ( ''.join(random.choice(string.ascii_lowercase) for i in range(10)) ) + "@" + domain
         req_url = "https://api.mail.tm/accounts"
         req_json = {"address": address, "password": "versatools"}
-        response = httpx.post(req_url, json=req_json)
+        response = httpx.post(req_url, json=req_json, proxies=proxies)
 
         if response.status_code != 201:
-            raise Exception(f"Failed to create email {response.text}")
+            raise Exception(f"Failed to create email {response.text} Code: {response.status_code}")
         
         address = response.json()["address"]
 
         # get auth token
         req_url = "https://api.mail.tm/token"
         req_json = {"address": address, "password": "versatools"}
-        response = httpx.post(req_url, json=req_json)
+        response = httpx.post(req_url, json=req_json, proxies=proxies)
         token = response.json()["token"]
         
         if response.status_code != 200:
-            raise Exception(f"Failed to get token {response.text}")
+            raise Exception(f"Failed to get token {response.text} Code: {response.status_code}")
 
         return address, token
 
@@ -90,13 +94,13 @@ class CookieVerifier(Tool):
 
         return response.status_code == 200, response.text
 
-    @Utils.retry_on_exception()
-    def get_email_id(self, token):
-        time.sleep(1)
+    @Utils.retry_on_exception(10)
+    def get_email_id(self, token, proxies):
+        time.sleep(1.5)
         req_url = "https://api.mail.tm/messages"
         req_params = {"page": 1}
         req_headers = {"Authorization": f"Bearer {token}"}
-        response = httpx.get(req_url, params=req_params, headers=req_headers)
+        response = httpx.get(req_url, params=req_params, headers=req_headers, proxies=proxies)
 
         if response.status_code != 200:
             raise Exception(f"Failed to get email id {response.text}")
@@ -109,10 +113,10 @@ class CookieVerifier(Tool):
         return mails[0]["id"]
     
     @Utils.retry_on_exception()
-    def get_email(self, token, mail_id):
+    def get_email(self, token, mail_id, proxies):
         req_url = f"https://api.mail.tm/sources/{mail_id}"
         req_headers = {"Authorization": f"Bearer {token}"}
-        response = httpx.get(req_url, headers=req_headers)
+        response = httpx.get(req_url, headers=req_headers, proxies=proxies)
 
         if response.status_code != 200:
             raise Exception(f"Failed to get email {response.text}")
@@ -145,7 +149,7 @@ class CookieVerifier(Tool):
         if is_verified:
             return False, "Email already verified"
 
-        address, token = self.create_address()
+        address, token = self.create_address(proxies)
 
         # set roblox email
         is_valid, response_text = self.set_roblox_email(cookie, user_agent, proxies, csrf_token, address)
@@ -153,8 +157,8 @@ class CookieVerifier(Tool):
             return False, response_text
 
         # get roblox email
-        mail_id = self.get_email_id(token)
-        mail = self.get_email(token, mail_id)
+        mail_id = self.get_email_id(token, proxies)
+        mail = self.get_email(token, mail_id, proxies)
         # click on verification link
         self.click_verif_link(mail, cookie, user_agent, csrf_token, proxies)
 

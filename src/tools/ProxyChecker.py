@@ -34,8 +34,8 @@ class ProxyChecker(Tool):
         print("Please wait... \n ")
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            results = [executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            results = [self.executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]
 
             for future in concurrent.futures.as_completed(results):
                 is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = future.result()

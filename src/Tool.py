@@ -4,6 +4,8 @@ import httpx
 from abc import ABC, abstractmethod
 from Proxy import Proxy
 from fake_useragent import UserAgent
+import signal
+import time
 
 class Tool(Proxy, ABC):
     def __init__(self, name: str, description: str, color: int, app: object):
@@ -13,6 +15,7 @@ class Tool(Proxy, ABC):
         self.name = name
         self.description = description
         self.app = app
+        self.executor = None
 
         self.config = {}
         self.captcha_tokens = {}
@@ -115,6 +118,15 @@ class Tool(Proxy, ABC):
     def print_status(self, req_worked, req_failed, total_req, response_text, has_worked, action_verb):
         print(f"\033[1A\033[K\033[1A\033[K\033[1;32m{action_verb}: {str(req_worked)}\033[0;0m | \033[1;31mFailed: {str(req_failed)}\033[0;0m | \033[1;34mTotal: {str(total_req)}\033[0;0m")
         print(f"\033[1;32mWorked: {response_text}\033[0;0m" if has_worked else f"\033[1;31mFailed: {response_text}\033[0;0m")
+
+    def setup_signal(self):
+        signal.signal(signal.SIGINT, self.signal_handler)
+
+    def signal_handler(self, sig, frame):
+        if self.executor is not None:
+            self.executor.shutdown(wait=True, cancel_futures=True)
+
+        raise KeyboardInterrupt("CTRL + C was pressed. Exiting...")
 
     def __str__(self) -> str:
         return "A Versatools tool. " + self.description

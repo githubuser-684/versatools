@@ -27,8 +27,8 @@ class CookieGenerator(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            results = [executor.submit(self.generate_cookie, self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            results = [self.executor.submit(self.generate_cookie, self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -103,7 +103,7 @@ class CookieGenerator(Tool):
         birthday = self.generate_birthday()
 
         retry_count = 0
-        while retry_count < 3:
+        while retry_count < 5:
             username = self.generate_username()
             is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, proxies)
 

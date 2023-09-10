@@ -68,7 +68,9 @@ class App():
                 print("\033[0;33mInvalid choice\033[0;0m")
     
     def launch_tool(self, tool):
-        tool.load_config() # reload config in case it was changed
+        tool.load_config()
+        tool.setup_signal()
+
         try:
             tool.run()
         except Exception as e:

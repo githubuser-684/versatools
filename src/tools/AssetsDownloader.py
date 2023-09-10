@@ -42,8 +42,8 @@ class AssetsDownloader(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            results = [executor.submit(self.download_asset, asset, directory) for asset in assets]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            results = [self.executor.submit(self.download_asset, asset, directory) for asset in assets]
 
             for future in concurrent.futures.as_completed(results):
                 try:

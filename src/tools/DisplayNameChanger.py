@@ -22,8 +22,8 @@ class DisplayNameChanger(Tool):
 
         print("Please wait... \n")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            results = [executor.submit(self.change_display_name, new_display_name, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            results = [self.executor.submit(self.change_display_name, new_display_name, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:

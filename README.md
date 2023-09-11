@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://discord.com/invite/kaz2XVGAya"><img src="https://cdn.discordapp.com/icons/1119803301295292458/eb9f9cd395ce2dbac016a4f5e7513054.webp" alt="Versatools" height="90" /></a>
+	<a href="https://discord.com/invite/kaz2XVGAya"><img src="icon.ico" alt="Versatools" height="90" /></a>
 </p>
 
 <h4 align="center">VERSATOOLS - FREE MULTITOOL | BOT FOLLOWERS/GROUP JOINS & MORE</h4>
@@ -49,7 +49,7 @@ python -m unittest discover src
 To package the program into an exe:
 
 ```bash
-pyinstaller src/main.py
+pyinstaller src/main.py --icon="icon.ico"
 ```
 
 ## File templates

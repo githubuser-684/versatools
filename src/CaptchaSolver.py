@@ -121,6 +121,9 @@ class CaptchaSolver:
             try:
                 token = captcha_response.json()["solution"]["token"]
             except:
+                if (captcha_response.json().get("error") == "Key doesn't exist."):
+                    raise Exception("Valid capbypass API key is required.")
+
                 raise Exception(captcha_response.text)
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")

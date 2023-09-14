@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://discord.com/invite/kaz2XVGAya"><img src="icon.ico" alt="Versatools" height="90" /></a>
+	<a href="https://discord.gg/dPmA4R4kjA"><img src="icon.ico" alt="Versatools" height="90" /></a>
 </p>
 
 <h4 align="center">VERSATOOLS - FREE MULTITOOL | BOT FOLLOWERS/GROUP JOINS & MORE</h4>
@@ -10,7 +10,7 @@
 <p align="center">
 	<a href="#installation">Installation</a> •
 	<a href="#file-templates">File templates</a> •
-	<a href="https://discord.com/invite/kaz2XVGAya">Discord server</a>
+	<a href="https://discord.gg/dPmA4R4kjA">Discord server</a>
 </p>
 <br/>
 

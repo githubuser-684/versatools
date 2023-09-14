@@ -12,8 +12,6 @@ class GroupJoinBot(Tool):
         self.config["max_workers"]
         self.config["use_proxy"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):
         group_id = input("Group ID to increase members count: ")
 

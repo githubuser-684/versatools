@@ -11,8 +11,6 @@ class MessageBot(Tool):
         self.config["max_workers"]
         self.config["use_proxy"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):        
         print("Write the message you want to send.")
         subject = input("Subject: ")

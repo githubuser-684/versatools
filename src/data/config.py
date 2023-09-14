@@ -80,6 +80,11 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "ModelSales": {
+		"max_generations": 100,
+		"use_proxy": True,
+		"max_workers": None
+	},
     "ProxyChecker": {
         "delete_failed_proxies": True,
         "timeout": 2,

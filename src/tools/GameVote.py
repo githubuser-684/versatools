@@ -11,8 +11,6 @@ class GameVote(Tool):
         self.config["max_workers"]
         self.config["use_proxy"]
 
-        self.cookies_file_path = self.app.cookies_file_path
-
     def run(self):
         game_id = input("Game ID to like/dislike: ")
 

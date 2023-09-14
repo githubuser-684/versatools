@@ -29,11 +29,14 @@ class ModelSales(Tool):
 
             for future in concurrent.futures.as_completed(results):
                 try:
-                    response_text = future.result()
+                    is_bought, response_text = future.result()
+                except Exception as e:
+                    is_bought, response_text = False, str(e)
+                
+                if is_bought:
                     is_success = True
                     req_sent += 1
-                except Exception as e:
-                    response_text = str(e)
+                else:
                     is_success = False
                     req_failed += 1
 
@@ -69,7 +72,7 @@ class ModelSales(Tool):
 
         response = httpx.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies, proxies=proxies)
 
-        if (response.status_code != 200):
-            raise Exception(response.text)
+        if (response.status_code != 200 or response.json().get("purchased") != True):
+            return False, response.text
         
-        return response.text
+        return True, response.text

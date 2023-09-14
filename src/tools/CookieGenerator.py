@@ -34,7 +34,7 @@ class CookieGenerator(Tool):
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:
-                    response_text = str(e)
+                    has_generated, response_text = False, str(e)
                 
                 if has_generated:
                     worked_gen += 1

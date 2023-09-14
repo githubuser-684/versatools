@@ -158,10 +158,7 @@ class CaptchaSolver:
 
         final_response = httpx.post(req_url, headers=req_headers, json=req_json, data=req_data, proxies=proxies)
         
-        if (final_response.status_code >= 400):
-            raise Exception(final_response.text)
-        else:
-            return final_response
+        return final_response
 
     def get_balance(self):
         if (self.captcha_service == "anti-captcha"):

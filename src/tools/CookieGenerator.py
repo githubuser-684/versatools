@@ -32,18 +32,18 @@ class CookieGenerator(Tool):
 
             for future in concurrent.futures.as_completed(results):
                 try:
-                    cookie = future.result()
-                    worked_gen += 1
-                    f.write(cookie+"\n")
-                    f.flush()
-                    response_text = cookie
-                    has_worked = True
+                    has_generated, response_text = future.result()
                 except Exception as e:
-                    has_worked = False
-                    failed_gen += 1
                     response_text = str(e)
+                
+                if has_generated:
+                    worked_gen += 1
+                    f.write(response_text+"\n")
+                    f.flush()
+                else:
+                    failed_gen += 1
 
-                self.print_status(worked_gen, failed_gen, total_gen, response_text, has_worked, "Generated")
+                self.print_status(worked_gen, failed_gen, total_gen, response_text, has_generated, "Generated")
         f.close()
 
     @Utils.retry_on_exception()
@@ -121,6 +121,9 @@ class CookieGenerator(Tool):
         sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, proxies)
         sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", user_agent, proxies)
 
-        cookie = sign_up_res.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
-        
-        return cookie
+        try:
+            cookie = sign_up_res.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
+        except:
+            return False, sign_up_res.text
+
+        return True, cookie

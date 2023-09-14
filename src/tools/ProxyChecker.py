@@ -4,7 +4,7 @@ import concurrent.futures
 
 class ProxyChecker(Tool):
     def __init__(self, app):
-        super().__init__("Proxy Checker", "Checks proxies from a list of HTTP and SOCKS proxies", 1, app)
+        super().__init__("Proxy Checker", "Checks proxies from a list of HTTP, HTTPS and SOCKS proxies", 1, app)
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-proxies.txt")
 
@@ -14,7 +14,7 @@ class ProxyChecker(Tool):
 
     def run(self):
         # make sure format of the file is good
-        self.check_proxies_file_format(self.proxies_file_path, False)
+        self.check_proxies_file_format(self.proxies_file_path)
 
         # get proxies lines
         f = open(self.proxies_file_path, 'r+')

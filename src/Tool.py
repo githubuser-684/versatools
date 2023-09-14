@@ -127,6 +127,27 @@ class Tool(Proxy, ABC):
             cookies = cookies[:amount]
 
         return cookies
+    
+    def get_random_proxies(self) -> dict:
+        """
+        Gets random proxies dict from proxies.txt file for httpx module
+        """
+
+        # make sure proxies list is correctly formatted
+        self.check_proxies_file_format(self.app.proxies_file_path)
+
+        f = open(self.app.proxies_file_path, 'r')
+        proxies_list = f.readlines()
+        proxies_list = [*set(proxies_list)] # remove duplicates
+
+        # get random line
+        random_line = proxies_list[random.randint(0, len(proxies_list) - 1)]
+        random_line = self.clear_line(random_line)
+        # get proxies dict for httpx module
+        proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(random_line)
+        proxies = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
+        
+        return proxies
 
     def print_status(self, req_worked, req_failed, total_req, response_text, has_worked, action_verb):
         print(f"\033[1A\033[K\033[1A\033[K\033[1;32m{action_verb}: {str(req_worked)}\033[0;0m | \033[1;31mFailed: {str(req_failed)}\033[0;0m | \033[1;34mTotal: {str(total_req)}\033[0;0m")

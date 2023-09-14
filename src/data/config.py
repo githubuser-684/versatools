@@ -81,7 +81,7 @@ config = {
         "max_workers": None
     },
     "ProxyChecker": {
-        "delete_failed_proxies": False,
+        "delete_failed_proxies": True,
         "timeout": 2,
         "max_workers": None
     },

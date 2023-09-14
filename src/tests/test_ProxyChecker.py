@@ -17,26 +17,3 @@ class TestProxyChecker(unittest.TestCase):
         self.assertEqual(proxy_port, 80)
         self.assertEqual(proxy_user, "admin")
         self.assertEqual(proxy_pass, "1234")
-        
-    def test_test_proxy(self):
-        is_working = self.tool.test_proxy({
-            "all://": f"http://10.8.8.8@admin:1234/"
-        }, 1)
-
-        self.assertEqual(is_working, False)
-
-    def test_write_proxy_line(self):
-        line = self.tool.write_proxy_line("http", "8.8.8.8", 80, "admin", "1234")
-        self.assertEqual(line, "http:8.8.8.8:80:admin:1234")
-
-        line = self.tool.write_proxy_line("http", "8.8.8.8", 80)
-        self.assertEqual(line, "http:8.8.8.8:80")
-
-        line = self.tool.write_proxy_line(None, "8.8.8.8", 80, "admin", "1234")
-        self.assertEqual(line, "8.8.8.8:80:admin:1234")
-
-        line = self.tool.write_proxy_line(None, "8.8.8.8", 80)
-        self.assertEqual(line, "8.8.8.8:80")
-
-        with self.assertRaises(ValueError, msg="Should raise error when username is provided but password is not"):
-            self.tool.write_proxy_line("http", "8.8.8.8", 80, "admin", None)

@@ -7,7 +7,7 @@ class Proxy(ABC):
     Interface for classes that implement proxy support
     """
     def __init__(self):
-        self.supported_proxy_protocols = ["http", "socks4", "socks5"]
+        self.supported_proxy_protocols = ["http", "https", "socks4", "socks5"]
 
     def test_proxy(self, proxies: dict, timeout:int) -> bool:
         """
@@ -26,6 +26,8 @@ class Proxy(ABC):
         """
         Write a correctly formatted proxy line for proxies.txt file
         """
+        proxy_type = None if proxy_type == "http" else proxy_type
+
         if (proxy_user is not None and proxy_pass is not None):
             auth = True
         elif (proxy_user is None and proxy_pass is None):
@@ -35,14 +37,14 @@ class Proxy(ABC):
 
         return f"{proxy_type + ':' if proxy_type else ''}{proxy_ip}:{proxy_port}{':' + proxy_user + ':' + proxy_pass if auth else ''}"
     
-    def check_proxies_file_format(self, file_path: str, is_proxy_type_needed: bool) -> bool:
+    def check_proxies_file_format(self, file_path: str) -> bool:
         """
         Makes sure proxies.txt file format is good before checking/using proxies
         """
         try:
             f = open(file_path)
         except FileNotFoundError:
-            raise FileNotFoundError("Please add your proxies in files/proxies.txt and try again")
+            raise FileNotFoundError("files/proxies.txt path not found. Create it, add proxies and try again")
         
         lines = f.readlines()
         f.close()
@@ -70,17 +72,8 @@ class Proxy(ABC):
                     line
                 ))
             
-            # if proxy_type is needed, make sure it is provided
-            if (is_proxy_type_needed and (proxy_type_provided != True)):
-                raise SyntaxError("Proxy type is not provided", (
-                    file_path,
-                    line_number,
-                    None,
-                    line
-                ))
-            
             # make sure proxy_type is supported
-            if (proxy_type_provided and proxy_type not in self.supported_proxy_protocols):
+            if (proxy_type not in self.supported_proxy_protocols):
                 raise SyntaxError("Proxy type not supported", (
                     file_path,
                     line_number,
@@ -113,9 +106,10 @@ class Proxy(ABC):
         proxy_user = None
         proxy_pass = None
 
-        # get proxy_type (if provided), proxy_ip, proxy_port, proxy_user (if provided), proxy_pass (if provided)
+        # get proxy_type, proxy_ip, proxy_port, proxy_user (if provided), proxy_pass (if provided)
         if (num_item in [2, 4]):
             proxy_type_provided = False
+            proxy_type = "http"
             proxy_ip = line.split(":")[0]
             proxy_port = line.split(":")[1]
             if (num_item == 4):
@@ -155,25 +149,4 @@ class Proxy(ABC):
         else:
             proxies = { "all://": f"{proxy_type}://{proxy_ip}:{proxy_port}/" }
 
-        return proxies
-    
-    def get_random_proxies(self) -> dict:
-        """
-        Gets random proxies dict from proxies.txt file for httpx module
-        """
-
-        # make sure proxies list is correctly formatted
-        self.check_proxies_file_format(self.app.proxies_file_path, True)
-
-        f = open(self.app.proxies_file_path, 'r')
-        proxies_list = f.readlines()
-        proxies_list = [*set(proxies_list)] # remove duplicates
-
-        # get random line
-        random_line = proxies_list[random.randint(0, len(proxies_list) - 1)]
-        random_line = self.clear_line(random_line)
-        # get proxies dict for httpx module
-        proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(random_line)
-        proxies = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
-        
         return proxies

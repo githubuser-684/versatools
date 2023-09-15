@@ -67,7 +67,7 @@ Add your cookies in this file. You can generate them using our Cookie Generator 
 You can use this template to add your proxies. We currently support HTTP, SOCKS4 and SOCKS5 proxies.
 
 ```
-http:8.8.8.8:5001
+8.8.8.8:5001 (here will be http by default)
 socks4:8.8.8.8:5002
 socks5:8.8.8.8:5003:username:password
 ```

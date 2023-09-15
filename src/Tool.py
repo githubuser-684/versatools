@@ -132,13 +132,16 @@ class Tool(Proxy, ABC):
         """
         Gets random proxies dict from proxies.txt file for httpx module
         """
-
-        # make sure proxies list is correctly formatted
-        self.check_proxies_file_format(self.app.proxies_file_path)
-
-        f = open(self.app.proxies_file_path, 'r')
+        try:
+            f = open(self.app.proxies_file_path, 'r')
+        except FileNotFoundError:
+            raise FileNotFoundError("files/proxies.txt path not found. Create it, add proxies and try again")
+        
         proxies_list = f.readlines()
         proxies_list = [*set(proxies_list)] # remove duplicates
+
+        if len(proxies_list) == 0:
+            raise Exception("No proxies found in files/proxies.txt. Please add some and try again")
 
         # get random line
         random_line = proxies_list[random.randint(0, len(proxies_list) - 1)]

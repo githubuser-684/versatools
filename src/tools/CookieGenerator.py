@@ -8,18 +8,6 @@ from utils import Utils
 from data.adjectives import adjectives
 from data.nouns import nouns
 
-def generate_username():
-    """
-    Generates a random username
-    """
-    word1 = random.choice(adjectives)
-    word2 = random.choice(nouns)
-    word1 = word1.title()
-    word2 = word2.title()
-    generated_username = f"{word1}{word2}{random.randint(1, 9999)}"
-
-    return generated_username
-
 class CookieGenerator(Tool):
     def __init__(self, app):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
@@ -74,6 +62,18 @@ class CookieGenerator(Tool):
 
         return response.json()["message"] == "Username is valid", response.json()["message"]
 
+    def generate_username(self):
+        """
+        Generates a random username
+        """
+        word1 = random.choice(adjectives)
+        word2 = random.choice(nouns)
+        word1 = word1.title()
+        word2 = word2.title()
+        generated_username = f"{word1}{word2}{random.randint(1, 9999)}"
+
+        return generated_username
+
     def generate_password(self):
         """
         Generates a random and complex password
@@ -111,7 +111,7 @@ class CookieGenerator(Tool):
 
         retry_count = 0
         while retry_count < 5:
-            username = generate_username()
+            username = self.generate_username()
             is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, proxies)
 
             if is_username_valid:

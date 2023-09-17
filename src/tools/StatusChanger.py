@@ -1,4 +1,3 @@
-import time
 from Tool import Tool
 import httpx
 import concurrent.futures
@@ -37,6 +36,9 @@ class StatusChanger(Tool):
 
     @Utils.retry_on_exception()
     def change_status(self, new_status, cookie):
+        """
+        Changes the status of a user
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
@@ -47,5 +49,5 @@ class StatusChanger(Tool):
         req_data = {"description": new_status }
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, data=req_data, proxies=proxies)
-        
+
         return (response.status_code == 200), response.text

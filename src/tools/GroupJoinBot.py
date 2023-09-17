@@ -7,11 +7,6 @@ class GroupJoinBot(Tool):
     def __init__(self, app):
         super().__init__("Group Join Bot", "Enhance the size of your group members", 7, app)
 
-        self.config["max_generations"]
-        self.config["captcha_solver"]
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         group_id = input("Group ID to increase members count: ")
 
@@ -31,15 +26,18 @@ class GroupJoinBot(Tool):
                     has_joined, response_text = future.result()
                 except Exception as e:
                     has_joined, response_text =  False, str(e)
-                
+
                 if has_joined:
                     req_worked += 1
                 else:
                     req_failed += 1
-                
+
                 self.print_status(req_worked, req_failed, total_req, response_text, has_joined, "New joins")
 
     def send_group_join_request(self, captcha_service:str, group_id:str | int, cookie:str):
+        """
+        Send a join request to a group
+        """
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
@@ -52,5 +50,5 @@ class GroupJoinBot(Tool):
 
         init_res = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", user_agent, proxies)
-        
+
         return (response.status_code == 200), response.text

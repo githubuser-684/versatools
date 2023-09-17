@@ -8,17 +8,12 @@ class FavoriteBot(Tool):
     def __init__(self, app):
         super().__init__("Favorite Bot", "Increase/Decrease stars count of an asset", 2, app)
 
-        self.config["max_generations"]
-        self.config["max_workers"]
-        self.config["use_proxy"]
-        self.config["timeout"]
-
     def run(self):
         asset_id = input("Asset ID to favorite/unfavorite: ")
         unfavorite = input('Enter "a" to unfavorite: ') == "a"
-    
+
         cookies = self.get_cookies(self.config["max_generations"])
-            
+
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)
@@ -39,10 +34,13 @@ class FavoriteBot(Tool):
                 else:
                     req_failed += 1
 
-                self.print_status(req_sent, req_failed, total_req, response_text, is_success, "New favorites")  
+                self.print_status(req_sent, req_failed, total_req, response_text, is_success, "New favorites")
 
     @Utils.retry_on_exception()
     def send_favorite(self, asset_id, cookie, unfavorite: bool):
+        """
+        Send a favorite to an asset
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
@@ -58,5 +56,5 @@ class FavoriteBot(Tool):
         response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
         time.sleep(self.config["timeout"])
-    
+
         return (response.status_code == 200), response.text

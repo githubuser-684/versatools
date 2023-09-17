@@ -7,16 +7,12 @@ class GameVote(Tool):
     def __init__(self, app):
         super().__init__("Game Vote", "Increase Like/Dislike count of a game", 1, app)
 
-        self.config["max_generations"] 
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         game_id = input("Game ID to like/dislike: ")
 
         print("1. Like")
         print("2. Dislike")
-        
+
         ask_again = True
         while ask_again:
             choice = input("\033[0;0mEnter your choice: ")
@@ -27,9 +23,9 @@ class GameVote(Tool):
 
             if ask_again:
                 print("\033[0;33mInvalid choice\033[0;0m")
-        
+
         vote = choice == 1
-        
+
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0
@@ -46,7 +42,7 @@ class GameVote(Tool):
                     is_success, response_text = future.result()
                 except Exception as e:
                     is_success, response_text = False, str(e)
-                
+
                 if is_success:
                     req_sent += 1
                 else:
@@ -56,6 +52,9 @@ class GameVote(Tool):
 
     @Utils.retry_on_exception()
     def send_game_vote(self, game_id, vote, cookie):
+        """
+        Send a vote to a game
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
@@ -65,5 +64,5 @@ class GameVote(Tool):
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-    
+
         return (response.status_code == 200 and response.json()["Success"]), response.text

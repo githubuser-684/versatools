@@ -48,7 +48,7 @@ class CaptchaSolver:
         website_subdomain = "roblox-api.arkoselabs.com"
 
         # solve captcha using specified service
-        if (self.captcha_service == "anti-captcha"):
+        if self.captcha_service == "anti-captcha":
             solver = funcaptchaProxyless() # funcaptchaProxyon()
             solver.set_verbose(0)
             solver.set_key(self.api_key)
@@ -78,7 +78,7 @@ class CaptchaSolver:
 
             if token == 0:
                 raise Exception("task finished with error " + solver.error_code)
-        elif (self.captcha_service == "2captcha"):
+        elif self.captcha_service == "2captcha":
             solver = TwoCaptcha(self.api_key)
 
             result = solver.funcaptcha(
@@ -92,9 +92,9 @@ class CaptchaSolver:
                 #} if use_proxy else None),
                 **{"data[blob]": blob}
             )
-            
+
             token = result["code"]
-        elif (self.captcha_service == "capsolver"):
+        elif self.captcha_service == "capsolver":
             capsolver.api_key = self.api_key
             with Suppressor():
                 solution = capsolver.solve({
@@ -105,7 +105,7 @@ class CaptchaSolver:
                 })
 
             token = solution["token"]
-        elif (self.captcha_service == "capbypass"):
+        elif self.captcha_service == "capbypass":
             captcha_response = httpx.post('https://capbypass.com/api/createTask', json={
                 "clientKey": self.api_key,
                 "task": {
@@ -121,13 +121,13 @@ class CaptchaSolver:
             try:
                 token = captcha_response.json()["solution"]["token"]
             except:
-                if (captcha_response.json().get("error") == "Key doesn't exist."):
+                if captcha_response.json().get("error") == "Key doesn't exist.":
                     raise Exception("Valid capbypass API key is required.")
 
                 raise Exception(captcha_response.text)
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")
-        
+
         # build metadata containing token for login request
         metadata = f"{{\"unifiedCaptchaId\":\"{unified_captcha_id}\",\"captchaToken\":\"{token}\",\"actionType\":\"{rblx_metadata['actionType']}\"}}"
         metadata_base64 = base64.b64encode(metadata.encode()).decode()
@@ -144,7 +144,7 @@ class CaptchaSolver:
         # error bytes to json
         req_json = {}
         req_data = {}
-        
+
         req_content = bytes.decode(response.request._content)
 
         if response.request.headers.get("content-type") == "application/x-www-form-urlencoded":
@@ -160,24 +160,27 @@ class CaptchaSolver:
         req_json["captchaProvider"] = "PROVIDER_ARKOSE_LABS"
 
         final_response = httpx.post(req_url, headers=req_headers, json=req_json, data=req_data, proxies=proxies)
-        
+
         return final_response
 
     def get_balance(self):
-        if (self.captcha_service == "anti-captcha"):
+        """
+        Gets the balance of the captcha service
+        """
+        if self.captcha_service == "anti-captcha":
             solver = funcaptchaProxyless() # or any other class
             solver.set_verbose(0)
             solver.set_key(self.api_key)
             balance = solver.get_balance()
-        elif (self.captcha_service == "2captcha"):
+        elif self.captcha_service == "2captcha":
             solver = TwoCaptcha(self.api_key)
             balance = solver.balance()
-        elif (self.captcha_service == "capsolver"):
+        elif self.captcha_service == "capsolver":
             capsolver.api_key = self.api_key
 
             with Suppressor():
                 balance = capsolver.balance()["balance"]
-        elif (self.captcha_service == "capbypass"):
+        elif self.captcha_service == "capbypass":
             req_url = 'https://capbypass.com/api/getBalance'
             req_data = {
                 'clientKey': self.api_key,
@@ -188,8 +191,8 @@ class CaptchaSolver:
             return balance
         else:
             raise Exception("Captcha service not found")
-        
+
         return balance
-        
+
     def __str__(self):
         return "A funcaptcha Solver using " + self.captcha_service + " as the captcha service."

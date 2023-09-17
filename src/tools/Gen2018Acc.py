@@ -8,8 +8,6 @@ class Gen2018Acc(Tool):
     def __init__(self, app):
         super().__init__("Gen 2018 Acc", "2018 old roblox account generator", 6, app)
 
-        self.config["use_proxy"]
-
     def run(self):
         user_id = 73223429
         default_pass = "insaneclient101"
@@ -30,18 +28,24 @@ class Gen2018Acc(Tool):
 
     @Utils.retry_on_exception()
     def get_followers_count(self, user_id):
+        """
+        Get the amount of followers of a user
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers/count"
         req_headers = self.get_roblox_headers(user_agent)
-        
+
         response = httpx.get(req_url, headers=req_headers, proxies=proxies)
 
         return response.json()["count"]
 
     @Utils.retry_on_exception()
     def get_followers(self, user_id, cursor, follower_per_page):
+        """
+        Get a page of followers
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 

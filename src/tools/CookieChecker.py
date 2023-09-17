@@ -8,12 +8,8 @@ class CookieChecker(Tool):
     def __init__(self, app):
         super().__init__("Cookie Checker", "Checks if cookies are valid and shuffle and unduplicate them.", 1, app)
 
-        self.config["delete_invalid_cookies"]
-        self.config["use_proxy"]
-        self.config["max_workers"]
-
         self.cache_file_path = os.path.join(self.cache_directory, "verified-cookies.txt")
-    
+
     def run(self):
         cookies = self.get_cookies()
 
@@ -37,7 +33,7 @@ class CookieChecker(Tool):
                     is_working, cookie, response_text = future.result()
                 except Exception as e:
                     is_working, response_text = False, str(e)
-                
+
                 if is_working:
                     working_cookies += 1
                 else:
@@ -55,6 +51,9 @@ class CookieChecker(Tool):
 
     @Utils.retry_on_exception(2)
     def test_cookie(self, cookie, use_proxy):
+        """
+        Checks if a cookie is working
+        """
         user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None
 

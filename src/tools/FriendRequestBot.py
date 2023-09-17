@@ -7,10 +7,6 @@ class FriendRequestBot(Tool):
     def __init__(self, app):
         super().__init__("Friend Request Bot", "Send a lot of friend requests to a user", 5, app)
 
-        self.config["max_generations"]
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         user_id = input("User ID to send friend requests to: ")
 
@@ -30,7 +26,7 @@ class FriendRequestBot(Tool):
                     is_sent, response_text = future.result()
                 except Exception as e:
                     is_sent, response_text = False, str(e)
-                
+
                 if is_sent:
                     req_sent += 1
                 else:
@@ -40,6 +36,9 @@ class FriendRequestBot(Tool):
 
     @Utils.retry_on_exception()
     def send_friend_request(self, user_id, cookie):
+        """
+        Send a friend request to a user
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
@@ -49,5 +48,5 @@ class FriendRequestBot(Tool):
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-    
+
         return (response.status_code == 200 and response.json()["success"]), response.text

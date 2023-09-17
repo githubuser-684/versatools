@@ -1,3 +1,4 @@
+# pylint: disable = missing-function-docstring
 import os
 import unittest
 from tools.ProxyChecker import ProxyChecker
@@ -5,21 +6,16 @@ from App import App
 
 class TestProxy(unittest.TestCase):
     @classmethod
-    def setUpClass(self):
-        self.app = App()
-        self.tool = ProxyChecker(self.app)
-        self.test_file_path = os.path.join(self.app.cache_directory, "test_file_format")
-
-    def test_clear_line(self):
-        line = "  http : \n 8.8.8.8    : 80 \t   :  admin  :  1234  \n"
-        cleaned_line = self.tool.clear_line(line)
-        self.assertEqual(cleaned_line, "http:8.8.8.8:80:admin:1234")
+    def setUpClass(cls):
+        cls.app = App()
+        cls.tool = ProxyChecker(cls.app)
+        cls.test_file_path = os.path.join(cls.app.cache_directory, "test_file_format")
 
     def test_check_proxies_file_format(self):
         # make sure file doesn't exist
         try:
             os.remove(self.test_file_path)
-        except:
+        except Exception:
             pass
 
         with self.assertRaises(FileNotFoundError, msg="Should returns error when file doesn't exist"):
@@ -56,7 +52,7 @@ class TestProxy(unittest.TestCase):
 
         with self.assertRaises(Exception, msg="Should return error for unsupported proxy type"):
             self.tool.check_proxies_file_format(self.test_file_path)
-        
+
         # should return error for invalid proxy port
         # because port is out of range
         file = open(self.test_file_path, "w")
@@ -73,7 +69,7 @@ class TestProxy(unittest.TestCase):
 
         with self.assertRaises(Exception, msg="Should return error for invalid proxy port (not a number)"):
             self.tool.check_proxies_file_format(self.test_file_path)
-    
+
     def test_get_proxies_values(self):
         line = "102.237.17.4:80"
         proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.tool.get_proxy_values(line)
@@ -118,12 +114,12 @@ class TestProxy(unittest.TestCase):
     def test_get_proxies(self):
         proxies = self.tool.get_proxies("http", "8.8.8.8", 80, "admin", "1234")
         self.assertEqual(proxies, {
-            "all://": f"http://admin:1234@8.8.8.8:80/"
+            "all://": "http://admin:1234@8.8.8.8:80/"
         })
 
         proxies = self.tool.get_proxies("socks4", "8.8.8.8", 80)
         self.assertEqual(proxies, {
-            "all://": f"socks4://8.8.8.8:80/"
+            "all://": "socks4://8.8.8.8:80/"
         })
 
         with self.assertRaises(Exception):
@@ -131,7 +127,7 @@ class TestProxy(unittest.TestCase):
 
     def test_test_proxy(self):
         is_working = self.tool.test_proxy({
-            "all://": f"http://10.8.8.8@admin:1234/"
+            "all://": "http://10.8.8.8@admin:1234/"
         }, 1)
 
         self.assertEqual(is_working, False)

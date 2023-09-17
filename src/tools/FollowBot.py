@@ -7,11 +7,6 @@ class FollowBot(Tool):
     def __init__(self, app):
         super().__init__("Follow Bot", "Increase Followers count of a user", 4, app)
 
-        self.config["max_generations"]
-        self.config["captcha_solver"]
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         user_id = input("User ID to increase followers count: ")
 
@@ -31,7 +26,7 @@ class FollowBot(Tool):
                     is_followed, response_text = future.result()
                 except Exception as e:
                     is_followed, response_text = False, str(e)
-        
+
                 if is_followed:
                     req_worked += 1
                 else:
@@ -40,6 +35,9 @@ class FollowBot(Tool):
                 self.print_status(req_worked, req_failed, total_req, response_text, is_followed, "New followers")
 
     def send_follow_request(self, captcha_service:str, user_id:str | int, cookie:str):
+        """
+        Send a follow request to a user
+        """
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
@@ -51,5 +49,5 @@ class FollowBot(Tool):
 
         init_res = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", user_agent, proxies)
-        
+
         return (response.status_code == 200), response.text

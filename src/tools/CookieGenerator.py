@@ -8,14 +8,21 @@ from utils import Utils
 from data.adjectives import adjectives
 from data.nouns import nouns
 
+def generate_username():
+    """
+    Generates a random username
+    """
+    word1 = random.choice(adjectives)
+    word2 = random.choice(nouns)
+    word1 = word1.title()
+    word2 = word2.title()
+    generated_username = f"{word1}{word2}{random.randint(1, 9999)}"
+
+    return generated_username
+
 class CookieGenerator(Tool):
     def __init__(self, app):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
-
-        self.config["max_generations"]
-        self.config["captcha_solver"]
-        self.config["use_proxy"]
-        self.config["max_workers"]
 
     def run(self):
         # open cookies.txt for writing in it
@@ -35,7 +42,7 @@ class CookieGenerator(Tool):
                     has_generated, response_text = future.result()
                 except Exception as e:
                     has_generated, response_text = False, str(e)
-                
+
                 if has_generated:
                     worked_gen += 1
                     f.write(response_text+"\n")
@@ -48,20 +55,17 @@ class CookieGenerator(Tool):
 
     @Utils.retry_on_exception()
     def get_csrf_token(self, proxies:dict = None) -> str:
+        """
+        Gets a csrf token from the auth.roblox.com endpoint
+        """
         csrf_response = httpx.post("https://auth.roblox.com/v2/login", proxies=proxies)
         csrf_token = csrf_response.headers.get("x-csrf-token")
         return csrf_token
-    
-    def generate_username(self):
-        word1 = random.choice(adjectives)
-        word2 = random.choice(nouns)
-        word1 = word1.title()
-        word2 = word2.title()
-        generated_username = '{}{}{}'.format(word1, word2, random.randint(1, 9999))
 
-        return generated_username
-    
     def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, proxies:dict=None):
+        """
+        Verifies if a username is valid
+        """
         req_url = "https://auth.roblox.com/v1/usernames/validate"
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "context": "Signup", "username": username}
@@ -76,15 +80,18 @@ class CookieGenerator(Tool):
         """
         length = 10
         return ''.join(random.choices(string.ascii_uppercase + string.digits + string.punctuation, k=length))
-    
+
     def generate_birthday(self):
         """
         Generates a random birthday
         """
         return str(random.randint(2006, 2010)).zfill(2) + "-" + str(random.randint(1, 12)).zfill(2) + "-" + str(random.randint(1, 27)).zfill(2) + "T05:00:00.000Z"
-    
+
     @Utils.retry_on_exception()
     def send_signup_request(self, user_agent:str, csrf_token:str, username:str, password:str, birthday:str, is_girl:bool, proxies:dict=None):
+        """
+        Sends a signup request to the auth.roblox.com endpoint
+        """
         req_url = "https://auth.roblox.com/v2/signup"
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
@@ -104,12 +111,12 @@ class CookieGenerator(Tool):
 
         retry_count = 0
         while retry_count < 5:
-            username = self.generate_username()
+            username = generate_username()
             is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, proxies)
 
             if is_username_valid:
                 break
-            
+
             retry_count += 1
 
         if not is_username_valid:
@@ -123,7 +130,7 @@ class CookieGenerator(Tool):
 
         try:
             cookie = sign_up_res.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
-        except:
+        except Exception:
             return False, sign_up_res.text
 
         return True, cookie

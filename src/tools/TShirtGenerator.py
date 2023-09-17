@@ -9,7 +9,7 @@ from Tool import Tool
 class TShirtGenerator(Tool):
     def __init__(self, app):
         super().__init__("T-Shirt Generator", "Generate a t-shirt from a query", 2, app)
-        
+
         self.cache_img_path = os.path.join(self.cache_directory, "original-image")
         self.img_path = os.path.join(self.files_directory, "rblx-t-shirt.png")
 
@@ -30,17 +30,17 @@ class TShirtGenerator(Tool):
 
         response = httpx.get(url, headers=headers, params=querystring)
 
-        if (response.status_code == 429):
+        if response.status_code == 429:
             raise Exception("Rate limited by Image Search Api. If you require more API requests, you can consider upgrading your plan here: https://rapidapi.com/emailmatteoutile/api/image-search-api2/pricing")
 
-        if (response.status_code == 403):
+        if response.status_code == 403:
             raise Exception("You are not subscribed to API. Please subscribe here: https://rapidapi.com/emailmatteoutile/api/image-search-api2")
-    
+
         try:
             images = response.json()["images"]
         except:
             raise Exception(f"Unable to search the image... \n\n{response.text}")
-        
+
         # retrieve random image from API
         image = images[random.randint(0, len(images) - 1)]
         image_src = image["src"].replace("&w=300&h=300", "")

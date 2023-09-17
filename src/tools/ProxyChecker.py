@@ -1,16 +1,13 @@
 from Tool import Tool
 import os
 import concurrent.futures
+from utils import Utils
 
 class ProxyChecker(Tool):
     def __init__(self, app):
         super().__init__("Proxy Checker", "Checks proxies from a list of HTTP, HTTPS and SOCKS proxies", 1, app)
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-proxies.txt")
-
-        self.config["delete_failed_proxies"]
-        self.config["timeout"]
-        self.config["max_workers"]
 
     def run(self):
         # make sure format of the file is good
@@ -26,7 +23,7 @@ class ProxyChecker(Tool):
         f = open(self.cache_file_path, 'w')
         f.seek(0)
         f.truncate()
-        
+
         working_proxies = 0
         failed_proxies = 0
         total_proxies = len(lines)
@@ -44,7 +41,7 @@ class ProxyChecker(Tool):
                     working_proxies += 1
                 else:
                     failed_proxies += 1
-                
+
                 line = self.write_proxy_line(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
                 if not (self.config["delete_failed_proxies"] and not is_working):
@@ -61,11 +58,11 @@ class ProxyChecker(Tool):
         Checks if a line proxy is working
         """
 
-        line = self.clear_line(line)
+        line = Utils.clear_line(line)
 
         proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(line)
 
-        if (proxy_type_provided):
+        if proxy_type_provided:
             proxies = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
             is_working = self.test_proxy(proxies, timeout)
         else:

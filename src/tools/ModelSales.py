@@ -1,19 +1,15 @@
+import concurrent.futures
 import httpx
 from Tool import Tool
-import concurrent.futures
 from utils import Utils
 
 class ModelSales(Tool):
     def __init__(self, app):
         super().__init__("Model Sales", "Buy your Roblox models tons of times", 3, app)
 
-        self.config["max_generations"] 
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         asset_id = input("Asset ID to buy: ")
-        
+
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0
@@ -32,7 +28,7 @@ class ModelSales(Tool):
                     is_bought, response_text = future.result()
                 except Exception as e:
                     is_bought, response_text = False, str(e)
-                
+
                 if is_bought:
                     is_success = True
                     req_sent += 1
@@ -43,6 +39,9 @@ class ModelSales(Tool):
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Bought")
 
     def get_product_id(self, asset_id, cookie):
+        """
+        Get the product ID of an asset
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
@@ -56,11 +55,14 @@ class ModelSales(Tool):
             product_id = response.json()["data"][0]["product"]["productId"]
         except:
             raise Exception(response.text + " Status code: " + str(response.status_code))
-        
+
         return product_id
 
     @Utils.retry_on_exception()
     def buy_product(self, asset_id, product_id, cookie):
+        """
+        Buy a product
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
@@ -72,7 +74,7 @@ class ModelSales(Tool):
 
         response = httpx.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies, proxies=proxies)
 
-        if (response.status_code != 200 or response.json().get("purchased") != True):
+        if (response.status_code != 200 or response.json().get("purchased") is False):
             return False, response.text
-        
+
         return True, response.text

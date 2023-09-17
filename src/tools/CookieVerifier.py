@@ -12,9 +12,6 @@ class CookieVerifier(Tool):
     def __init__(self, app):
         super().__init__("Cookie Verifier", "Verify your cookies!", 4, app)
 
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         cookies = self.get_cookies()
 
@@ -32,7 +29,7 @@ class CookieVerifier(Tool):
                     is_verified, response_text = future.result()
                 except Exception as e:
                     is_verified, response_text = False, str(e)
-        
+
                 if is_verified:
                     req_worked += 1
                 else:
@@ -42,6 +39,9 @@ class CookieVerifier(Tool):
 
     @Utils.retry_on_exception()
     def is_verified(self, cookie, user_agent, proxies):
+        """
+        Checks if a cookie is verified
+        """
         req_url = "https://accountsettings.roblox.com/v1/email"
         req_cookies = {".ROBLOSECURITY": cookie}
         req_headers = self.get_roblox_headers(user_agent)
@@ -52,13 +52,16 @@ class CookieVerifier(Tool):
 
     @Utils.retry_on_exception()
     def create_address(self, proxies):
+        """
+        Creates a random email address
+        """
         # get domain
         req_url = "https://api.mail.tm/domains"
         response = httpx.get(req_url, proxies=proxies)
 
         if response.status_code != 200:
             raise Exception(f"Failed to get domain {response.text} Code: {response.status_code}")
-        
+
         domain = response.json()["hydra:member"][0]["domain"]
 
         # create email address
@@ -69,7 +72,7 @@ class CookieVerifier(Tool):
 
         if response.status_code != 201:
             raise Exception(f"Failed to create email {response.text} Code: {response.status_code}")
-        
+
         address = response.json()["address"]
 
         # get auth token
@@ -77,7 +80,7 @@ class CookieVerifier(Tool):
         req_json = {"address": address, "password": "versatools"}
         response = httpx.post(req_url, json=req_json, proxies=proxies)
         token = response.json()["token"]
-        
+
         if response.status_code != 200:
             raise Exception(f"Failed to get token {response.text} Code: {response.status_code}")
 
@@ -85,6 +88,9 @@ class CookieVerifier(Tool):
 
     @Utils.retry_on_exception()
     def set_roblox_email(self, cookie, user_agent, proxies, csrf_token, email_addr):
+        """
+        Sets the roblox email address
+        """
         req_url = "https://accountsettings.roblox.com/v1/email"
         req_cookies = {".ROBLOSECURITY": cookie}
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
@@ -96,6 +102,9 @@ class CookieVerifier(Tool):
 
     @Utils.retry_on_exception(10)
     def get_email_id(self, token, proxies):
+        """
+        Gets the id of the latest email
+        """
         time.sleep(1.5)
         req_url = "https://api.mail.tm/messages"
         req_params = {"page": 1}
@@ -111,9 +120,12 @@ class CookieVerifier(Tool):
             raise Exception("No mails found")
 
         return mails[0]["id"]
-    
+
     @Utils.retry_on_exception()
     def get_email(self, token, mail_id, proxies):
+        """
+        Gets the email
+        """
         req_url = f"https://api.mail.tm/sources/{mail_id}"
         req_headers = {"Authorization": f"Bearer {token}"}
         response = httpx.get(req_url, headers=req_headers, proxies=proxies)
@@ -123,11 +135,14 @@ class CookieVerifier(Tool):
 
         data = response.json()["data"]
         mail = mailparser.parse_from_string(data)
-        
+
         return mail
 
     @Utils.retry_on_exception()
     def click_verif_link(self, mail, cookie, user_agent, csrf_token, proxies):
+        """
+        Simulates clicking on the verification link
+        """
         ticket = unquote(mail.body.split("?ticket=")[1].split('"')[0])
 
         req_url = "https://accountinformation.roblox.com/v1/email/verify"
@@ -141,6 +156,9 @@ class CookieVerifier(Tool):
 
     @Utils.retry_on_exception()
     def verify_cookie(self, cookie:str):
+        """
+        Verifies a cookie
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)

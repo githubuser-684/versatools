@@ -7,13 +7,10 @@ class DisplayNameChanger(Tool):
     def __init__(self, app):
         super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
 
-        self.config["max_workers"]
-        self.config["use_proxy"]
-
     def run(self):
         print("\033[1;31mWarning: Display names can only be changed once every week\033[0;0m")
         new_display_name = input("New display name: ")
-            
+
         cookies = self.get_cookies()
 
         req_sent = 0
@@ -30,7 +27,7 @@ class DisplayNameChanger(Tool):
                     is_success, response_text = future.result()
                 except Exception as e:
                     is_success, response_text = False, str(e)
-                
+
                 if is_success:
                     req_sent += 1
                 else:
@@ -40,6 +37,9 @@ class DisplayNameChanger(Tool):
 
     @Utils.retry_on_exception()
     def change_display_name(self, new_display_name, cookie):
+        """
+        Changes the display name of a user
+        """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)

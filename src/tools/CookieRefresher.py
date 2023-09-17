@@ -8,9 +8,6 @@ class CookieRefresher(Tool):
     def __init__(self, app):
         super().__init__("Cookie Refresher", "Refresh your .ROBLOSECURITY cookies!", 7, app)
 
-        self.config["use_proxy"]
-        self.config["max_workers"]
-
         self.new_cookies_file_path = os.path.join(self.files_directory, "refreshed-cookies.txt")
 
     def run(self):
@@ -37,10 +34,10 @@ class CookieRefresher(Tool):
                     f.flush()
                     response_text = cookie
                     has_worked = True
-                except Exception as e:
+                except Exception as err:
                     has_worked = False
                     req_failed += 1
-                    response_text = str(e)
+                    response_text = str(err)
 
                 self.print_status(req_sent, req_failed, total_req, response_text, has_worked, "Generated")
 

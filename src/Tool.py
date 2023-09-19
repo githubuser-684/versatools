@@ -4,8 +4,8 @@ import httpx
 from abc import ABC, abstractmethod
 from Proxy import Proxy
 from fake_useragent import UserAgent
-import signal
 from utils import Utils
+import eel
 
 class Tool(Proxy, ABC):
     def __init__(self, name: str, description: str, color: int, app: object):
@@ -42,7 +42,7 @@ class Tool(Proxy, ABC):
         try:
             f = open(self.config_file_path)
         except FileNotFoundError:
-            raise Exception("\033[1;31mConfig file not found. Make sure to have it in files/config.json\033[0;0m")
+            raise Exception("\x1B[1;31mConfig file not found. Make sure to have it in files/config.json\x1B[0;0m")
 
         data = f.read()
         f.close()
@@ -59,6 +59,8 @@ class Tool(Proxy, ABC):
         props = x["FunCaptchaSolvers"]
         for prop in props:
             self.captcha_tokens[prop.replace("_token", "")] = props[prop]
+
+        return self.config
 
     def get_random_user_agent(self) -> str:
         """
@@ -164,24 +166,16 @@ class Tool(Proxy, ABC):
         """
         Prints the status of a request
         """
-        print(f"\033[1A\033[K\033[1A\033[K\033[1;32m{action_verb}: {str(req_worked)}\033[0;0m | \033[1;31mFailed: {str(req_failed)}\033[0;0m | \033[1;34mTotal: {str(total_req)}\033[0;0m")
-        print(f"\033[1;32mWorked: {response_text}\033[0;0m" if has_worked else f"\033[1;31mFailed: {response_text}\033[0;0m")
-
-    def setup_signal(self):
-        """
-        Sets up the signal handler for the tool
-        """
-        signal.signal(signal.SIGINT, self.signal_handler)
+        eel.set_stats(f"{action_verb}: {str(req_worked)} | Failed: {str(req_failed)} | Total: {str(total_req)}")
+        eel.write_terminal(f"\x1B[1;32mWorked: {response_text}\x1B[0;0m" if has_worked else f"\x1B[1;31mFailed: {response_text}\x1B[0;0m")
 
     # pylint: disable = unused-argument
-    def signal_handler(self, sig, frame):
+    def signal_handler(self):
         """
         Handles the signal
         """
         if self.executor is not None:
             self.executor.shutdown(wait=True, cancel_futures=True)
-
-        raise KeyboardInterrupt()
 
     def __str__(self) -> str:
         return "A Versatools tool. " + self.description

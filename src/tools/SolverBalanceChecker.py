@@ -1,5 +1,6 @@
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
+import eel
 
 class SolverBalanceChecker(Tool):
     def __init__(self, app):
@@ -12,6 +13,6 @@ class SolverBalanceChecker(Tool):
             captcha_solver = CaptchaSolver(solver_name, self.captcha_tokens[solver_name])
             try:
                 balance = captcha_solver.get_balance()
-                print(f"\033[1;32m{solver_name.title()}: {balance}$\033[0;0m")
+                eel.write_terminal(f"\x1B[1;32m{solver_name.title()}: {balance}$\x1B[0;0m")
             except Exception as e:
-                print(f"\033[1;31m{solver_name.title()}: ERROR {e}\033[0;0m")
+                eel.write_terminal(f"\x1B[1;31m{solver_name.title()}: ERROR {e}\x1B[0;0m")

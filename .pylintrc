@@ -435,7 +435,9 @@ disable=broad-exception-caught,
         wildcard-import,
         protected-access,
         unused-variable,
-        useless-else-on-loop
+        useless-else-on-loop,
+        no-member,
+        missing-function-docstring
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

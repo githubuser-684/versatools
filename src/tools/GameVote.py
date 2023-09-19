@@ -2,6 +2,7 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
+import eel
 
 class GameVote(Tool):
     def __init__(self, app):
@@ -10,19 +11,19 @@ class GameVote(Tool):
     def run(self):
         game_id = input("Game ID to like/dislike: ")
 
-        print("1. Like")
-        print("2. Dislike")
+        eel.write_terminal("1. Like")
+        eel.write_terminal("2. Dislike")
 
         ask_again = True
         while ask_again:
-            choice = input("\033[0;0mEnter your choice: ")
+            choice = input("\x1B[0;0mEnter your choice: ")
 
             if (choice.isnumeric() and int(choice) > 0 and int(choice) < 3):
                 choice = int(choice)
                 ask_again = False
 
             if ask_again:
-                print("\033[0;33mInvalid choice\033[0;0m")
+                eel.write_terminal("\x1B[0;33mInvalid choice\x1B[0;0m")
 
         vote = choice == 1
 
@@ -31,8 +32,6 @@ class GameVote(Tool):
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)
-
-        print("Please wait... \n")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.send_game_vote, game_id, vote, cookie) for cookie in cookies]

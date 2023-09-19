@@ -16,8 +16,6 @@ class FriendRequestBot(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        print("Please wait... \n")
-
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.send_friend_request, user_id, cookie) for cookie in cookies]
 

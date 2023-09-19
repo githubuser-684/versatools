@@ -16,8 +16,6 @@ class StatusChanger(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        print("Please wait... \n")
-
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
 

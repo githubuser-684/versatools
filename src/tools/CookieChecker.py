@@ -22,8 +22,6 @@ class CookieChecker(Tool):
         failed_cookies = 0
         total_cookies = len(cookies)
 
-        print("Please wait... \n ")
-
         # for each line, test the proxy
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]

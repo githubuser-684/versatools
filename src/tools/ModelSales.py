@@ -16,8 +16,6 @@ class ModelSales(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        print("Please wait... \n")
-
         product_id = self.get_product_id(asset_id, cookies[0])
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:

@@ -2,13 +2,14 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
+import eel
 
 class DisplayNameChanger(Tool):
     def __init__(self, app):
         super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
 
     def run(self):
-        print("\033[1;31mWarning: Display names can only be changed once every week\033[0;0m")
+        eel.write_terminal("\x1B[1;31mWarning: Display names can only be changed once every week\x1B[0;0m")
         new_display_name = input("New display name: ")
 
         cookies = self.get_cookies()
@@ -16,8 +17,6 @@ class DisplayNameChanger(Tool):
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)
-
-        print("Please wait... \n")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.change_display_name, new_display_name, cookie) for cookie in cookies]

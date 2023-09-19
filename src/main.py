@@ -1,8 +1,35 @@
 from multiprocessing import freeze_support
 from App import App
+from App import show_menu
+import eel
+from threading import Thread
 
 if __name__ == "__main__":
     freeze_support() # needed for multiprocessing on windows
 
     app = App()
-    app.run()
+
+    @eel.expose
+    def launch_app_tool(tool_name):
+        thread = Thread(target=lambda: app.launch_tool(tool_name))
+        thread.start()
+
+    @eel.expose
+    def stop_current_tool():
+        app.current_tool.signal_handler()
+
+    @eel.expose
+    def get_tool_config(tool_name):
+        return app.get_tool_config(tool_name)
+
+    @eel.expose
+    def set_tool_config(tool_name, config):
+        return app.set_tool_config(tool_name, config)
+
+    # start web app
+    eel.init('src/web')
+    show_menu()
+    app.set_proxies_loaded()
+    app.set_cookies_loaded()
+
+    eel.start('index.html', port=3042, size=(1425, 885))

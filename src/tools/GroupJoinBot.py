@@ -16,8 +16,6 @@ class GroupJoinBot(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        print("Please wait... \n")
-
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.send_group_join_request, self.config["captcha_solver"], group_id, cookie) for cookie in cookies]
 

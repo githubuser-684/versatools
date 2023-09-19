@@ -28,8 +28,6 @@ class ProxyChecker(Tool):
         failed_proxies = 0
         total_proxies = len(lines)
 
-        print("Please wait... \n ")
-
         # for each line, test the proxy
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]

@@ -3,6 +3,7 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
+import eel
 
 class AssetsDownloader(Tool):
     def __init__(self, app):
@@ -15,19 +16,20 @@ class AssetsDownloader(Tool):
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
     def run(self):
-        print("1. Download shirts")
-        print("2. Download pants")
+        eel.write_terminal("1. Download shirts")
+        eel.write_terminal("2. Download pants")
 
         ask_again = True
         while ask_again:
-            choice = input("\033[0;0mEnter your choice: ")
+            choice = eel.input("\x1B[0;0mEnter your choice: ")()
+            print(choice)
 
             if (choice.isnumeric() and int(choice) > 0 and int(choice) < 3):
                 choice = int(choice)
                 ask_again = False
 
             if ask_again:
-                print("\033[0;33mInvalid choice\033[0;0m")
+                eel.write_terminal("\x1B[0;33mInvalid choice\x1B[0;0m")
 
         assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.config["max_generations"])
         directory = self.shirts_files_directory if choice == 1 else self.pants_files_directory
@@ -35,8 +37,6 @@ class AssetsDownloader(Tool):
         req_worked = 0
         req_failed = 0
         total_req = len(assets)
-
-        print("Please wait... \n")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
             results = [self.executor.submit(self.download_asset, asset, directory) for asset in assets]

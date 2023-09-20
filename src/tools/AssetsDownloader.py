@@ -3,7 +3,7 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
-import eel
+import random
 
 class AssetsDownloader(Tool):
     def __init__(self, app):
@@ -16,30 +16,14 @@ class AssetsDownloader(Tool):
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
     def run(self):
-        eel.write_terminal("1. Download shirts")
-        eel.write_terminal("2. Download pants")
-
-        ask_again = True
-        while ask_again:
-            choice = eel.input("\x1B[0;0mEnter your choice: ")()
-            print(choice)
-
-            if (choice.isnumeric() and int(choice) > 0 and int(choice) < 3):
-                choice = int(choice)
-                ask_again = False
-
-            if ask_again:
-                eel.write_terminal("\x1B[0;33mInvalid choice\x1B[0;0m")
-
-        assets = self.get_assets_amount("ClassicShirts" if choice == 1 else "ClassicPants", self.config["max_generations"])
-        directory = self.shirts_files_directory if choice == 1 else self.pants_files_directory
+        assets = self.get_assets_amount(self.config["max_generations"])
 
         req_worked = 0
         req_failed = 0
         total_req = len(assets)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.download_asset, asset, directory) for asset in assets]
+            results = [self.executor.submit(self.download_asset, asset) for asset in assets]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -72,26 +56,37 @@ class AssetsDownloader(Tool):
 
         return data, cursor
 
-    def get_assets_amount(self, asset_name, amount):
+    def get_assets_amount(self,  amount):
         """
         Get x amount of assets
         """
         assets = []
-        cursor = None
+        shirt_cursor = None
+        pants_cursor = None
 
         while len(assets) < amount:
-            data, cursor = self.get_assets_page(asset_name, cursor)
+            data, shirt_cursor = self.get_assets_page("ClassicShirts", shirt_cursor)
+            for asset in data:
+                asset["shirt"] = True
+    
+            assets += data
+
+            data, pants_cursor = self.get_assets_page("ClassicPants", pants_cursor)
 
             assets += data
+            random.shuffle(assets)
 
         assets = assets[:amount]
         return assets
 
     @Utils.retry_on_exception()
-    def download_asset(self, asset, directory):
+    def download_asset(self, asset):
         """
         Download an asset
         """
+        # get directory
+        directory = self.shirts_files_directory if asset.get("shirt") else self.pants_files_directory
+
         asset_id = asset["id"]
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
 

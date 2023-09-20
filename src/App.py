@@ -46,6 +46,7 @@ class App():
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")
         self.config_file_path = os.path.join(self.files_directory, "config.json")
 
+        self.ensure_config_file_exists()
         self.tools = [t(self) for t in Tool.__subclasses__()]
         self.current_tool = None
         self.selected_tool = None
@@ -54,7 +55,6 @@ class App():
 
         Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
         Utils.ensure_files_exist([self.proxies_file_path, self.cookies_file_path])
-        self.ensure_config_file_exists()
 
         self.start_watching_files() # used for syncing config changes with UI
 

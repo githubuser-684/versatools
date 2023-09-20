@@ -2,7 +2,7 @@ from watchdog.events import FileSystemEventHandler
 
 class FilesChangeHandler(FileSystemEventHandler):
     """
-    Handles config file changes
+    Handles files/* changes
     """
     def __init__(self, app):
         self.app = app

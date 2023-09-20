@@ -209,6 +209,7 @@ function input() {
 eel.expose(set_ui_tool_config);
 function set_ui_tool_config(newConfig) {
 	app.set_tool_config(newConfig);
+	console.log("ui config updated");
 }
 
 eel.expose(set_stats);
@@ -221,12 +222,14 @@ eel.expose(set_proxies_loaded);
 function set_proxies_loaded(amount) {
 	const amountEl = document.getElementById("proxies-loaded");
 	amountEl.innerHTML = amount;
+	console.log(amount + " proxies loaded");
 }
 
 eel.expose(set_cookies_loaded);
 function set_cookies_loaded(amount) {
 	const amountEl = document.getElementById("cookies-loaded");
 	amountEl.innerHTML = amount;
+	console.log(amount + " cookies loaded");
 }
 
 eel.expose(tool_finished);

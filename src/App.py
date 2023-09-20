@@ -50,8 +50,8 @@ class App():
         self.tools = [t(self) for t in Tool.__subclasses__()]
         self.current_tool = None
         self.selected_tool = None
-        self.proxies_loaded = 0
-        self.cookies_loaded = 0
+        self.proxies_loaded = None
+        self.cookies_loaded = None
 
         Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
         Utils.ensure_files_exist([self.proxies_file_path, self.cookies_file_path])
@@ -67,7 +67,6 @@ class App():
             raise Exception("Tool not found")
 
         self.current_tool = tool
-        tool.load_config()
 
         try:
             tool.run()

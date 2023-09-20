@@ -26,6 +26,7 @@ class Gen2018Acc(Tool):
         username = followers[random.randint(0, len(followers)-1)]["name"]
 
         eel.write_terminal(f"\x1B[1;32m2018 Account Generated: {username}:{default_pass}\x1B[0;0m")
+        eel.tool_finished()
 
     @Utils.retry_on_exception()
     def get_followers_count(self, user_id):

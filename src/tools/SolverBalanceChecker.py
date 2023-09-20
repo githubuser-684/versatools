@@ -16,3 +16,5 @@ class SolverBalanceChecker(Tool):
                 eel.write_terminal(f"\x1B[1;32m{solver_name.title()}: {balance}$\x1B[0;0m")
             except Exception as e:
                 eel.write_terminal(f"\x1B[1;31m{solver_name.title()}: ERROR {e}\x1B[0;0m")
+
+        eel.tool_finished()

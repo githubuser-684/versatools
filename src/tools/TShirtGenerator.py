@@ -59,3 +59,4 @@ class TShirtGenerator(Tool):
 
         eel.write_terminal("Image label: " + image_label)
         eel.write_terminal("\x1B[0;32m" + query + " t-shirt was saved in files folder as rblx-t-shirt.png\x1B[0;0m")
+        eel.tool_finished()

@@ -46,8 +46,6 @@ class App():
         self.cookies_file_path = os.path.join(self.files_directory, "cookies.txt")
         self.config_file_path = os.path.join(self.files_directory, "config.json")
 
-        self.ensure_config_file_exists()
-        self.tools = [t(self) for t in Tool.__subclasses__()]
         self.current_tool = None
         self.selected_tool = None
         self.proxies_loaded = None
@@ -55,6 +53,9 @@ class App():
 
         Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
         Utils.ensure_files_exist([self.proxies_file_path, self.cookies_file_path])
+
+        self.ensure_config_file_exists()
+        self.tools = [t(self) for t in Tool.__subclasses__()]
 
         self.start_watching_files() # used for syncing config changes with UI
 
@@ -117,9 +118,12 @@ class App():
         tool.config = tool_config
 
         # update config file
-        with open(self.config_file_path, "w") as json_file:
-            config[tool.name.replace(" ", "")] = tool.config
-            ordered_config = dict(sorted(config.items(), key=lambda x: x[0]))
+        with open(self.config_file_path, "r+") as json_file:
+            file_config = json.load(json_file)
+            file_config[tool.name.replace(" ", "")] = tool.config
+            ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
+            json_file.seek(0)
+            json_file.truncate()
             json.dump(ordered_config, json_file, indent=4)
 
     def set_tool_config_ui(self):

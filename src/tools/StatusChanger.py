@@ -8,8 +8,7 @@ class StatusChanger(Tool):
         super().__init__("Status Changer", "Change the status of a large number of accounts", 7, app)
 
     def run(self):
-        new_status = input("New status: ")
-
+        new_status = self.config["new_status"]
         cookies = self.get_cookies()
 
         req_worked = 0

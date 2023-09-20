@@ -8,8 +8,7 @@ class ModelSales(Tool):
         super().__init__("Model Sales", "Buy your Roblox models tons of times", 3, app)
 
     def run(self):
-        asset_id = input("Asset ID to buy: ")
-
+        asset_id = self.config["asset_id"]
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0

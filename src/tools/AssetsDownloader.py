@@ -68,7 +68,7 @@ class AssetsDownloader(Tool):
             data, shirt_cursor = self.get_assets_page("ClassicShirts", shirt_cursor)
             for asset in data:
                 asset["shirt"] = True
-    
+
             assets += data
 
             data, pants_cursor = self.get_assets_page("ClassicPants", pants_cursor)

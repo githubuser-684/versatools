@@ -88,10 +88,16 @@ class WebApp {
 			btnRun.classList.remove("btn--success");
 			btnRun.classList.add("btn--danger");
 		} else {
-			btnRun.innerHTML = "START";
-			btnRun.classList.remove("btn--danger");
-			btnRun.classList.add("btn--success");
+			this.finishedRun();
 		}
+	}
+
+	finishedRun() {
+		const btnRun = document.getElementById("btn-run");
+
+		btnRun.innerHTML = "START";
+		btnRun.classList.remove("btn--danger");
+		btnRun.classList.add("btn--success");
 	}
 
 	async setupSelectTools() {
@@ -221,4 +227,9 @@ eel.expose(set_cookies_loaded);
 function set_cookies_loaded(amount) {
 	const amountEl = document.getElementById("cookies-loaded");
 	amountEl.innerHTML = amount;
+}
+
+eel.expose(tool_finished);
+function tool_finished() {
+	app.finishedRun();
 }

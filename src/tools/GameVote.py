@@ -2,31 +2,14 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
-import eel
 
 class GameVote(Tool):
     def __init__(self, app):
         super().__init__("Game Vote", "Increase Like/Dislike count of a game", 1, app)
 
     def run(self):
-        game_id = input("Game ID to like/dislike: ")
-
-        eel.write_terminal("1. Like")
-        eel.write_terminal("2. Dislike")
-
-        ask_again = True
-        while ask_again:
-            choice = input("\x1B[0;0mEnter your choice: ")
-
-            if (choice.isnumeric() and int(choice) > 0 and int(choice) < 3):
-                choice = int(choice)
-                ask_again = False
-
-            if ask_again:
-                eel.write_terminal("\x1B[0;33mInvalid choice\x1B[0;0m")
-
-        vote = choice == 1
-
+        game_id = self.config["game_id"]
+        vote = not self.config["dislike"]
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0

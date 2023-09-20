@@ -10,8 +10,7 @@ class DisplayNameChanger(Tool):
 
     def run(self):
         eel.write_terminal("\x1B[1;31mWarning: Display names can only be changed once every week\x1B[0;0m")
-        new_display_name = input("New display name: ")
-
+        new_display_name = self.config["new_display_name"]
         cookies = self.get_cookies()
 
         req_sent = 0

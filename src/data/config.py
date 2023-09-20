@@ -5,6 +5,7 @@ config = {
         "max_workers": None
     },
     "CommentBot": {
+        "asset_id": 0,
         "max_generations": 1000,
         "captcha_solver": "capbypass",
         "use_proxy": True,
@@ -30,22 +31,27 @@ config = {
         "max_workers": None
     },
     "DisplayNameChanger": {
+        "new_display_name": "VersatoolsBEST",
         "use_proxy": True,
         "max_workers": None
     },
     "FavoriteBot": {
+        "asset_id": 0,
+        "unfavorite": False,
         "max_generations": 500,
         "use_proxy": True,
         "max_workers": 50,
         "timeout": 0
     },
     "FollowBot": {
+        "user_id": 1,
         "max_generations": 100,
         "captcha_solver": "capbypass",
         "use_proxy": True,
         "max_workers": 50
     },
     "FriendRequestBot": {
+        "user_id": 1,
         "max_generations": 1000,
         "use_proxy": True,
         "max_workers": None
@@ -63,6 +69,8 @@ config = {
         "capbypass": "xx"
     },
     "GameVote": {
+        "game_id": 0,
+        "dislike": False,
         "max_generations": 100,
         "use_proxy": True,
         "max_workers": None
@@ -71,16 +79,22 @@ config = {
         "use_proxy": False
     },
     "GroupJoinBot": {
+        "group_id": 0,
         "max_generations": 100,
         "captcha_solver": "capbypass",
         "use_proxy": True,
         "max_workers": 50
     },
     "MessageBot": {
+        "recipient_id": 1,
+        "subject": "Hello",
+        "body": "Hey there! I'm a bot :D\n\nCan you please follow me?",
+        "max_generations": 100,
         "use_proxy": True,
         "max_workers": None
     },
     "ModelSales": {
+        "asset_id": 0,
 		"max_generations": 100,
 		"use_proxy": True,
 		"max_workers": None
@@ -91,10 +105,12 @@ config = {
         "max_workers": None
     },
     "StatusChanger": {
+        "new_status": "Hello I'm a bot :D",
         "use_proxy": True,
         "max_workers": None
     },
     "T-ShirtGenerator": {
+        "query": "elon musk",
         "//image_search_api_url": "https://rapidapi.com/emailmatteoutile/api/image-search-api2",
         "image_search_api_key": "xx"
     }

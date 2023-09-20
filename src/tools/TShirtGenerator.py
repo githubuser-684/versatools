@@ -16,8 +16,7 @@ class TShirtGenerator(Tool):
 
     def run(self):
         image_search_api_key = self.config["image_search_api_key"]
-
-        query = input("Enter your query for the t-shirt: ")
+        query = self.config["query"]
 
         # get image url
         url = "https://image-search-api2.p.rapidapi.com/image-search"

@@ -8,8 +8,7 @@ class FriendRequestBot(Tool):
         super().__init__("Friend Request Bot", "Send a lot of friend requests to a user", 5, app)
 
     def run(self):
-        user_id = input("User ID to send friend requests to: ")
-
+        user_id = self.config["user_id"]
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0

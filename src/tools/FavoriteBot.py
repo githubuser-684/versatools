@@ -9,9 +9,8 @@ class FavoriteBot(Tool):
         super().__init__("Favorite Bot", "Increase/Decrease stars count of an asset", 2, app)
 
     def run(self):
-        asset_id = input("Asset ID to favorite/unfavorite: ")
-        unfavorite = input('Enter "a" to unfavorite: ') == "a"
-
+        asset_id = self.config["asset_id"]
+        unfavorite = self.config["unfavorite"]
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_sent = 0

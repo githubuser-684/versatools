@@ -3,44 +3,23 @@ from Tool import Tool
 import concurrent.futures
 from utils import Utils
 import random
-import eel
 
 class MessageBot(Tool):
     def __init__(self, app):
-        super().__init__("Message Bot", "Spam someone with the same message or send messages to a large audience", 6, app)
+        super().__init__("Message Bot", "Spam someone with the same message", 6, app)
 
     def run(self):
-        eel.write_terminal("Write the message you want to send.")
-        subject = input("Subject: ")
-        body = input("Body: ")
+        subject = self.config["subject"]
+        body = self.config["body"]
 
-        eel.write_terminal("1. Spam a specific user")
-        eel.write_terminal("2. Send to a large audience")
-
-        askAgain = True
-        while askAgain:
-            choice = input("\x1B[0;0mEnter your choice: ")
-
-            if (choice.isnumeric() and int(choice) > 0 and int(choice) < 3):
-                choice = int(choice)
-                askAgain = False
-
-            if askAgain:
-                eel.write_terminal("\x1B[0;33mInvalid choice\x1B[0;0m")
-
-        if choice == 1:
-            self.spam_specific_user(subject, body)
-
-        if choice == 2:
-            eel.write_terminal("Sorry, this feature is not available yet.")
+        self.spam_specific_user(subject, body)
 
     def spam_specific_user(self, subject, body):
         """
         Spam a specific user with the same message
         """
-        recipient_id = input("Recipient ID: ")
-
-        cookies = self.get_cookies()
+        recipient_id = self.config["recipient_id"]
+        cookies = self.get_cookies(self.config["max_generations"])
 
         msg_sent = 0
         msg_failed = 0

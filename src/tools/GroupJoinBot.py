@@ -8,8 +8,7 @@ class GroupJoinBot(Tool):
         super().__init__("Group Join Bot", "Enhance the size of your group members", 7, app)
 
     def run(self):
-        group_id = input("Group ID to increase members count: ")
-
+        group_id = self.config["group_id"]
         cookies = self.get_cookies(self.config["max_generations"])
 
         req_worked = 0

@@ -164,6 +164,11 @@ h2 {
 	flex-direction: column;
 }
 
+.select-container {
+	display: inline-block;
+	position: relative;
+}
+
 .cool-select {
 	background-color: var(--c-dark);
 	color: var(--c-white);
@@ -172,6 +177,21 @@ h2 {
 	margin: 0px;
 	border-radius: 8px;
 	width: 250px;
+	outline: none;
+	cursor: pointer;
+
+	/* remove current arrow icon */
+	appearance: none;
+}
+
+.arrow-icon {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 14px;
+	filter: invert(98%) sepia(3%) saturate(23%) hue-rotate(30deg) brightness(105%) contrast(73%);
+	pointer-events: none;
 }
 
 .btn {
@@ -182,6 +202,7 @@ h2 {
 	font-weight: bold;
 	border-radius: 9px;
 	cursor: pointer;
+	outline: none;
 }
 
 .btn--success {
@@ -189,9 +210,17 @@ h2 {
 	color: var(--c-dark);
 }
 
+.btn--success:hover {
+	background-color: #e6ac27;
+}
+
 .btn--danger {
 	background-color: #8b0000;
 	color: var(--c-white);
+}
+
+.btn--danger:hover {
+	background-color: #730000;
 }
 
 .divide-exploit {

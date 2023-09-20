@@ -49,7 +49,7 @@ python -m unittest discover src
 To package the program into an exe:
 
 ```bash
-pyinstaller src/main.py --icon="icon.ico"
+python -m eel src/main.py src/web --windowed --icon="icon.ico"
 ```
 
 ## File templates

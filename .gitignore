@@ -4,3 +4,4 @@ __pycache__
 .versacache
 files
 setup.iss
+main.spec

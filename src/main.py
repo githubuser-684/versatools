@@ -1,3 +1,11 @@
+# fix: https://stackoverflow.com/questions/75232011/why-does-exe-built-using-pyinstaller-isnt-working
+import sys
+import io
+
+buffer = io.StringIO()
+sys.stdout = sys.stderr = buffer
+
+# pylint: disable=wrong-import-position
 from multiprocessing import freeze_support
 from App import App
 from App import show_menu

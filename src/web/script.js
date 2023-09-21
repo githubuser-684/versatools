@@ -84,6 +84,8 @@ class WebApp {
 		const btnRun = document.getElementById("btn-run");
 
 		if (this.runState) {
+			set_stats(""); // clear stats
+
 			btnRun.innerHTML = "STOP";
 			btnRun.classList.remove("btn--success");
 			btnRun.classList.add("btn--danger");

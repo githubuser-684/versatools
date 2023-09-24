@@ -10,6 +10,7 @@ import time
 from watchdog.observers import Observer
 from threading import Thread
 from FilesChangeHandler import FilesChangeHandler
+import traceback
 
 @eel.expose
 def get_tools_info():
@@ -74,6 +75,8 @@ class App():
         except KeyboardInterrupt:
             return
         except Exception as err:
+            traceback_str = traceback.format_exc()
+            eel.write_terminal(traceback_str)
             eel.write_terminal(f"\x1B[1;31m{str(err)}\x1B[0;0m")
             return
 

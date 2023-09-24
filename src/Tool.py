@@ -84,20 +84,6 @@ class Tool(Proxy, ABC):
 
         return csrf_token
 
-    def get_roblox_headers(self, user_agent, csrf_token = None, content_type = None):
-        """
-        Returns a dict of headers for Roblox requests
-        """
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
-
-        if content_type is not None:
-            req_headers["Content-Type"] = content_type
-
-        if csrf_token is not None:
-            req_headers["X-Csrf-Token"] = csrf_token
-
-        return req_headers
-
     def get_user_info(self, cookie, proxies, user_agent):
         """
         Gets the user info from the Roblox API

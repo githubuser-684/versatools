@@ -6,9 +6,12 @@ import capsolver
 from utils import Suppressor, Utils
 import httpx
 from urllib.parse import unquote
+from Proxy import Proxy
 
-class CaptchaSolver:
+class CaptchaSolver(Proxy):
     def __init__(self, captcha_service:str, api_key:str):
+        super().__init__()
+
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
@@ -24,7 +27,7 @@ class CaptchaSolver:
 
         return public_key
 
-    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, proxies:dict = None) -> httpx.Response:
+    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, proxies:dict = None, challenge_continue = False) -> httpx.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -132,11 +135,22 @@ class CaptchaSolver:
         metadata = f"{{\"unifiedCaptchaId\":\"{unified_captcha_id}\",\"captchaToken\":\"{token}\",\"actionType\":\"{rblx_metadata['actionType']}\"}}"
         metadata_base64 = base64.b64encode(metadata.encode()).decode()
 
+        # get headers from response
+        req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
+        del req_headers["content-length"]
+
+        if challenge_continue:
+            req_url = "https://apis.roblox.com/challenge/v1/continue"
+            ua = req_headers["user-agent"]
+            csrf_token = req_headers["x-csrf-token"]
+            continue_headers = self.get_roblox_headers(ua, csrf_token)
+            req_json={"challengeId": rblx_challenge_id, "challengeMetadata": metadata, "challengeType": "captcha"}
+
+            httpx.post(req_url, headers=continue_headers, json=req_json, proxies=proxies)
+
         # send request again but with captcha token
         req_url = str(response.request.url)
 
-        req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
-        del req_headers["content-length"]
         req_headers['Rblx-Challenge-Id'] = rblx_challenge_id
         req_headers["Rblx-Challenge-Type"] = "captcha"
         req_headers["Rblx-Challenge-Metadata"] = metadata_base64

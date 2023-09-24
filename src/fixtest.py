@@ -1,4 +1,5 @@
 import httpx
+import concurrent.futures
 
 
 def get_roblox_headers(user_agent, csrf_token = None, content_type = None):
@@ -15,20 +16,19 @@ def get_roblox_headers(user_agent, csrf_token = None, content_type = None):
 
     return req_headers
 
+def run_test():
+    proxies = None
+    req_headers = get_roblox_headers("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
 
+    req_url = "https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory=ClassicShirts"
 
+    response = httpx.get(req_url, headers=req_headers, proxies=proxies)
+    result = response.json()
 
+    print("data found: "+ str(len(result['data'])))
 
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    results = [executor.submit(run_test) for x in range(2)]
 
-proxies = None
-req_headers = get_roblox_headers("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
-
-
-req_url = "https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory=ClassicShirts"
-
-
-
-response = httpx.get(req_url, headers=req_headers, proxies=proxies)
-result = response.json()
-
-print("data found: "+ str(len(result['data'])))
+    for future in concurrent.futures.as_completed(results):
+        future.result()

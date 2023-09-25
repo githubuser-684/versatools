@@ -155,9 +155,6 @@ class Tool(Proxy, ABC):
         eel.set_stats(f"{action_verb}: {str(req_worked)} | Failed: {str(req_failed)} | Total: {str(total_req)}")
         eel.write_terminal(f"\x1B[1;32mWorked: {response_text}\x1B[0;0m" if has_worked else f"\x1B[1;31mFailed: {response_text}\x1B[0;0m")
 
-        if req_worked + req_failed == total_req:
-            eel.tool_finished()
-
     # pylint: disable = unused-argument
     def signal_handler(self):
         """

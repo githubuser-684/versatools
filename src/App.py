@@ -78,7 +78,8 @@ class App():
             traceback_str = traceback.format_exc()
             eel.write_terminal(traceback_str)
             eel.write_terminal(f"\x1B[1;31m{str(err)}\x1B[0;0m")
-            return
+
+        eel.tool_finished()
 
     def get_tool_from_name(self, tool_name):
         """

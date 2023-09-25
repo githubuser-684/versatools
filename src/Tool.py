@@ -3,9 +3,9 @@ import random
 import httpx
 from abc import ABC, abstractmethod
 from Proxy import Proxy
-from fake_useragent import UserAgent
 from utils import Utils
 import eel
+from data.useragents import useragents
 
 class Tool(Proxy, ABC):
     def __init__(self, name: str, description: str, color: int, app: object):
@@ -66,8 +66,7 @@ class Tool(Proxy, ABC):
         """
         Generates a random user agent
         """
-        ua = UserAgent(use_external_data=True)
-        return ua.random
+        return random.choice(useragents)
 
     def get_csrf_token(self, proxies:dict = None, cookie:str = None) -> str:
         """

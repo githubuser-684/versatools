@@ -85,4 +85,12 @@ or you can decide to not specify the type of proxy and let the proxy checker che
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline)](https://star-history.com/#garryybd/versatools&Timeline)
+## Star History
+
+<a href="https://star-history.com/#garryybd/versatools&Timeline">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline" />
+  </picture>
+</a>

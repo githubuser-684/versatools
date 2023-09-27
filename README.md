@@ -82,3 +82,7 @@ or you can decide to not specify the type of proxy and let the proxy checker che
 8.8.8.8:5002
 8.8.8.8:5003:username:password
 ```
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline)](https://star-history.com/#garryybd/versatools&Timeline)

@@ -1,5 +1,6 @@
 config = {
     "AssetsDownloader": {
+        "remove_trademark": True,
         "max_generations": 20,
         "use_proxy": False,
         "max_workers": None

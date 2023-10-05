@@ -4,6 +4,7 @@ from Tool import Tool
 import concurrent.futures
 from utils import Utils
 import random
+from PIL import Image
 
 class AssetsDownloader(Tool):
     def __init__(self, app):
@@ -12,6 +13,8 @@ class AssetsDownloader(Tool):
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
         self.shirts_files_directory = os.path.join(self.files_directory, "./assets/shirts")
         self.pants_files_directory = os.path.join(self.files_directory, "./assets/pants")
+
+        self.cache_template_path = os.path.join(self.cache_directory, "asset-template.png")
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
@@ -99,6 +102,23 @@ class AssetsDownloader(Tool):
 
         with open(asset_path, 'wb') as f:
             f.write(image)
-            f.flush()
+
+        if self.config["remove_trademark"]:
+            self.remove_trademark(asset_path)
 
         return True, "Generated in files/assets"
+
+    def remove_trademark(self, asset_path):
+        self.ensure_template_exists()
+
+        trademarked_img = Image.open(asset_path)
+        template = Image.open(self.cache_template_path)
+
+        trademarked_img.paste(template, (0,0), mask = template)
+        trademarked_img.save(asset_path)
+
+    def ensure_template_exists(self):
+        if not os.path.exists(self.cache_template_path):
+            with open(self.cache_template_path, 'wb') as f:
+                png = httpx.get(f'https://rofuel.com/wp-content/uploads/2023/10/shirt.png').content
+                f.write(png)

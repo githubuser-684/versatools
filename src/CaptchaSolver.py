@@ -27,7 +27,7 @@ class CaptchaSolver(Proxy):
 
         return public_key
 
-    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, proxies:dict = None, challenge_continue = False) -> httpx.Response:
+    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, proxies:dict = None) -> httpx.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -139,14 +139,14 @@ class CaptchaSolver(Proxy):
         req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
         del req_headers["content-length"]
 
-        if challenge_continue:
-            req_url = "https://apis.roblox.com/challenge/v1/continue"
-            ua = req_headers["user-agent"]
-            csrf_token = req_headers["x-csrf-token"]
-            continue_headers = self.get_roblox_headers(ua, csrf_token)
-            req_json={"challengeId": rblx_challenge_id, "challengeMetadata": metadata, "challengeType": "captcha"}
+        # challenge_continue
+        req_url = "https://apis.roblox.com/challenge/v1/continue"
+        ua = req_headers["user-agent"]
+        csrf_token = req_headers["x-csrf-token"]
+        continue_headers = self.get_roblox_headers(ua, csrf_token)
+        req_json={"challengeId": rblx_challenge_id, "challengeMetadata": metadata, "challengeType": "captcha"}
 
-            httpx.post(req_url, headers=continue_headers, json=req_json, proxies=proxies)
+        httpx.post(req_url, headers=continue_headers, json=req_json, proxies=proxies)
 
         # send request again but with captcha token
         req_url = str(response.request.url)

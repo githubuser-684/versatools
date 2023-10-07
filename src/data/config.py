@@ -5,6 +5,13 @@ config = {
         "use_proxy": False,
         "max_workers": None
     },
+    "AssetsUploader": {
+        "cookie": "_|WARNING:",
+        "robux_price": 5,
+        "group_id": 0,
+        "use_proxy": False,
+        "max_workers": None
+    },
     "CommentBot": {
         "asset_id": 0,
         "max_generations": 1000,

@@ -52,7 +52,7 @@ class Utils():
                         if "Expecting value: line" in err:
                             err = "JSON decode error. Probably that cookie is invalid"
                 else:
-                    raise Exception(f"Error {err} while running {func.__name__}. Tried {retries} times")
+                    raise Exception(f"Error {err}. Tried running {func.__name__} {retries} times")
             return wrapper
         return decorator
 

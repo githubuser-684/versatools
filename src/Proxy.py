@@ -151,11 +151,14 @@ class Proxy(ABC):
 
         return proxies
 
-    def get_roblox_headers(self, user_agent, csrf_token = None, content_type = None):
+    def get_roblox_headers(self, user_agent = None, csrf_token = None, content_type = None):
         """
         Returns a dict of headers for Roblox requests
         """
-        req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+        req_headers = {"Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
+
+        if user_agent is not None:
+            req_headers["User-Agent"] = user_agent
 
         if content_type is not None:
             req_headers["Content-Type"] = content_type

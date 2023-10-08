@@ -55,7 +55,7 @@ class App():
         Utils.ensure_directories_exist([self.cache_directory, self.files_directory])
         Utils.ensure_files_exist([self.proxies_file_path, self.cookies_file_path])
 
-        self.ensure_config_file_exists()
+        self.ensure_config_file()
         self.tools = [t(self) for t in Tool.__subclasses__()]
 
         self.start_watching_files() # used for syncing config changes with UI
@@ -101,15 +101,30 @@ class App():
 
         return tool.config
 
-    def ensure_config_file_exists(self):
+    def ensure_config_file(self):
         """
-        Ensure config file exists.
-        If doesn't exist, create it with default config
+        Ensure config file exists and is valid
         """
         config_file_path = os.path.join(self.files_directory, "config.json")
+        # make sure config file exists
         if not os.path.exists(config_file_path):
             with open(config_file_path, "w") as json_file:
                 ordered_config = dict(sorted(config.items(), key=lambda x: x[0]))
+                json.dump(ordered_config, json_file, indent=4)
+        else:
+            # make sure config file contains all keys
+            with open(config_file_path, "r+") as json_file:
+                file_config = json.load(json_file)
+                for key in config:
+                    if key not in file_config:
+                        file_config[key] = config[key]
+                    
+                    for subkey in config[key]:
+                        if subkey not in file_config[key]:
+                            file_config[key][subkey] = config[key][subkey]
+                ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
+                json_file.seek(0)
+                json_file.truncate()
                 json.dump(ordered_config, json_file, indent=4)
 
     def set_tool_config(self, tool_name, tool_config):

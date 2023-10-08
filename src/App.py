@@ -118,10 +118,14 @@ class App():
                 for key in config:
                     if key not in file_config:
                         file_config[key] = config[key]
-                    
-                    for subkey in config[key]:
-                        if subkey not in file_config[key]:
-                            file_config[key][subkey] = config[key][subkey]
+                    else:
+                        for subkey in config[key]:
+                            if subkey not in file_config[key]:
+                                file_config[key][subkey] = config[key][subkey]
+                            
+                            # make sure subkeys starting with // are not overwritten
+                            if subkey.startswith("//"):
+                                file_config[key][subkey] = config[key][subkey]
                 ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
                 json_file.seek(0)
                 json_file.truncate()

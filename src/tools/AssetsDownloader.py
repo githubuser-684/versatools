@@ -19,6 +19,9 @@ class AssetsDownloader(Tool):
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
     def run(self):
+        if self.config["sort"] not in self.config["//sorts"]:
+            raise Exception(f"Invalid sort config key \"{self.config['sort']}\"")
+
         assets = self.get_assets_amount(self.config["max_generations"])
 
         req_worked = 0
@@ -49,10 +52,61 @@ class AssetsDownloader(Tool):
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
 
-        req_url = f"https://catalog.roblox.com/v1/search/items?category=Clothing&limit=120&minPrice=5&salesTypeFilter=1&sortAggregation=1&sortType=2&subcategory={asset_name}{'&cursor='+cursor if cursor else ''}"
-        req_headers = self.get_roblox_headers(user_agent)
+        salesTypeFilter = None
+        sortAggregation = None
+        sortType = None
 
-        response = httpx.get(req_url, headers=req_headers, proxies=proxies)
+        if self.config["sort"] == "relevance":
+            salesTypeFilter = 1
+        elif self.config["sort"] == "favouritedalltime":
+            salesTypeFilter = 1
+            sortAggregation = 5
+            sortType = 1
+        elif self.config["sort"] == "favouritedallweek":
+            salesTypeFilter = 1
+            sortAggregation = 3
+            sortType = 1
+        elif self.config["sort"] == "favouritedallday":
+            salesTypeFilter = 1
+            sortAggregation = 1
+            sortType = 1
+        elif self.config["sort"] == "bestsellingalltime":
+            salesTypeFilter = 1
+            sortAggregation = 5
+            sortType = 2
+        elif self.config["sort"] == "bestsellingweek":
+            salesTypeFilter = 1
+            sortAggregation = 3
+            sortType = 2
+        elif self.config["sort"] == "bestsellingday":
+            salesTypeFilter = 1
+            sortAggregation = 1
+            sortType = 2
+        elif self.config["sort"] == "recentlycreated":
+            salesTypeFilter = 1
+            sortType = 3
+        elif self.config["sort"] == "pricehightolow":
+            salesTypeFilter = 1
+            sortType = 5
+        elif self.config["sort"] == "pricelowtohigh":
+            salesTypeFilter = 1
+            sortType = 4
+
+        req_url = f"https://catalog.roblox.com/v1/search/items"
+        req_headers = self.get_roblox_headers(user_agent)
+        req_params = {
+            "category": "Clothing",
+            "limit": 120,
+            "minPrice": 5,
+            "salesTypeFilter": salesTypeFilter,
+            "sortAggregation": sortAggregation,
+            "sortType": sortType,
+            "subcategory": asset_name,
+            "cursor": cursor,
+            "keyword": self.config["keyword"]
+        }
+
+        response = httpx.get(req_url, headers=req_headers, params=req_params, proxies=proxies)
         result = response.json()
         data = result["data"]
         cursor = result["nextPageCursor"]

@@ -1,6 +1,9 @@
 config = {
     "AssetsDownloader": {
         "remove_trademark": True,
+        "//sorts": ["relevance", "favouritedalltime", "favouritedallweek", "favouritedallday", "bestsellingalltime", "bestsellingweek", "bestsellingday", "recentlycreated", "pricehightolow", "pricelowtohigh"],
+        "sort": "relevance",
+        "keyword": "red",
         "max_generations": 20,
         "use_proxy": False,
         "max_workers": None

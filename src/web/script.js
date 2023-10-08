@@ -1,4 +1,4 @@
-const discordInvite = "https://discord.gg/nUMAAWwhK6";
+const discordInvite = "https://discord.gg/hBCqFHV3cC";
 
 class WebApp {
 	constructor() {

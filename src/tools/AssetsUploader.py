@@ -56,7 +56,7 @@ class AssetsUploader(Tool):
 
         req_json = {
             "displayName": asset_name,
-            "description": asset_type.title(),
+            "description": self.config["description"],
             "assetType": "Shirt" if asset_type == "shirt" else "Pants",
             "creationContext":{
                 "creator": {

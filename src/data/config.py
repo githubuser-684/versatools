@@ -8,6 +8,7 @@ config = {
     "AssetsUploader": {
         "cookie": "_|WARNING:",
         "robux_price": 5,
+        "description": "Made by a goat (me)",
         "group_id": 0,
         "use_proxy": False,
         "max_workers": None

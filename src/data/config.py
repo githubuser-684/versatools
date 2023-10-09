@@ -15,7 +15,7 @@ config = {
         "group_id": 0,
         "use_proxy": False,
         "max_workers": None,
-        "timeout": 1
+        "timeout": 45
     },
     "CommentBot": {
         "asset_id": 0,

@@ -151,6 +151,9 @@ class Tool(Proxy, ABC):
         """
         Prints the status of a request
         """
+        if has_worked is False and "Expecting value: line" in response_text:
+            response_text = "JSON decode error. Cookie is invalid OR Rate limit"
+
         eel.set_stats(f"{action_verb}: {str(req_worked)} | Failed: {str(req_failed)} | Total: {str(total_req)}")
         eel.write_terminal(f"\x1B[1;32mWorked: {response_text}\x1B[0;0m" if has_worked else f"\x1B[1;31mFailed: {response_text}\x1B[0;0m")
 

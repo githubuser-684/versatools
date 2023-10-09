@@ -112,9 +112,9 @@ class AssetsUploader(Tool):
         csrf_token = self.get_csrf_token(proxies, self.config["cookie"])
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         
-        req = requests.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+        response = requests.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
-        return True, req.text
+        return (response.status_code == 200), response.text
 
     @Utils.retry_on_exception()
     def get_asset_id(self, operationId):

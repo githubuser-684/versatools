@@ -50,7 +50,7 @@ class Utils():
                     except Exception as e:
                         err = str(e)
                         if "Expecting value: line" in err:
-                            err = "JSON decode error. Probably that cookie is invalid"
+                            err = "JSON decode error. Cookie is invalid OR Rate limit"
                 else:
                     raise Exception(f"Error {err}. Tried running {func.__name__} {retries} times")
             return wrapper

@@ -6,8 +6,7 @@ config = {
         "keyword": "red",
         "max_generations": 20,
         "use_proxy": False,
-        "max_workers": None,
-        "timeout": 1
+        "max_workers": None
     },
     "AssetsUploader": {
         "cookie": "_|WARNING:",
@@ -15,7 +14,8 @@ config = {
         "description": "Made by a goat (me)",
         "group_id": 0,
         "use_proxy": False,
-        "max_workers": None
+        "max_workers": None,
+        "timeout": 1
     },
     "CommentBot": {
         "asset_id": 0,

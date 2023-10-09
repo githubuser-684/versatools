@@ -143,6 +143,9 @@ h2 {
 }
 
 .container {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 60px);
 	margin: 30px;
 }
 
@@ -260,8 +263,13 @@ h2 {
 	}
 }
 
+.config-part {
+	flex: 1;
+	min-height: 200px;
+}
+
 .json-editor {
 	display: block;
 	width: auto;
-	height: 200px;
+	height: 100%;
 }

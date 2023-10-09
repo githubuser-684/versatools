@@ -113,6 +113,13 @@ config = {
 		"use_proxy": True,
 		"max_workers": None
 	},
+    "ModelVote": {
+        "model_id": 0,
+        "dislike": False,
+        "max_generations": 100,
+        "use_proxy": True,
+        "max_workers": None
+    },
     "ProxyChecker": {
         "delete_failed_proxies": True,
         "timeout": 2,

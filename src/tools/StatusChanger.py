@@ -47,4 +47,4 @@ class StatusChanger(Tool):
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, data=req_data, proxies=proxies)
 
-        return (response.status_code == 200), response.text
+        return (response.status_code == 200), Utils.return_res(response)

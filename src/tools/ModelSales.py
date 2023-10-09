@@ -51,7 +51,7 @@ class ModelSales(Tool):
         try:
             product_id = response.json()["data"][0]["product"]["productId"]
         except:
-            raise Exception(response.text + " Status code: " + str(response.status_code))
+            raise Exception(Utils.return_res(response))
 
         return product_id
 
@@ -71,7 +71,6 @@ class ModelSales(Tool):
 
         response = httpx.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies, proxies=proxies)
 
-        if (response.status_code != 200 or response.json().get("purchased") is False):
-            return False, response.text
+        is_bought = (response.status_code == 200 and response.json().get("purchased") is True)
 
-        return True, response.text
+        return is_bought, Utils.return_res(response)

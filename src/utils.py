@@ -31,6 +31,13 @@ class Utils():
         Clears a line from spaces, tabs and newlines
         """
         return line.replace("\n", "").replace(" ", "").replace("\t", "")
+    
+    @staticmethod
+    def return_res(response) -> str:
+        """
+        Returns a string with the response text and status code
+        """
+        return response.text + " HTTPStatus: " + str(response.status_code)
 
     @staticmethod
     def retry_on_exception(retries = 3):
@@ -49,8 +56,8 @@ class Utils():
                         return func(*args, **kwargs)
                     except Exception as e:
                         err = str(e)
-                        if "Expecting value: line" in err:
-                            err = "JSON decode error. Cookie is invalid OR Rate limit"
+                        # if "Expecting value: line" in err:
+                        #     err = "JSON decode error. Cookie is invalid OR Rate limit"
                 else:
                     raise Exception(f"Error {err}. Tried running {func.__name__} {retries} times")
             return wrapper

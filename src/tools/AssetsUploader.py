@@ -86,8 +86,8 @@ class AssetsUploader(Tool):
         result = requests.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, files=files)
         response = result.json()
         if (result.status_code != 200):
-            return False, result.text
-        
+            return False, Utils.return_res(result)
+
         operationId = response["operationId"]
         done = response["done"]
 
@@ -114,7 +114,7 @@ class AssetsUploader(Tool):
         
         response = requests.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
-        return (response.status_code == 200), response.text
+        return (response.status_code == 200), Utils.return_res(response)
 
     @Utils.retry_on_exception()
     def get_asset_id(self, operationId):
@@ -125,6 +125,9 @@ class AssetsUploader(Tool):
         req_headers = self.get_roblox_headers(user_agent)
 
         result = requests.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        if result.status_code != 200:
+            Utils.return_res(result)
+
         response = result.json()
         done = response["done"]
         response = response.get("response") if done else False
@@ -152,6 +155,9 @@ class AssetsUploader(Tool):
         req_cookies = { ".ROBLOSECURITY": self.config["cookie"]}
 
         result = httpx.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies, proxies=proxies)
+        if result.status_code != 200:
+            Utils.return_res(result)
+
         response = result.json()
         asset_name = response["data"][0]['name']
 

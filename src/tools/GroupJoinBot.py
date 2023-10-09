@@ -2,6 +2,7 @@ import httpx
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
+from utils import Utils
 
 class GroupJoinBot(Tool):
     def __init__(self, app):
@@ -48,4 +49,4 @@ class GroupJoinBot(Tool):
         init_res = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", user_agent, proxies)
 
-        return (response.status_code == 200), response.text
+        return (response.status_code == 200), Utils.return_res(response)

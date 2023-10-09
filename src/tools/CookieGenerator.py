@@ -7,6 +7,7 @@ from CaptchaSolver import CaptchaSolver
 from utils import Utils
 from data.adjectives import adjectives
 from data.nouns import nouns
+from utils import Utils
 
 class CookieGenerator(Tool):
     def __init__(self, app):
@@ -58,6 +59,9 @@ class CookieGenerator(Tool):
 
         response = httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
 
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
+
         return response.json()["message"] == "Username is valid", response.json()["message"]
 
     def generate_username(self):
@@ -93,7 +97,9 @@ class CookieGenerator(Tool):
         req_url = "https://auth.roblox.com/v2/signup"
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
-        return httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
+        result = httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
+
+        return result
 
     def generate_cookie(self, captcha_service:str, use_proxy:bool) -> tuple:
         """
@@ -129,6 +135,6 @@ class CookieGenerator(Tool):
         try:
             cookie = sign_up_res.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
-            return False, sign_up_res.text
+            return False, Utils.return_res(sign_up_res)
 
         return True, cookie

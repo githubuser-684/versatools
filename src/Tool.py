@@ -78,9 +78,6 @@ class Tool(Proxy, ABC):
 
         csrf_token = response.headers.get("x-csrf-token")
 
-        if csrf_token is None:
-            raise Exception("CSRF TOKEN not found. Invalid cookie probably")
-
         return csrf_token
 
     def get_user_info(self, cookie, proxies, user_agent):
@@ -92,6 +89,9 @@ class Tool(Proxy, ABC):
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
         response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        if (response.status_code != 200):
+            raise Exception(Utils.return_res(response))
+
         result = response.json()
 
         return {
@@ -151,8 +151,6 @@ class Tool(Proxy, ABC):
         """
         Prints the status of a request
         """
-        if has_worked is False and "Expecting value: line" in response_text:
-            response_text = "JSON decode error. Cookie is invalid OR Rate limit"
 
         eel.set_stats(f"{action_verb}: {str(req_worked)} | Failed: {str(req_failed)} | Total: {str(total_req)}")
         eel.write_terminal(f"\x1B[1;32mWorked: {response_text}\x1B[0;0m" if has_worked else f"\x1B[1;31mFailed: {response_text}\x1B[0;0m")

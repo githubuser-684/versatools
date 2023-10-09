@@ -46,4 +46,4 @@ class FriendRequestBot(Tool):
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
-        return (response.status_code == 200 and response.json()["success"]), response.text
+        return (response.status_code == 200 and response.json()["success"]), Utils.return_res(response)

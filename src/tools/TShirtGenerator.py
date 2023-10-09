@@ -6,6 +6,7 @@ from PIL import Image
 from resizeimage import resizeimage
 from Tool import Tool
 import eel
+from utils import Utils
 
 class TShirtGenerator(Tool):
     def __init__(self, app):
@@ -39,7 +40,7 @@ class TShirtGenerator(Tool):
         try:
             images = response.json()["images"]
         except:
-            raise Exception(f"Unable to search the image... \n\n{response.text}")
+            raise Exception(f"Unable to search the image... \n\n{Utils.return_res(response)}")
         
         if len(images) == 0:
             raise Exception(f"No images found for query '{query}'")

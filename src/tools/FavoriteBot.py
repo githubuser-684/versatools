@@ -54,4 +54,4 @@ class FavoriteBot(Tool):
 
         response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
-        return (response.status_code == 200), response.text
+        return (response.status_code == 200), Utils.return_res(response.text)

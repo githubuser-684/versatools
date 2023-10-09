@@ -40,6 +40,9 @@ class Gen2018Acc(Tool):
 
         response = httpx.get(req_url, headers=req_headers, proxies=proxies)
 
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
+
         return response.json()["count"]
 
     @Utils.retry_on_exception()
@@ -54,6 +57,9 @@ class Gen2018Acc(Tool):
         req_headers = self.get_roblox_headers(user_agent)
 
         response = httpx.get(req_url, headers=req_headers, proxies=proxies)
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
+
         response_json = response.json()
 
         return response_json["nextPageCursor"], response_json["data"]

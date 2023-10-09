@@ -4,6 +4,7 @@ import concurrent.futures
 from CaptchaSolver import CaptchaSolver
 from data.comments import comments
 import random
+from utils import Utils
 
 class CommentBot(Tool):
     def __init__(self, app):
@@ -56,4 +57,4 @@ class CommentBot(Tool):
         init_res = httpx.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
         response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, proxies)
 
-        return (response.status_code == 200 and response.get('ErrorCode') is None), response.text
+        return (response.status_code == 200 and response.get('ErrorCode') is None), Utils.return_res(response)

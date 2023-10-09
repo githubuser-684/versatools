@@ -54,7 +54,7 @@ class MessageBot(Tool):
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
         if response.status_code != 200:
-            raise Exception(response.text)
+            raise Exception(Utils.return_res(response))
 
     @Utils.retry_on_exception()
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
@@ -77,4 +77,4 @@ class MessageBot(Tool):
             # try again
             response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
-        return (response.status_code == 200 and response.json()["success"]), response.text
+        return (response.status_code == 200 and response.json()["success"]), Utils.return_res(response)

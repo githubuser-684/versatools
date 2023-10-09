@@ -34,16 +34,15 @@ class CaptchaSolver(Proxy):
         """
         status_code = response.status_code
         response_headers = response.headers
-        response_text = response.text
 
         if status_code == 423: # rate limited
-            raise Exception(response_text)
+            raise Exception(Utils.return_res(response))
         elif status_code != 403: # no captcha
             return response
 
         # get captcha data
-        rblx_challenge_id = response_headers.get("Rblx-Challenge-Id")
-        rblx_metadata = json.loads(base64.b64decode(response_headers.get("Rblx-Challenge-Metadata")))
+        rblx_challenge_id = response_headers["Rblx-Challenge-Id"]
+        rblx_metadata = json.loads(base64.b64decode(response_headers["Rblx-Challenge-Metadata"]))
         blob = rblx_metadata["dataExchangeBlob"]
         unified_captcha_id = rblx_metadata["unifiedCaptchaId"]
         public_key = self.get_rblx_public_key(user_agent, action_type, proxies)
@@ -122,12 +121,15 @@ class CaptchaSolver(Proxy):
             }, timeout=120)
 
             try:
-                token = captcha_response.json()["solution"]["token"]
-            except:
+                result = captcha_response.json()
+                token = result["solution"]["token"]
+            except json.JSONDecodeError:
+                raise Exception(Utils.return_res(captcha_response))
+            except Exception:
                 if captcha_response.json().get("error") == "Key doesn't exist.":
                     raise Exception("Valid capbypass API key is required.")
 
-                raise Exception(captcha_response.text)
+                raise Exception(Utils.return_res(captcha_response))
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")
 

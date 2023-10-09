@@ -47,4 +47,4 @@ class GameVote(Tool):
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
-        return (response.status_code == 200 and response.json()["Success"]), response.text
+        return (response.status_code == 200 and response.json()["Success"]), Utils.return_res(response)

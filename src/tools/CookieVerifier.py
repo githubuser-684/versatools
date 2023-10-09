@@ -46,6 +46,9 @@ class CookieVerifier(Tool):
 
         response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
+        if response.status_code != 200:
+            raise Exception(f"Failed to check if cookie verified {Utils.return_res(response)}")
+
         return response.json()["verified"]
 
     @Utils.retry_on_exception()
@@ -58,7 +61,7 @@ class CookieVerifier(Tool):
         response = httpx.get(req_url, proxies=proxies)
 
         if response.status_code != 200:
-            raise Exception(f"Failed to get domain {response.text} Code: {response.status_code}")
+            raise Exception(f"Failed to get domain {Utils.return_res(response)}")
 
         domain = response.json()["hydra:member"][0]["domain"]
 
@@ -69,7 +72,7 @@ class CookieVerifier(Tool):
         response = httpx.post(req_url, json=req_json, proxies=proxies)
 
         if response.status_code != 201:
-            raise Exception(f"Failed to create email {response.text} Code: {response.status_code}")
+            raise Exception(f"Failed to create email {Utils.return_res(response)}")
 
         address = response.json()["address"]
 
@@ -80,7 +83,7 @@ class CookieVerifier(Tool):
         token = response.json()["token"]
 
         if response.status_code != 200:
-            raise Exception(f"Failed to get token {response.text} Code: {response.status_code}")
+            raise Exception(f"Failed to get token {Utils.return_res(response)}")
 
         return address, token
 
@@ -96,7 +99,7 @@ class CookieVerifier(Tool):
 
         response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
-        return response.status_code == 200, response.text
+        return response.status_code == 200, Utils.return_res(response)
 
     @Utils.retry_on_exception(10)
     def get_email_id(self, token, proxies):
@@ -110,7 +113,7 @@ class CookieVerifier(Tool):
         response = httpx.get(req_url, params=req_params, headers=req_headers, proxies=proxies)
 
         if response.status_code != 200:
-            raise Exception(f"Failed to get email id {response.text}")
+            raise Exception(f"Failed to get email id {Utils.return_res(response)}")
 
         mails = response.json()["hydra:member"]
 
@@ -129,7 +132,7 @@ class CookieVerifier(Tool):
         response = httpx.get(req_url, headers=req_headers, proxies=proxies)
 
         if response.status_code != 200:
-            raise Exception(f"Failed to get email {response.text}")
+            raise Exception(f"Failed to get email {Utils.return_res(response)}")
 
         data = response.json()["data"]
         mail = mailparser.parse_from_string(data)
@@ -150,7 +153,7 @@ class CookieVerifier(Tool):
         response = httpx.post(req_url, json=req_json, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
         if response.status_code != 200:
-            raise Exception(f"Failed to click verification link {response.text}")
+            raise Exception(f"Failed to click verification link {Utils.return_res(response)}")
 
     @Utils.retry_on_exception()
     def verify_cookie(self, cookie:str):

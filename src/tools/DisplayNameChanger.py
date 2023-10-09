@@ -51,4 +51,4 @@ class DisplayNameChanger(Tool):
 
         response = httpx.patch(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
 
-        return (response.status_code == 200), response.text
+        return (response.status_code == 200), Utils.return_res(response)

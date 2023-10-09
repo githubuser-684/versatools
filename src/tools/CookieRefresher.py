@@ -40,7 +40,15 @@ class CookieRefresher(Tool):
                 self.print_status(req_sent, req_failed, total_req, response_text, has_worked, "Generated")
 
         f.close()
-        os.replace(self.new_cookies_file_path, self.cookies_file_path)
+
+        # replace cookies
+        f = open(self.cookies_file_path, 'w')
+        f.seek(0)
+        f.truncate()
+        f.write(open(self.new_cookies_file_path, 'r').read())
+
+        os.remove(self.new_cookies_file_path)
+
 
     @Utils.retry_on_exception(1)
     def refresh_cookie(self, cookie:str, use_proxy:bool) -> tuple:
@@ -57,6 +65,9 @@ class CookieRefresher(Tool):
         req_headers = self.get_roblox_headers(user_agent, xcsrf_token)
 
         data = httpx.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
-        cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
+        try:
+            cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
+        except Exception:
+            raise Exception(Utils.return_res(data))
 
         return cookie

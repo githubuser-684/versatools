@@ -98,6 +98,7 @@ class AssetsUploader(Tool):
 
         return self.publish_asset(asset_id)
 
+    @Utils.retry_on_exception()
     def publish_asset(self, asset_id):
         req_url = f"https://itemconfiguration.roblox.com/v1/assets/{asset_id}/release"
         req_cookies = {".ROBLOSECURITY": self.config["cookie"]}
@@ -112,6 +113,7 @@ class AssetsUploader(Tool):
 
         return True, req.text
 
+    @Utils.retry_on_exception()
     def get_asset_id(self, operationId):
         req_url = f"https://apis.roblox.com/assets/user-auth/v1/operations/{operationId}"
         req_cookies = { ".ROBLOSECURITY": self.config["cookie"] }
@@ -126,6 +128,7 @@ class AssetsUploader(Tool):
 
         return done, response
 
+    @Utils.retry_on_exception()
     def get_asset_name(self, asset_id):
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()

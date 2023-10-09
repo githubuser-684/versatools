@@ -4,6 +4,7 @@ from Tool import Tool
 import concurrent.futures
 from utils import Utils
 import requests
+import time
 
 class AssetsUploader(Tool):
     def __init__(self, app):
@@ -44,6 +45,8 @@ class AssetsUploader(Tool):
                 self.print_status(req_worked, req_failed, total_req, response_text, has_uploaded, "Uploaded")
 
     def upload_asset(self, asset):
+        time.sleep(self.config["timeout"])
+
         asset_file = asset["file"]
         asset_id = asset_file.replace(".png", "")
         asset_name = self.get_asset_name(asset_id)

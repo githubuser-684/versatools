@@ -38,6 +38,8 @@ class FavoriteBot(Tool):
         """
         Send a favorite to an asset
         """
+        time.sleep(self.config["timeout"])
+
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
         user_agent = self.get_random_user_agent()
         csrf_token = self.get_csrf_token(proxies, cookie)
@@ -51,7 +53,5 @@ class FavoriteBot(Tool):
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
         response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-
-        time.sleep(self.config["timeout"])
 
         return (response.status_code == 200), response.text

@@ -6,7 +6,8 @@ config = {
         "keyword": "red",
         "max_generations": 20,
         "use_proxy": False,
-        "max_workers": None
+        "max_workers": None,
+        "timeout": 1
     },
     "AssetsUploader": {
         "cookie": "_|WARNING:",

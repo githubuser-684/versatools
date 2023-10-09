@@ -60,6 +60,10 @@ class CookieChecker(Tool):
         req_headers = self.get_roblox_headers(user_agent)
 
         response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
+
         result = response.json()
 
         user_id = result["UserID"]

@@ -124,7 +124,7 @@ class CookieGenerator(Tool):
             retry_count += 1
 
         if not is_username_valid:
-            raise Exception(f"Failed to generate a valid username after 3 retries. ({response_text})")
+            raise Exception(f"Failed to generate a valid username after {retry_count} tries. ({response_text})")
 
         password = self.generate_password()
         is_girl = random.choice([True, False])

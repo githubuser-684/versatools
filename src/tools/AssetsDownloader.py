@@ -22,6 +22,9 @@ class AssetsDownloader(Tool):
         if self.config["sort"] not in self.config["//sorts"]:
             raise Exception(f"Invalid sort config key \"{self.config['sort']}\"")
 
+        if self.config["asset_type"] not in ["shirt", "pants"]:
+            raise Exception("Invalid asset type. Must be either \"shirt\" or \"pants\"")
+
         assets = self.get_assets_amount(self.config["max_generations"])
 
         req_worked = 0
@@ -118,17 +121,14 @@ class AssetsDownloader(Tool):
         Get x amount of assets
         """
         assets = []
-        shirt_cursor = None
-        pants_cursor = None
+        cursor = None
 
         while len(assets) < amount:
-            data, shirt_cursor = self.get_assets_page("ClassicShirts", shirt_cursor)
-            for asset in data:
-                asset["shirt"] = True
+            data, cursor = self.get_assets_page("ClassicShirts" if self.config["asset_type"] == "shirt" else "ClassicPants", cursor)
 
-            assets += data
-
-            data, pants_cursor = self.get_assets_page("ClassicPants", pants_cursor)
+            if self.config["asset_type"] == "shirt":
+                for asset in data:
+                    asset["shirt"] = True
 
             assets += data
             random.shuffle(assets)

@@ -98,6 +98,8 @@ class AssetsUploader(Tool):
             done, response = self.get_asset_id(operationId)
             if (done is True):
                 asset_id = response["assetId"]
+            else:
+                time.sleep(1)
 
         return self.publish_asset(asset_id)
 

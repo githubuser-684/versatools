@@ -42,7 +42,7 @@ class MessageBot(Tool):
                 self.print_status(msg_sent, msg_failed, total_cookies, response_text, is_sent, "Messages sent")
 
     @Utils.retry_on_exception()
-    def allow_sending_msgs(self, cookie, proxies, user_agent, csrf_token):
+    def allow_sending_msgs(self, cookie, client, user_agent, csrf_token):
         """
         Allow sending messages to anyone
         """
@@ -51,7 +51,7 @@ class MessageBot(Tool):
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"whoCanMessageMe": "All"}
 
-        response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+        response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
 
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
@@ -62,19 +62,26 @@ class MessageBot(Tool):
         Send a message to a user
         """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-        csrf_token = self.get_csrf_token(proxies, cookie)
 
-        req_url = "https://privatemessages.roblox.com/v1/messages/send"
-        req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
-        req_json={"body": body, "recipientid": recipient_id, "subject": subject}
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
 
-        response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+            req_url = "https://privatemessages.roblox.com/v1/messages/send"
+            req_cookies = {".ROBLOSECURITY": cookie}
+            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_json={"body": body, "recipientid": recipient_id, "subject": subject}
 
-        if (not response.json()["success"] and response.json()["shortMessage"] == "SenderPrivacySettingsTooHigh"):
-            self.allow_sending_msgs(cookie, proxies, user_agent, csrf_token)
-            # try again
-            response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+            response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
 
-        return (response.status_code == 200 and response.json()["success"]), Utils.return_res(response)
+            if (not response.json()["success"] and response.json()["shortMessage"] == "SenderPrivacySettingsTooHigh"):
+                self.allow_sending_msgs(cookie, client, user_agent, csrf_token)
+                # try again
+                response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
+
+        try:
+            success = response.status_code == 200 and response.json()["success"]
+        except Exception:
+            raise Exception("Failed to access success key" + Utils.return_res(response))
+
+        return success, Utils.return_res(response)

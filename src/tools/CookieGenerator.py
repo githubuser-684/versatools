@@ -41,15 +41,19 @@ class CookieGenerator(Tool):
         f.close()
 
     @Utils.retry_on_exception()
-    def get_csrf_token(self, proxies:dict = None) -> str:
+    def get_csrf_token(self, client) -> str:
         """
         Gets a csrf token from the auth.roblox.com endpoint
         """
-        csrf_response = httpx.post("https://auth.roblox.com/v2/login", proxies=proxies)
-        csrf_token = csrf_response.headers.get("x-csrf-token")
+        csrf_response = client.post("https://auth.roblox.com/v2/login")
+        try:
+            csrf_token = csrf_response.headers["x-csrf-token"]
+        except KeyError:
+            raise Exception(Utils.return_res(csrf_response))
+
         return csrf_token
 
-    def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, proxies:dict=None):
+    def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, client):
         """
         Verifies if a username is valid
         """
@@ -57,12 +61,17 @@ class CookieGenerator(Tool):
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "context": "Signup", "username": username}
 
-        response = httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
+        response = client.post(req_url, headers=req_headers, json=req_json)
 
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
+        
+        try:
+            message = response.json()["message"]
+        except KeyError:
+            raise Exception("Unable to access message key " + Utils.return_res(response))
 
-        return response.json()["message"] == "Username is valid", response.json()["message"]
+        return message == "Username is valid", message
 
     def generate_username(self):
         """
@@ -90,14 +99,14 @@ class CookieGenerator(Tool):
         return str(random.randint(2006, 2010)).zfill(2) + "-" + str(random.randint(1, 12)).zfill(2) + "-" + str(random.randint(1, 27)).zfill(2) + "T05:00:00.000Z"
 
     @Utils.retry_on_exception()
-    def send_signup_request(self, user_agent:str, csrf_token:str, username:str, password:str, birthday:str, is_girl:bool, proxies:dict=None):
+    def send_signup_request(self, user_agent:str, csrf_token:str, username:str, password:str, birthday:str, is_girl:bool, client):
         """
         Sends a signup request to the auth.roblox.com endpoint
         """
         req_url = "https://auth.roblox.com/v2/signup"
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
-        result = httpx.post(req_url, headers=req_headers, json=req_json, proxies=proxies)
+        result = client.post(req_url, headers=req_headers, json=req_json)
 
         return result
 
@@ -106,34 +115,36 @@ class CookieGenerator(Tool):
         Generates a ROBLOSECURITY cookie
         Returns a tuple with the error and the cookie
         """
-        captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
-        user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None
-        csrf_token = self.get_csrf_token(proxies)
 
-        birthday = self.generate_birthday()
+        with httpx.Client(proxies=proxies) as client:
+            captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(client)
 
-        retry_count = 0
-        while retry_count < 5:
-            username = self.generate_username()
-            is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, proxies)
+            birthday = self.generate_birthday()
 
-            if is_username_valid:
-                break
+            retry_count = 0
+            while retry_count < 5:
+                username = self.generate_username()
+                is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, client)
 
-            retry_count += 1
+                if is_username_valid:
+                    break
 
-        if not is_username_valid:
-            raise Exception(f"Failed to generate a valid username after {retry_count} tries. ({response_text})")
+                retry_count += 1
 
-        password = self.generate_password()
-        is_girl = random.choice([True, False])
+            if not is_username_valid:
+                raise Exception(f"Failed to generate a valid username after {retry_count} tries. ({response_text})")
 
-        sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, proxies)
-        sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP",user_agent, proxies)
+            password = self.generate_password()
+            is_girl = random.choice([True, False])
+
+            sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, client)
+            sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", user_agent, client)
 
         try:
-            cookie = sign_up_res.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
+            cookie = sign_up_res.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
             return False, Utils.return_res(sign_up_res)
 

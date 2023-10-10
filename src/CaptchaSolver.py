@@ -16,18 +16,18 @@ class CaptchaSolver(Proxy):
         self.api_key = api_key
 
     @Utils.retry_on_exception()
-    def get_rblx_public_key(self, user_agent:str, action_type:str, proxies:dict = None) -> str:
+    def get_rblx_public_key(self, user_agent:str, action_type:str, client) -> str:
         """
         Gets the public key for the specified action type
         """
         reqpk_url = "https://apis.rbxcdn.com/captcha/v1/metadata"
         reqpk_headers = {"User-Agent": user_agent, "Accept": "*/*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty",  "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Te": "trailers", "Connection": "close", }
-        reqpk_response = httpx.get(reqpk_url, headers=reqpk_headers, proxies=proxies)
+        reqpk_response = client.get(reqpk_url, headers=reqpk_headers)
         public_key = reqpk_response.json()["funCaptchaPublicKeys"][action_type]
 
         return public_key
 
-    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, proxies:dict = None) -> httpx.Response:
+    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, client) -> httpx.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -45,7 +45,7 @@ class CaptchaSolver(Proxy):
         rblx_metadata = json.loads(base64.b64decode(response_headers["Rblx-Challenge-Metadata"]))
         blob = rblx_metadata["dataExchangeBlob"]
         unified_captcha_id = rblx_metadata["unifiedCaptchaId"]
-        public_key = self.get_rblx_public_key(user_agent, action_type, proxies)
+        public_key = self.get_rblx_public_key(user_agent, action_type, client)
         website_url = "https://www.roblox.com"
         website_subdomain = "roblox-api.arkoselabs.com"
 
@@ -148,7 +148,7 @@ class CaptchaSolver(Proxy):
         continue_headers = self.get_roblox_headers(ua, csrf_token)
         req_json={"challengeId": rblx_challenge_id, "challengeMetadata": metadata, "challengeType": "captcha"}
 
-        httpx.post(req_url, headers=continue_headers, json=req_json, proxies=proxies)
+        client.post(req_url, headers=continue_headers, json=req_json)
 
         # send request again but with captcha token
         req_url = str(response.request.url)
@@ -163,7 +163,7 @@ class CaptchaSolver(Proxy):
 
         req_content = bytes.decode(response.request._content)
 
-        if response.request.headers.get("content-type") == "application/x-www-form-urlencoded":
+        if response.request.headers["content-type"] == "application/x-www-form-urlencoded":
             pairs = req_content.split('&')
             for pair in pairs:
                 key, value = pair.split('=')
@@ -175,7 +175,7 @@ class CaptchaSolver(Proxy):
         req_json["captchaId"] = unified_captcha_id
         req_json["captchaProvider"] = "PROVIDER_ARKOSE_LABS"
 
-        final_response = httpx.post(req_url, headers=req_headers, json=req_json, data=req_data, proxies=proxies)
+        final_response = client.post(req_url, headers=req_headers, json=req_json, data=req_data)
 
         return final_response
 

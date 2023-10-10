@@ -41,17 +41,19 @@ class FavoriteBot(Tool):
         time.sleep(self.config["timeout"])
 
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-        csrf_token = self.get_csrf_token(proxies, cookie)
-        user_info = self.get_user_info(cookie, proxies, user_agent)
-        user_id = user_info.get("UserID")
 
-        send = httpx.delete if unfavorite else httpx.post
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
+            user_info = self.get_user_info(cookie, client, user_agent)
+            user_id = user_info["UserID"]
 
-        req_url = f"https://catalog.roblox.com/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
-        req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_url = f"https://catalog.roblox.com/v1/favorites/users/{user_id}/assets/{asset_id}/favorite"
+            req_cookies = {".ROBLOSECURITY": cookie}
+            req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
-        response = send(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+            send_favorite = client.delete if unfavorite else client.post
 
-        return (response.status_code == 200), Utils.return_res(response.text)
+            response = send_favorite(req_url, headers=req_headers, cookies=req_cookies)
+
+        return (response.status_code == 200), Utils.return_res(response)

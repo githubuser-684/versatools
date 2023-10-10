@@ -48,13 +48,10 @@ class AssetsDownloader(Tool):
                 self.print_status(req_worked, req_failed, total_req, response_text, has_downloaded, "Downloaded")
 
     @Utils.retry_on_exception()
-    def get_assets_page(self, asset_name, cursor):
+    def get_assets_page(self, asset_name, cursor, proxies, user_agent):
         """
         Get a page of assets
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-
         salesTypeFilter = None
         sortAggregation = None
         sortType = None
@@ -123,8 +120,11 @@ class AssetsDownloader(Tool):
         assets = []
         cursor = None
 
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        user_agent = self.get_random_user_agent()
+
         while len(assets) < amount:
-            data, cursor = self.get_assets_page("ClassicShirts" if self.config["asset_type"] == "shirt" else "ClassicPants", cursor)
+            data, cursor = self.get_assets_page("ClassicShirts" if self.config["asset_type"] == "shirt" else "ClassicPants", cursor, proxies, user_agent)
 
             if self.config["asset_type"] == "shirt":
                 for asset in data:
@@ -148,10 +148,13 @@ class AssetsDownloader(Tool):
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
 
         with httpx.Client(proxies=proxies) as client:
-            assetdelivery = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}').json()['location']
-            assetid = str(client.get(assetdelivery).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
-            png = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{assetid}').json()['location']
-            image = client.get(png).content
+            user_agent = self.get_random_user_agent()
+            headers = self.get_roblox_headers(user_agent)
+
+            assetdelivery = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}', headers=headers).json()['location']
+            assetid = str(client.get(assetdelivery, headers=headers).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
+            png = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{assetid}', headers=headers).json()['location']
+            image = client.get(png, headers=headers).content
             asset_path = os.path.join(directory, f"{asset_id}.png")
 
         with open(asset_path, 'wb') as f:

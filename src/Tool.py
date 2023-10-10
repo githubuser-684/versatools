@@ -68,19 +68,21 @@ class Tool(Proxy, ABC):
         """
         return random.choice(useragents)
 
-    def get_csrf_token(self, proxies:dict = None, cookie:str = None) -> str:
+    def get_csrf_token(self, cookie:str, client) -> str:
         """
         Retrieve a CSRF token from Roblox
         """
-
         headers = {'Cookie': ".ROBLOSECURITY=" + cookie } if cookie else None
-        response = httpx.post("https://auth.roblox.com/v2/logout", headers=headers, proxies=proxies)
+        response = client.post("https://auth.roblox.com/v2/logout", headers=headers)
 
-        csrf_token = response.headers.get("x-csrf-token")
+        try:
+            csrf_token = response.headers["x-csrf-token"]
+        except KeyError:
+            raise Exception(Utils.return_res(response))
 
         return csrf_token
 
-    def get_user_info(self, cookie, proxies, user_agent):
+    def get_user_info(self, cookie, client, user_agent):
         """
         Gets the user info from the Roblox API
         """
@@ -88,7 +90,7 @@ class Tool(Proxy, ABC):
         req_cookies = { ".ROBLOSECURITY": cookie }
         req_headers = {"User-Agent": user_agent, "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
 
-        response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        response = client.get(req_url, headers=req_headers, cookies=req_cookies)
         if (response.status_code != 200):
             raise Exception(Utils.return_res(response))
 

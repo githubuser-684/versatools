@@ -46,15 +46,19 @@ class CommentBot(Tool):
         """
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-        csrf_token = self.get_csrf_token(proxies, cookie)
 
-        req_url = "https://www.roblox.com/comments/post"
-        req_cookies = { ".ROBLOSECURITY": cookie }
-        req_headers = self.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
-        req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
 
-        init_res = httpx.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies, proxies=proxies)
-        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, proxies)
+            req_url = "https://www.roblox.com/comments/post"
+            req_cookies = { ".ROBLOSECURITY": cookie }
+            req_headers = self.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
+            req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
 
-        return (response.status_code == 200 and response.get('ErrorCode') is None), Utils.return_res(response)
+            init_res = client.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies)
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, client)
+
+        success = response.status_code == 200 and response.get('ErrorCode') is None
+
+        return success, Utils.return_res(response)

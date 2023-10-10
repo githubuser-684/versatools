@@ -12,51 +12,55 @@ class Gen2018Acc(Tool):
     def run(self):
         user_id = 73223429
         default_pass = "insaneclient101"
-        followers_count = self.get_followers_count(user_id)
-        follower_per_page = 18
-        max_pages = math.ceil(followers_count / follower_per_page)
-        max_loop_pages = 50 if max_pages > 50 else max_pages
-        loop_pages = random.randint(0, max_loop_pages)
 
-        cursor = None
-        followers = []
-        for i in range(loop_pages):
-            cursor, followers = self.get_followers(user_id, cursor, follower_per_page)
+        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        user_agent = self.get_random_user_agent()
 
-        username = followers[random.randint(0, len(followers)-1)]["name"]
+        with httpx.Client(proxies=proxies) as client:
+            followers_count = self.get_followers_count(user_id, client, user_agent)
+            follower_per_page = 18
+            max_pages = math.ceil(followers_count / follower_per_page)
+            max_loop_pages = 50 if max_pages > 50 else max_pages
+            loop_pages = random.randint(0, max_loop_pages)
+
+            cursor = None
+            followers = []
+            for i in range(loop_pages):
+                cursor, followers = self.get_followers(user_id, cursor, follower_per_page, client, user_agent)
+
+            username = followers[random.randint(0, len(followers)-1)]["name"]
 
         eel.write_terminal(f"\x1B[1;32m2018 Account Generated: {username}:{default_pass}\x1B[0;0m")
 
     @Utils.retry_on_exception()
-    def get_followers_count(self, user_id):
+    def get_followers_count(self, user_id, client, user_agent):
         """
         Get the amount of followers of a user
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers/count"
         req_headers = self.get_roblox_headers(user_agent)
 
-        response = httpx.get(req_url, headers=req_headers, proxies=proxies)
+        response = client.get(req_url, headers=req_headers)
 
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
+        
+        try:
+            count = response.json()["count"]
+        except Exception:
+            raise Exception("Failed to access count key. " + Utils.return_res(response))
 
-        return response.json()["count"]
+        return count
 
     @Utils.retry_on_exception()
-    def get_followers(self, user_id, cursor, follower_per_page):
+    def get_followers(self, user_id, cursor, follower_per_page, client, user_agent):
         """
         Get a page of followers
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers?sortOrder=Desc&limit={follower_per_page}{'&cursor='+cursor if cursor else ''}"
         req_headers = self.get_roblox_headers(user_agent)
 
-        response = httpx.get(req_url, headers=req_headers, proxies=proxies)
+        response = client.get(req_url, headers=req_headers)
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
 

@@ -52,22 +52,23 @@ class CookieChecker(Tool):
         """
         Checks if a cookie is working
         """
-        user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None
 
-        req_url = "https://www.roblox.com/mobileapi/userinfo"
-        req_cookies = { ".ROBLOSECURITY": cookie }
-        req_headers = self.get_roblox_headers(user_agent)
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            req_url = "https://www.roblox.com/mobileapi/userinfo"
+            req_cookies = { ".ROBLOSECURITY": cookie }
+            req_headers = self.get_roblox_headers(user_agent)
 
-        response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+            response = client.get(req_url, headers=req_headers, cookies=req_cookies)
 
-        if response.status_code != 200:
-            raise Exception(Utils.return_res(response))
+            if response.status_code != 200:
+                raise Exception(Utils.return_res(response))
 
-        result = response.json()
+            result = response.json()
 
-        user_id = result["UserID"]
-        username = result["UserName"]
-        robux_balance = result["RobuxBalance"]
+            user_id = result["UserID"]
+            username = result["UserName"]
+            robux_balance = result["RobuxBalance"]
 
         return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance}"

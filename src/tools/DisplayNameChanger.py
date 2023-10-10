@@ -39,16 +39,18 @@ class DisplayNameChanger(Tool):
         Changes the display name of a user
         """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-        csrf_token = self.get_csrf_token(proxies, cookie)
-        user_info = self.get_user_info(cookie, proxies, user_agent)
-        user_id = user_info.get("UserID")
 
-        req_url = f"https://users.roblox.com/v1/users/{user_id}/display-names"
-        req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
-        req_json = {"newDisplayName": new_display_name}
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
+            user_info = self.get_user_info(cookie, client, user_agent)
+            user_id = user_info["UserID"]
 
-        response = httpx.patch(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+            req_url = f"https://users.roblox.com/v1/users/{user_id}/display-names"
+            req_cookies = {".ROBLOSECURITY": cookie}
+            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_json = {"newDisplayName": new_display_name}
+
+            response = client.patch(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
 
         return (response.status_code == 200), Utils.return_res(response)

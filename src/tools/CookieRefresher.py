@@ -49,24 +49,26 @@ class CookieRefresher(Tool):
 
         os.remove(self.new_cookies_file_path)
 
-
     @Utils.retry_on_exception(1)
     def refresh_cookie(self, cookie:str, use_proxy:bool) -> tuple:
         """
         Refresh a ROBLOSECURITY cookie
         Returns a tuple with the error and the new cookie
         """
-        user_agent = self.get_random_user_agent()
         proxies = self.get_random_proxies() if use_proxy else None
-        xcsrf_token = self.get_csrf_token(proxies, cookie)
 
-        # Creating a new cookie
-        reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
-        req_headers = self.get_roblox_headers(user_agent, xcsrf_token)
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            xcsrf_token = self.get_csrf_token(cookie, client)
 
-        data = httpx.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers, proxies=proxies)
+            # Creating a new cookie
+            reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
+            req_headers = self.get_roblox_headers(user_agent, xcsrf_token)
+
+            data = client.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers)
+
         try:
-            cookie = data.headers.get("Set-Cookie").split(".ROBLOSECURITY=")[1].split(";")[0]
+            cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
             raise Exception(Utils.return_res(data))
 

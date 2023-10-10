@@ -36,16 +36,18 @@ class FollowBot(Tool):
         """
         Send a follow request to a user
         """
-        captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-        csrf_token = self.get_csrf_token(proxies, cookie)
 
-        req_url = f"https://friends.roblox.com/v1/users/{user_id}/follow"
-        req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        with httpx.Client(proxies=proxies) as client:
+            captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
 
-        init_res = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
-        response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", user_agent, proxies)
+            req_url = f"https://friends.roblox.com/v1/users/{user_id}/follow"
+            req_cookies = {".ROBLOSECURITY": cookie}
+            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+
+            init_res = client.post(req_url, headers=req_headers, cookies=req_cookies)
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", user_agent, client)
 
         return (response.status_code == 200), Utils.return_res(response)

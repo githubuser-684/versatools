@@ -37,13 +37,20 @@ class FriendRequestBot(Tool):
         Send a friend request to a user
         """
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
-        csrf_token = self.get_csrf_token(proxies, cookie)
 
-        req_url = f"https://friends.roblox.com/v1/users/{user_id}/request-friendship"
-        req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        with httpx.Client(proxies=proxies) as client:
+            user_agent = self.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
 
-        response = httpx.post(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+            req_url = f"https://friends.roblox.com/v1/users/{user_id}/request-friendship"
+            req_cookies = {".ROBLOSECURITY": cookie}
+            req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
-        return (response.status_code == 200 and response.json()["success"]), Utils.return_res(response)
+            response = client.post(req_url, headers=req_headers, cookies=req_cookies)
+        
+        try:
+            success = (response.status_code == 200 and response.json()["success"])
+        except Exception:
+            raise Exception("Failed to access success key. " + Utils.return_res(response))
+
+        return success, Utils.return_res(response)

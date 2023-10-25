@@ -14,6 +14,10 @@
 </p>
 <br/>
 
+## Screenshot
+
+![Screenshot](./screenshot.png)
+
 ## Installation
 
 This installation is designed for Windows. If you want to use Versatools on Mac/Linux, run it from source.

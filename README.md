@@ -67,7 +67,6 @@ Add your cookies in this file. You can generate them using our Cookie Generator 
 ### files/proxies.txt
 
 You can use this template to add your proxies. We currently support HTTP, SOCKS4 and SOCKS5 proxies.
-We support only static proxies, no rotating proxies.
 
 ```
 8.8.8.8:5001 (here will be http by default)

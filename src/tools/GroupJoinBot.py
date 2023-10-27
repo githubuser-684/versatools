@@ -49,7 +49,7 @@ class GroupJoinBot(Tool):
             req_headers = self.get_roblox_headers(user_agent, csrf_token)
             req_json={"redemptionToken": "", "sessionId": ""}
 
-            init_res = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, proxies=proxies)
+            init_res = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
             response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", user_agent, client)
 
         return (response.status_code == 200), Utils.return_res(response)

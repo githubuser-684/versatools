@@ -1,11 +1,7 @@
 import httpx
-from abc import ABC
 from utils import Utils
 
-class Proxy(ABC):
-    """
-    Interface for classes that implement proxy support
-    """
+class Proxy():
     def __init__(self):
         self.supported_proxy_protocols = ["http", "https", "socks4", "socks5"]
 

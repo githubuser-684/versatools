@@ -45,7 +45,12 @@ class CookieChecker(Tool):
 
         if self.config["delete_invalid_cookies"]:
             f.close()
-            os.replace(self.cache_file_path, self.cookies_file_path)
+
+            # replace file with cache
+            with (open(self.cookies_file_path, 'w')) as f:
+                f.seek(0)
+                f.truncate()
+                f.write(open(self.cache_file_path, 'r').read())
 
     @Utils.retry_on_exception(2)
     def test_cookie(self, cookie, use_proxy):

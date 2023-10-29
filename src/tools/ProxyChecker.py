@@ -19,10 +19,11 @@ class ProxyChecker(Tool):
         lines = [*set(lines)] # remove duplicates
         f.close()
 
-        # open cache to start writing in it
-        f = open(self.cache_file_path, 'w')
-        f.seek(0)
-        f.truncate()
+        if self.config["delete_failed_proxies"]:
+            # open cache to start writing in it
+            f = open(self.cache_file_path, 'w')
+            f.seek(0)
+            f.truncate()
 
         working_proxies = 0
         failed_proxies = 0
@@ -42,14 +43,20 @@ class ProxyChecker(Tool):
 
                 line = self.write_proxy_line(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
-                if not (self.config["delete_failed_proxies"] and not is_working):
+                if self.config["delete_failed_proxies"] and is_working:
                     f.write(line + "\n")
                     f.flush()
 
                 self.print_status(working_proxies, failed_proxies, total_proxies, line, is_working, "Working")
 
-        f.close()
-        os.replace(self.cache_file_path, self.proxies_file_path)
+        if self.config["delete_failed_proxies"]:
+            f.close()
+
+            # replace file with cache
+            with (open(self.proxies_file_path, 'w')) as f:
+                f.seek(0)
+                f.truncate()
+                f.write(open(self.cache_file_path, 'r').read())
 
     def test_proxy_line(self, line: str, timeout: int) -> bool:
         """

@@ -36,7 +36,7 @@ class GroupJoinBot(Tool):
         """
         Send a join request to a group
         """
-        
+
         proxies = self.get_random_proxies() if self.config["use_proxy"] else None
 
         with httpx.Client(proxies=proxies) as client:

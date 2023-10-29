@@ -44,7 +44,7 @@ class Gen2018Acc(Tool):
 
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
-        
+
         try:
             count = response.json()["count"]
         except Exception:

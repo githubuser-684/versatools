@@ -122,7 +122,7 @@ class App():
                         for subkey in config[key]:
                             if subkey not in file_config[key]:
                                 file_config[key][subkey] = config[key][subkey]
-                            
+
                             # make sure subkeys starting with // are not overwritten
                             if subkey.startswith("//"):
                                 file_config[key][subkey] = config[key][subkey]

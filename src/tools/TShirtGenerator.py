@@ -41,7 +41,7 @@ class TShirtGenerator(Tool):
             images = response.json()["images"]
         except:
             raise Exception(f"Unable to search the image... \n\n{Utils.return_res(response)}")
-        
+
         if len(images) == 0:
             raise Exception(f"No images found for query '{query}'")
 

@@ -48,7 +48,7 @@ class GameVote(Tool):
             req_headers = self.get_roblox_headers(user_agent, csrf_token)
 
             response = client.post(req_url, headers=req_headers, cookies=req_cookies)
-        
+
         try:
             success = (response.status_code == 200 and response.json()["Success"])
         except Exception:

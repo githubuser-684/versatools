@@ -48,7 +48,7 @@ class CookieVerifier(Tool):
 
         if response.status_code != 200:
             raise Exception(f"Failed to check if cookie verified {Utils.return_res(response)}")
-        
+
         try:
             is_verified = response.json()["verified"]
         except Exception:

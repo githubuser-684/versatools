@@ -65,7 +65,7 @@ class CookieGenerator(Tool):
 
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
-        
+
         try:
             message = response.json()["message"]
         except KeyError:

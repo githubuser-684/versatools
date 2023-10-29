@@ -35,12 +35,12 @@ class AssetsUploader(Tool):
                     has_uploaded, response_text = future.result()
                 except Exception as err:
                     has_uploaded, response_text = False, str(err)
-            
+
                 if has_uploaded:
                     req_worked += 1
                 else:
                     req_failed += 1
-            
+
                 self.print_status(req_worked, req_failed, total_req, response_text, has_uploaded, "Uploaded")
 
     def upload_asset(self, asset):
@@ -112,9 +112,9 @@ class AssetsUploader(Tool):
         req_url = f"https://itemconfiguration.roblox.com/v1/assets/{asset_id}/release"
         req_cookies = {".ROBLOSECURITY": self.config["cookie"]}
         req_json={"priceConfiguration": {"priceInRobux": self.config["robux_price"]}, "releaseConfiguration": {"saleAvailabilityLocations": [0, 1]}, "saleStatus": "OnSale"}
-        
+
         req_headers = self.get_roblox_headers(user_agent, csrf_token)
-        
+
         response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
 
         return (response.status_code == 200), Utils.return_res(response)

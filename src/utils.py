@@ -31,7 +31,7 @@ class Utils():
         Clears a line from spaces, tabs and newlines
         """
         return line.replace("\n", "").replace(" ", "").replace("\t", "")
-    
+
     @staticmethod
     def return_res(response) -> str:
         """

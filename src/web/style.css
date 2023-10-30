@@ -20,6 +20,7 @@
 }
 
 body {
+	background-color: var(--c-dark);
 	font-size: 1.8rem;
 	font-family: Roboto;
 	line-height: 1.5;
@@ -130,7 +131,6 @@ h2 {
 */
 
 .root {
-	background-color: var(--c-dark);
 	width: 100%;
 	margin-left: 100px; /* consider menu width */
 
@@ -266,6 +266,7 @@ h2 {
 .config-part {
 	flex: 1;
 	min-height: 200px;
+	margin-bottom: 30px;
 }
 
 .json-editor {

@@ -15,7 +15,7 @@ class CaptchaSolver(Proxy):
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def get_rblx_public_key(self, user_agent:str, action_type:str, client) -> str:
         """
         Gets the public key for the specified action type

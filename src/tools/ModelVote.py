@@ -32,7 +32,7 @@ class ModelVote(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "New votes")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def send_model_vote(self, model_id, vote, cookie):
         """
         Send a vote to a model

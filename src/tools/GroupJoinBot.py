@@ -32,6 +32,7 @@ class GroupJoinBot(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, has_joined, "New joins")
 
+    @Utils.handle_exception()
     def send_group_join_request(self, captcha_service:str, group_id:str | int, cookie:str):
         """
         Send a join request to a group

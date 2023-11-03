@@ -40,7 +40,7 @@ class CookieGenerator(Tool):
                 self.print_status(worked_gen, failed_gen, total_gen, response_text, has_generated, "Generated")
         f.close()
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def get_csrf_token(self, client) -> str:
         """
         Gets a csrf token from the auth.roblox.com endpoint
@@ -53,6 +53,7 @@ class CookieGenerator(Tool):
 
         return csrf_token
 
+    @Utils.handle_exception(2, False)
     def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, client):
         """
         Verifies if a username is valid
@@ -98,7 +99,7 @@ class CookieGenerator(Tool):
         """
         return str(random.randint(2006, 2010)).zfill(2) + "-" + str(random.randint(1, 12)).zfill(2) + "-" + str(random.randint(1, 27)).zfill(2) + "T05:00:00.000Z"
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def send_signup_request(self, user_agent:str, csrf_token:str, username:str, password:str, birthday:str, is_girl:bool, client):
         """
         Sends a signup request to the auth.roblox.com endpoint
@@ -110,6 +111,7 @@ class CookieGenerator(Tool):
 
         return result
 
+    @Utils.handle_exception()
     def generate_cookie(self, captcha_service:str, use_proxy:bool) -> tuple:
         """
         Generates a ROBLOSECURITY cookie

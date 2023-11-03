@@ -52,7 +52,7 @@ class CookieChecker(Tool):
                 f.truncate()
                 f.write(open(self.cache_file_path, 'r').read())
 
-    @Utils.retry_on_exception(2)
+    @Utils.handle_exception(2)
     def test_cookie(self, cookie, use_proxy):
         """
         Checks if a cookie is working

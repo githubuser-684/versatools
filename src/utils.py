@@ -1,6 +1,7 @@
 import sys
 import os
 import functools
+import sys
 
 class Utils():
     """
@@ -40,7 +41,7 @@ class Utils():
         return response.text + " HTTPStatus: " + str(response.status_code)
 
     @staticmethod
-    def retry_on_exception(retries = 3):
+    def handle_exception(retries = 1, decorate_exception = True):
         """
         Decorator to retry executing a function x times until there's no exception
         """
@@ -51,15 +52,24 @@ class Utils():
                 Retry executing function x times until there's no exception
                 """
                 err = None
+                err_line = None
                 for _ in range(retries):
                     try:
                         return func(*args, **kwargs)
                     except Exception as e:
                         err = str(e)
-                        # if "Expecting value: line" in err:
-                        #     err = "JSON decode error. Cookie is invalid OR Rate limit"
+                        exc_type, exc_obj, exc_tb = sys.exc_info()
+                        err_line = exc_tb.tb_next.tb_lineno
                 else:
-                    raise Exception(f"Error {err}. Tried running {func.__name__} {retries} times")
+                    if decorate_exception:
+                        err_msg = f"Error {err} on line {err_line}. Tried running {func.__name__}"
+
+                        if retries == 1:
+                            raise Exception(err_msg + " once")
+                        else:
+                            raise Exception(err_msg + f" {retries} times")
+                    else:
+                        raise Exception(err)
             return wrapper
         return decorator
 

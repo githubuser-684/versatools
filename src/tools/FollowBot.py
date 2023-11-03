@@ -32,6 +32,7 @@ class FollowBot(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, is_followed, "New followers")
 
+    @Utils.handle_exception()
     def send_follow_request(self, captcha_service:str, user_id:str | int, cookie:str):
         """
         Send a follow request to a user

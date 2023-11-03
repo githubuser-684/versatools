@@ -49,7 +49,7 @@ class CookieRefresher(Tool):
 
         os.remove(self.new_cookies_file_path)
 
-    @Utils.retry_on_exception(1)
+    @Utils.handle_exception()
     def refresh_cookie(self, cookie:str, use_proxy:bool) -> tuple:
         """
         Refresh a ROBLOSECURITY cookie

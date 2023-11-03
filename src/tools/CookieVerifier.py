@@ -35,7 +35,7 @@ class CookieVerifier(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, is_verified, "Verified")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def is_verified(self, cookie, user_agent, client):
         """
         Checks if a cookie is verified
@@ -56,7 +56,7 @@ class CookieVerifier(Tool):
 
         return is_verified
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def create_address(self, client):
         """
         Creates a random email address
@@ -102,7 +102,7 @@ class CookieVerifier(Tool):
 
         return address, token
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def set_roblox_email(self, cookie, user_agent, client, csrf_token, email_addr):
         """
         Sets the roblox email address
@@ -116,7 +116,7 @@ class CookieVerifier(Tool):
 
         return response.status_code == 200, Utils.return_res(response)
 
-    @Utils.retry_on_exception(10)
+    @Utils.handle_exception(10, False)
     def get_email_id(self, token, client):
         """
         Gets the id of the latest email
@@ -140,7 +140,7 @@ class CookieVerifier(Tool):
 
         return mails[0]["id"]
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def get_email(self, token, mail_id, client):
         """
         Gets the email
@@ -159,7 +159,7 @@ class CookieVerifier(Tool):
             raise Exception(f"Failed to fetch data email {Utils.return_res(response)}")
         return mail
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def click_verif_link(self, mail, cookie, user_agent, csrf_token, client):
         """
         Simulates clicking on the verification link
@@ -175,7 +175,7 @@ class CookieVerifier(Tool):
         if response.status_code != 200:
             raise Exception(f"Failed to click verification link {Utils.return_res(response)}")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def verify_cookie(self, cookie:str):
         """
         Verifies a cookie

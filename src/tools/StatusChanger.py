@@ -31,7 +31,7 @@ class StatusChanger(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, is_changed, "Changed")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def change_status(self, new_status, cookie):
         """
         Changes the status of a user

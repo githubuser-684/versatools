@@ -43,6 +43,7 @@ class AssetsUploader(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, has_uploaded, "Uploaded")
 
+    @Utils.handle_exception()
     def upload_asset(self, asset):
         time.sleep(self.config["timeout"])
 
@@ -107,7 +108,7 @@ class AssetsUploader(Tool):
 
             return self.publish_asset(asset_id, client, csrf_token, user_agent)
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def publish_asset(self, asset_id, client, csrf_token, user_agent):
         req_url = f"https://itemconfiguration.roblox.com/v1/assets/{asset_id}/release"
         req_cookies = {".ROBLOSECURITY": self.config["cookie"]}
@@ -119,7 +120,7 @@ class AssetsUploader(Tool):
 
         return (response.status_code == 200), Utils.return_res(response)
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def get_asset_id(self, operationId, client, user_agent):
         req_url = f"https://apis.roblox.com/assets/user-auth/v1/operations/{operationId}"
         req_cookies = { ".ROBLOSECURITY": self.config["cookie"] }
@@ -135,7 +136,7 @@ class AssetsUploader(Tool):
 
         return done, response
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def get_asset_name(self, asset_id, client, csrf_token):
         user_agent = self.get_random_user_agent()
 

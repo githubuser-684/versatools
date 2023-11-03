@@ -32,7 +32,7 @@ class Gen2018Acc(Tool):
 
         eel.write_terminal(f"\x1B[1;32m2018 Account Generated: {username}:{default_pass}\x1B[0;0m")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def get_followers_count(self, user_id, client, user_agent):
         """
         Get the amount of followers of a user
@@ -52,7 +52,7 @@ class Gen2018Acc(Tool):
 
         return count
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def get_followers(self, user_id, cursor, follower_per_page, client, user_agent):
         """
         Get a page of followers

@@ -31,7 +31,7 @@ class FriendRequestBot(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_sent, "New requests")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def send_friend_request(self, user_id, cookie):
         """
         Send a friend request to a user

@@ -40,6 +40,7 @@ class CommentBot(Tool):
         """
         return random.choice(comments)
 
+    @Utils.handle_exception()
     def send_comment(self, captcha_service, asset_id, cookie):
         """
         Send a comment to an asset

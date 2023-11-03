@@ -33,7 +33,7 @@ class DisplayNameChanger(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Changed")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def change_display_name(self, new_display_name, cookie):
         """
         Changes the display name of a user

@@ -41,7 +41,7 @@ class MessageBot(Tool):
 
                 self.print_status(msg_sent, msg_failed, total_cookies, response_text, is_sent, "Messages sent")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3, False)
     def allow_sending_msgs(self, cookie, client, user_agent, csrf_token):
         """
         Allow sending messages to anyone
@@ -56,7 +56,7 @@ class MessageBot(Tool):
         if response.status_code != 200:
             raise Exception(Utils.return_res(response))
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def send_message(self, subject, body, recipient_id, cookie)  -> (bool, str):
         """
         Send a message to a user

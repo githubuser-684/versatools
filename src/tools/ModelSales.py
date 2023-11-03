@@ -35,6 +35,7 @@ class ModelSales(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Bought")
 
+    @Utils.handle_exception(2)
     def get_product_id(self, asset_id, cookie):
         """
         Get the product ID of an asset
@@ -55,7 +56,7 @@ class ModelSales(Tool):
 
         return product_id
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def buy_product(self, asset_id, product_id, cookie):
         """
         Buy a product

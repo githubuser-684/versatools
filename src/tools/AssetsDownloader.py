@@ -47,7 +47,7 @@ class AssetsDownloader(Tool):
 
                 self.print_status(req_worked, req_failed, total_req, response_text, has_downloaded, "Downloaded")
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(2, False)
     def get_assets_page(self, asset_name, cursor, proxies, user_agent):
         """
         Get a page of assets
@@ -113,7 +113,8 @@ class AssetsDownloader(Tool):
 
         return data, cursor
 
-    def get_assets_amount(self,  amount):
+    @Utils.handle_exception(3)
+    def get_assets_amount(self, amount):
         """
         Get x amount of assets
         """
@@ -136,7 +137,7 @@ class AssetsDownloader(Tool):
         assets = assets[:amount]
         return assets
 
-    @Utils.retry_on_exception()
+    @Utils.handle_exception(3)
     def download_asset(self, asset):
         """
         Download an asset
@@ -165,6 +166,7 @@ class AssetsDownloader(Tool):
 
         return True, "Generated in files/assets"
 
+    @Utils.handle_exception(2, False)
     def remove_trademark(self, asset_path):
         self.ensure_template_exists()
 
@@ -174,8 +176,9 @@ class AssetsDownloader(Tool):
         trademarked_img.paste(template, (0,0), mask = template)
         trademarked_img.save(asset_path)
 
+    @Utils.handle_exception(2, False)
     def ensure_template_exists(self):
         if not os.path.exists(self.cache_template_path):
             with open(self.cache_template_path, 'wb') as f:
-                png = httpx.get(f'https://rofuel.com/wp-content/uploads/2023/10/shirt.png').content
+                png = httpx.get(f'https://i.ibb.co/cXJs5Rj/asset-template.png').content
                 f.write(png)

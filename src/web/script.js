@@ -30,7 +30,7 @@ class WebApp {
 	setupJsonEditor() {
 		const editor = ace.edit("json-editor");
 		editor.setOptions({
-			theme: "ace/theme/monokai",
+			theme: "ace/theme/merbivore", // https://github.com/ajaxorg/ace/blob/master/src/ext/themelist.js
 			mode: "ace/mode/json",
 			fontSize: 18,
 			highlightActiveLine: false,

@@ -1,4 +1,10 @@
 config = {
+    "AdScraper": {
+        "ad_format": "vertical",
+        "max_generations": 20,
+        "use_proxy": False,
+        "max_workers": None
+    },
     "AssetsDownloader": {
         "remove_trademark": True,
         "//sorts": ["relevance", "favouritedalltime", "favouritedallweek", "favouritedallday", "bestsellingalltime", "bestsellingweek", "bestsellingday", "recentlycreated", "pricehightolow", "pricelowtohigh"],

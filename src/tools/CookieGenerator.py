@@ -7,7 +7,6 @@ from CaptchaSolver import CaptchaSolver
 from utils import Utils
 from data.adjectives import adjectives
 from data.nouns import nouns
-from utils import Utils
 
 class CookieGenerator(Tool):
     def __init__(self, app):

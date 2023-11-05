@@ -1,5 +1,5 @@
 config = {
-    "AdScraper": {
+    "AdsScraper": {
         "ad_format": "vertical",
         "max_generations": 20,
         "use_proxy": False,

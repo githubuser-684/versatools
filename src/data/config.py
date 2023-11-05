@@ -131,6 +131,10 @@ config = {
         "timeout": 2,
         "max_workers": None
     },
+    "ProxyScraper": {
+        "max_sites": None,
+        "max_workers": None
+    },
     "StatusChanger": {
         "new_status": "Hello I'm a bot :D",
         "use_proxy": True,

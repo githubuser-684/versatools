@@ -155,10 +155,12 @@ class AssetsUploader(Tool):
         req_cookies = { ".ROBLOSECURITY": self.config["cookie"]}
 
         result = client.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies)
-        if result.status_code != 200:
-            Utils.return_res(result)
 
         response = result.json()
-        asset_name = response["data"][0]['name']
+
+        try:
+            asset_name = response["data"][0]['name']
+        except:
+            raise Exception(f"Could not get asset name. {Utils.return_res(result)}")
 
         return asset_name

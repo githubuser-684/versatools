@@ -3,13 +3,14 @@ import os
 from utils import Utils
 import httpx
 import random
-import time
 import subprocess
 import urllib.parse
 import concurrent.futures
 import win32event
 import threading
 import psutil
+import eel
+
 
 class GameVisits(Tool):
     def __init__(self, app):
@@ -20,6 +21,8 @@ class GameVisits(Tool):
         timeout = self.config["timeout"]
         place_id = self.config["place_id"]
         max_workers = self.config["max_workers"]
+
+        eel.write_terminal("\x1B[1;31mWarning: on Windows 11, it may not be possible to run multiple roblox instances\x1B[0;0m")
 
         self.roblox_player_path = self.find_roblox_player()
 

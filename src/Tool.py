@@ -16,6 +16,7 @@ class Tool(Proxy, ABC):
         self.description = description
         self.app = app
         self.executor = None
+        self.exit_flag = False
 
         self.config = {}
         self.captcha_tokens = {}
@@ -68,7 +69,7 @@ class Tool(Proxy, ABC):
         """
         return random.choice(useragents)
 
-    def get_csrf_token(self, cookie:str, client) -> str:
+    def get_csrf_token(self, cookie:str, client = httpx) -> str:
         """
         Retrieve a CSRF token from Roblox
         """
@@ -125,6 +126,9 @@ class Tool(Proxy, ABC):
 
         return cookies
 
+    def get_random_cookie(self) -> str:
+        return self.get_cookies(1)[0]
+
     def get_random_proxies(self) -> dict:
         """
         Gets random proxies dict from proxies.txt file for httpx module
@@ -164,6 +168,8 @@ class Tool(Proxy, ABC):
         """
         if self.executor is not None:
             self.executor.shutdown(wait=True, cancel_futures=True)
+
+        self.exit_flag = True
 
     def __str__(self) -> str:
         return "A Versatools tool. " + self.description

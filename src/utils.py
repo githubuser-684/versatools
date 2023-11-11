@@ -2,6 +2,7 @@ import sys
 import os
 import functools
 import sys
+from datetime import datetime
 
 class Utils():
     """
@@ -72,6 +73,16 @@ class Utils():
                         raise Exception(err)
             return wrapper
         return decorator
+
+    @staticmethod
+    def utc_sec():
+        """
+        Returns the current UTC time in seconds
+        """
+        utc_time = datetime.utcnow()
+        utc_seconds = round((utc_time - datetime(1970, 1, 1)).total_seconds())
+        return utc_seconds
+
 
 class Suppressor():
     """

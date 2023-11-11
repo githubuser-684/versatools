@@ -76,6 +76,12 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "GameVisits": {
+        "timeout": 10,
+        "place_id": 0,
+        "max_generations": 100,
+        "max_workers": None
+    },
     "FunCaptchaSolvers": {
         "//solvers_name": [
             "anti-captcha",
@@ -115,10 +121,10 @@ config = {
     },
     "ModelSales": {
         "asset_id": 0,
-		"max_generations": 100,
-		"use_proxy": True,
-		"max_workers": None
-	},
+        "max_generations": 100,
+        "use_proxy": True,
+        "max_workers": None
+    },
     "ModelVote": {
         "model_id": 0,
         "dislike": False,

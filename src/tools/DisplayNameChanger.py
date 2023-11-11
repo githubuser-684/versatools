@@ -9,9 +9,10 @@ class DisplayNameChanger(Tool):
         super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
 
     def run(self):
-        eel.write_terminal("\x1B[1;33mWarning: Display names can only be changed once every week\x1B[0;0m")
         new_display_name = self.config["new_display_name"]
         cookies = self.get_cookies()
+
+        eel.write_terminal("\x1B[1;33mWarning: Display names can only be changed once every week\x1B[0;0m")
 
         req_sent = 0
         req_failed = 0

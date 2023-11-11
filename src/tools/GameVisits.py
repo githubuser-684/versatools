@@ -22,7 +22,7 @@ class GameVisits(Tool):
         place_id = self.config["place_id"]
         max_workers = self.config["max_workers"]
 
-        eel.write_terminal("\x1B[1;31mWarning: on Windows 11, it may not be possible to run multiple roblox instances\x1B[0;0m")
+        eel.write_terminal("\x1B[1;33mWarning: on Windows 11, it may not be possible to run multiple roblox instances\x1B[0;0m")
 
         self.roblox_player_path = self.find_roblox_player()
 

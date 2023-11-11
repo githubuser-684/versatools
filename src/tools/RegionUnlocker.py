@@ -29,16 +29,18 @@ class RegionUnlocker(Tool):
 
             for future in concurrent.futures.as_completed(results):
                 try:
-                    cookie = future.result()
+                    has_worked, response_text = future.result()
+                except Exception as err:
+                    has_worked, response_text = False, str(err)
+
+                if has_worked:
                     req_sent += 1
+
+                    cookie = response_text
                     f.write(cookie+"\n")
                     f.flush()
-                    response_text = cookie
-                    has_worked = True
-                except Exception as err:
-                    has_worked = False
+                else:
                     req_failed += 1
-                    response_text = str(err)
 
                 self.print_status(req_sent, req_failed, total_req, response_text, has_worked, "Unlocked")
 
@@ -53,10 +55,7 @@ class RegionUnlocker(Tool):
         os.remove(self.unlocked_cookies_file_path)
 
     @Utils.handle_exception()
-    def unlock_cookie(self, cookie:str, use_proxy:bool) -> str:
-        """
-        Unlock a ROBLOSECURITY cookie
-        """
+    def unlock_cookie(self, cookie, use_proxy):
         proxies = self.get_random_proxies() if use_proxy else None
 
         with httpx.Client(proxies=proxies) as client:
@@ -72,9 +71,12 @@ class RegionUnlocker(Tool):
 
             res = client.post(req_url, headers=req_headers, data=req_data)
 
+            if "Invalid Cookie" in res.text:
+                return False, res.text
+
             if "_|WARNING:-DO-NOT-SHARE" not in res.text:
                 raise Exception(res.text)
 
             cookie = res.text
 
-        return cookie
+        return True, cookie

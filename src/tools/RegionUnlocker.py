@@ -25,7 +25,7 @@ class RegionUnlocker(Tool):
         total_req = len(cookies)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.refresh_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
+            results = [self.executor.submit(self.unlock_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -53,10 +53,9 @@ class RegionUnlocker(Tool):
         os.remove(self.unlocked_cookies_file_path)
 
     @Utils.handle_exception()
-    def refresh_cookie(self, cookie:str, use_proxy:bool) -> tuple:
+    def unlock_cookie(self, cookie:str, use_proxy:bool) -> str:
         """
-        Refresh a ROBLOSECURITY cookie
-        Returns a tuple with the error and the new cookie
+        Unlock a ROBLOSECURITY cookie
         """
         proxies = self.get_random_proxies() if use_proxy else None
 

@@ -26,18 +26,19 @@ class CookieRefresher(Tool):
 
             for future in concurrent.futures.as_completed(results):
                 try:
-                    cookie = future.result()
+                    has_worked, response_text = future.result()
+                except Exception as err:
+                    has_worked, response_text = False, str(err)
+
+                if has_worked:
                     req_sent += 1
+                    cookie = response_text
                     f.write(cookie+"\n")
                     f.flush()
-                    response_text = cookie
-                    has_worked = True
-                except Exception as err:
-                    has_worked = False
+                else:
                     req_failed += 1
-                    response_text = str(err)
 
-                self.print_status(req_sent, req_failed, total_req, response_text, has_worked, "Generated")
+                self.print_status(req_sent, req_failed, total_req, response_text, has_worked, "Refreshed")
 
         f.close()
 
@@ -50,11 +51,7 @@ class CookieRefresher(Tool):
         os.remove(self.new_cookies_file_path)
 
     @Utils.handle_exception()
-    def refresh_cookie(self, cookie:str, use_proxy:bool) -> tuple:
-        """
-        Refresh a ROBLOSECURITY cookie
-        Returns a tuple with the error and the new cookie
-        """
+    def refresh_cookie(self, cookie:str, use_proxy:bool):
         proxies = self.get_random_proxies() if use_proxy else None
 
         with httpx.Client(proxies=proxies) as client:
@@ -70,6 +67,6 @@ class CookieRefresher(Tool):
         try:
             cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
-            raise Exception(Utils.return_res(data))
+            return False, Utils.return_res(data)
 
-        return cookie
+        return True, cookie

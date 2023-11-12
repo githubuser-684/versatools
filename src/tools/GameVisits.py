@@ -99,12 +99,15 @@ class GameVisits(Tool):
 
     def find_roblox_player(self):
         user_home = os.path.expanduser("~")
-        base_directory = os.path.join(user_home, "AppData", "Local", "Roblox", "Versions")
+        base_directories = [
+            os.path.join(user_home, "AppData", "Local", "Roblox", "Versions"),
+            os.path.join("C:", "Program Files (x86)", "Roblox", "Versions"),
+        ]
 
-        # Search for RobloxPlayerBeta.exe in subdirectories
-        for root, dirs, files in os.walk(base_directory):
-            if "RobloxPlayerBeta.exe" in files:
-                return os.path.join(root, "RobloxPlayerBeta.exe")
+        for base_directory in base_directories:
+            for root, dirs, files in os.walk(base_directory):
+                if "RobloxPlayerBeta.exe" in files:
+                    return os.path.join(root, "RobloxPlayerBeta.exe")
 
         raise FileNotFoundError("Could not find path to Roblox executable")
 

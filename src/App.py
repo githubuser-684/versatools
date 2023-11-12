@@ -1,6 +1,6 @@
 import os
 # pylint: disable=unused-import
-from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,CookieVerifier,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot,Gen2018Acc,ModelSales,AssetsUploader,ModelVote,AdsScraper,ProxyScraper,GameVisits,RegionUnlocker
+from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,CookieVerifier,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot,Gen2018Acc,ModelSales,AssetsUploader,ModelVote,AdsScraper,ProxyScraper,GameVisits
 from Tool import Tool
 from utils import Utils
 import json

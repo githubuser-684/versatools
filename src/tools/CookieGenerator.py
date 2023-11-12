@@ -147,6 +147,6 @@ class CookieGenerator(Tool):
         try:
             cookie = sign_up_res.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
-            return False, Utils.return_res(sign_up_res)
+            raise Exception(Utils.return_res(sign_up_res))
 
         return True, cookie

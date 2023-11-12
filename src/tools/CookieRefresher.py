@@ -67,6 +67,6 @@ class CookieRefresher(Tool):
         try:
             cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
-            return False, Utils.return_res(data)
+            raise Exception(Utils.return_res(data))
 
         return True, cookie

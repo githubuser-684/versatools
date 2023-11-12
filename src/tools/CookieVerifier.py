@@ -196,7 +196,7 @@ class CookieVerifier(Tool):
             # set roblox email
             is_valid, response_text = self.set_roblox_email(cookie, user_agent, client, csrf_token, address)
             if not is_valid:
-                return False, response_text
+                raise Exception(response_text)
 
             # get roblox email
             mail_id = self.get_email_id(token, client)

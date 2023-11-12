@@ -99,9 +99,11 @@ class GameVisits(Tool):
 
     def find_roblox_player(self):
         user_home = os.path.expanduser("~")
+        program_files_x86 = os.environ.get("ProgramFiles(x86)")
+
         base_directories = [
             os.path.join(user_home, "AppData", "Local", "Roblox", "Versions"),
-            os.path.join("C:", "Program Files (x86)", "Roblox", "Versions"),
+            os.path.join(program_files_x86, "Roblox", "Versions"),
         ]
 
         for base_directory in base_directories:

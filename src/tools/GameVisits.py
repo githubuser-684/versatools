@@ -26,7 +26,7 @@ class GameVisits(Tool):
 
         self.roblox_player_path = self.find_roblox_player()
 
-        if max_workers > 1:
+        if max_workers == None or max_workers > 1:
             # remove singleton mutex
             threading.Thread(target=self.remove_singleton_mutex).start()
 

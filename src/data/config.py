@@ -80,7 +80,7 @@ config = {
         "timeout": 10,
         "place_id": 0,
         "max_generations": 100,
-        "max_workers": None
+        "max_workers": 5
     },
     "FunCaptchaSolvers": {
         "//solvers_name": [

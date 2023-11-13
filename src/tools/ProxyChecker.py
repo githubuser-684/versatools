@@ -58,7 +58,7 @@ class ProxyChecker(Tool):
                 f.truncate()
                 f.write(open(self.cache_file_path, 'r').read())
 
-    def test_proxy_line(self, line: str, timeout: int) -> bool:
+    def test_proxy_line(self, line: str, timeout: int):
         """
         Checks if a line proxy is working
         """

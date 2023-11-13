@@ -95,7 +95,7 @@ class GameVisits(Tool):
 
         return f'"{self.roblox_player_path}" roblox-player:1+launchmode:play+gameinfo:{auth_ticket}+'\
             f'launchtime:{Utils.utc_sec()}+placelauncherurl:{urllib.parse.quote(launcherurl)}'\
-                f'+browsertrackerid:{browser_tracker_id}+robloxLocale:fr_fr+gameLocale:fr_fr+channel:+LaunchExp:InApp'
+                f'+browsertrackerid:{browser_tracker_id}+robloxLocale:en_en+gameLocale:en_en+channel:+LaunchExp:InApp'
 
     def find_roblox_player(self):
         user_home = os.path.expanduser("~")

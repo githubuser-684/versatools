@@ -7,6 +7,7 @@ class ModelSales(Tool):
     def __init__(self, app):
         super().__init__("Model Sales", "Buy your Roblox models tons of times", 3, app)
 
+    @Tool.handle_exit
     def run(self):
         asset_id = self.config["asset_id"]
         cookies = self.get_cookies(self.config["max_generations"])

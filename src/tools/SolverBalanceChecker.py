@@ -6,6 +6,7 @@ class SolverBalanceChecker(Tool):
     def __init__(self, app):
         super().__init__("Solver Balance Checker", "Check balance of your solvers", 5, app)
 
+    @Tool.handle_exit
     def run(self):
         solvers = ["anti-captcha", "2captcha", "capsolver", "capbypass"]
 

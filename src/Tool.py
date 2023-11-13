@@ -169,7 +169,13 @@ class Tool(Proxy, ABC):
         if self.executor is not None:
             self.executor.shutdown(wait=True, cancel_futures=True)
 
-        self.exit_flag = True
+    @staticmethod
+    def handle_exit(func):
+        def wrapper(instance, *args, **kwargs):
+            result = func(instance, *args, **kwargs)
+            instance.exit_flag = True
+            return result
+        return wrapper
 
     def __str__(self) -> str:
         return "A Versatools tool. " + self.description

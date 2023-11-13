@@ -16,6 +16,7 @@ class GameVisits(Tool):
     def __init__(self, app):
         super().__init__("Game Visits", "Boost game visits", 2, app)
 
+    @Tool.handle_exit
     def run(self):
         max_generations = self.config["max_generations"]
         timeout = self.config["timeout"]

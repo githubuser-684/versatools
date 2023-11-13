@@ -10,6 +10,7 @@ class CommentBot(Tool):
     def __init__(self, app):
         super().__init__("Comment Bot", "Increase/Decrease comments count of an asset", 2, app)
 
+    @Tool.handle_exit
     def run(self):
         asset_id = self.config["asset_id"]
         cookies = self.get_cookies(self.config["max_generations"])

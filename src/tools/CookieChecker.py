@@ -10,6 +10,7 @@ class CookieChecker(Tool):
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-cookies.txt")
 
+    @Tool.handle_exit
     def run(self):
         cookies = self.get_cookies()
 

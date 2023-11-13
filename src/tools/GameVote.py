@@ -7,6 +7,7 @@ class GameVote(Tool):
     def __init__(self, app):
         super().__init__("Game Vote", "Increase Like/Dislike count of a game", 1, app)
 
+    @Tool.handle_exit
     def run(self):
         game_id = self.config["game_id"]
         vote = not self.config["dislike"]

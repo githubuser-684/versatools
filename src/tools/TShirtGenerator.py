@@ -15,6 +15,7 @@ class TShirtGenerator(Tool):
         self.cache_img_path = os.path.join(self.cache_directory, "original-image")
         self.img_path = os.path.join(self.files_directory, "rblx-t-shirt.png")
 
+    @Tool.handle_exit
     def run(self):
         image_search_api_key = self.config["image_search_api_key"]
         query = self.config["query"]

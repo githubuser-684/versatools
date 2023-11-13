@@ -17,6 +17,7 @@ class AdsScraper(Tool):
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.ads_directory, self.vertical_ads_directory, self.horizontal_ads_directory, self.square_ads_directory])
 
+    @Tool.handle_exit
     def run(self):
         if (self.config["ad_format"] not in ["vertical", "horizontal", "square"]):
             raise Exception("Invalid ad type. Must be either \"vertical\", \"horizontal\" or \"square\"")

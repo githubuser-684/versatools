@@ -9,6 +9,7 @@ class ProxyChecker(Tool):
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-proxies.txt")
 
+    @Tool.handle_exit
     def run(self):
         # make sure format of the file is good
         self.check_proxies_file_format(self.proxies_file_path)

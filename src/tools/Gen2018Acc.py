@@ -9,6 +9,7 @@ class Gen2018Acc(Tool):
     def __init__(self, app):
         super().__init__("Gen 2018 Acc", "2018 old roblox account generator", 6, app)
 
+    @Tool.handle_exit
     def run(self):
         user_id = 73223429
         default_pass = "insaneclient101"

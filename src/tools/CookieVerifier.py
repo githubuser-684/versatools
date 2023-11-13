@@ -12,6 +12,7 @@ class CookieVerifier(Tool):
     def __init__(self, app):
         super().__init__("Cookie Verifier", "Verify your cookies!", 4, app)
 
+    @Tool.handle_exit
     def run(self):
         cookies = self.get_cookies()
 

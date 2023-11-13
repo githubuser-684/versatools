@@ -12,6 +12,7 @@ class CookieGenerator(Tool):
     def __init__(self, app):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
 
+    @Tool.handle_exit
     def run(self):
         # open cookies.txt for writing in it
         f = open(self.cookies_file_path, 'a')

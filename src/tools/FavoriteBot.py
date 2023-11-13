@@ -8,6 +8,7 @@ class FavoriteBot(Tool):
     def __init__(self, app):
         super().__init__("Favorite Bot", "Increase/Decrease stars count of an asset", 2, app)
 
+    @Tool.handle_exit
     def run(self):
         asset_id = self.config["asset_id"]
         unfavorite = self.config["unfavorite"]

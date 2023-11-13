@@ -8,6 +8,7 @@ class MessageBot(Tool):
     def __init__(self, app):
         super().__init__("Message Bot", "Spam someone with the same message", 6, app)
 
+    @Tool.handle_exit
     def run(self):
         subject = self.config["subject"]
         body = self.config["body"]

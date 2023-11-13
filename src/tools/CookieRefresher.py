@@ -10,6 +10,7 @@ class CookieRefresher(Tool):
 
         self.new_cookies_file_path = os.path.join(self.files_directory, "refreshed-cookies.txt")
 
+    @Tool.handle_exit
     def run(self):
         cookies = self.get_cookies()
 

@@ -8,6 +8,7 @@ class FollowBot(Tool):
     def __init__(self, app):
         super().__init__("Follow Bot", "Increase Followers count of a user", 4, app)
 
+    @Tool.handle_exit
     def run(self):
         user_id = self.config["user_id"]
         cookies = self.get_cookies(self.config["max_generations"])

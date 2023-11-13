@@ -15,6 +15,7 @@ class AssetsUploader(Tool):
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
+    @Tool.handle_exit
     def run(self):
         shirts = os.listdir(self.shirts_files_directory)
         pants = os.listdir(self.pants_files_directory)

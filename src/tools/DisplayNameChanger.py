@@ -8,6 +8,7 @@ class DisplayNameChanger(Tool):
     def __init__(self, app):
         super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
 
+    @Tool.handle_exit
     def run(self):
         new_display_name = self.config["new_display_name"]
         cookies = self.get_cookies()

@@ -7,6 +7,7 @@ class StatusChanger(Tool):
     def __init__(self, app):
         super().__init__("Status Changer", "Change the status of a large number of accounts", 7, app)
 
+    @Tool.handle_exit
     def run(self):
         new_status = self.config["new_status"]
         cookies = self.get_cookies()

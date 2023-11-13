@@ -18,6 +18,7 @@ class AssetsDownloader(Tool):
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
+    @Tool.handle_exit
     def run(self):
         if self.config["sort"] not in self.config["//sorts"]:
             raise Exception(f"Invalid sort config key \"{self.config['sort']}\"")

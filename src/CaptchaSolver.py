@@ -56,24 +56,7 @@ class CaptchaSolver(Proxy):
             solver.set_key(self.api_key)
             solver.set_website_url(website_url)
             solver.set_website_key(public_key)
-
-            # optional funcaptcha API subdomain, see our Funcaptcha documentation for details
-            # solver.set_js_api_domain("client-api.arkoselabs.com")
-
-            # optional data[blob] value, read the docs
             solver.set_data_blob('{"blob":"' + blob + '"}')
-
-            # PROXY NOT SUPPORTED YET.
-            #if use_proxy:
-            #    solver.set_proxy_address(proxy_address)
-            #    solver.set_proxy_port(proxy_port)
-            #    solver.set_proxy_login(proxy_username)
-            #    solver.set_proxy_password(proxy_password)
-            #    if (user_agent != None):
-            #        solver.set_user_agent(user_agent)
-
-            # Specify softId to earn 10% commission with your app.
-            # Get your softId here: https://anti-captcha.com/clients/tools/devcenter
             solver.set_soft_id(0)
 
             token = solver.solve_and_return_solution()
@@ -87,11 +70,6 @@ class CaptchaSolver(Proxy):
                 sitekey=public_key,
                 url=website_url,
                 userAgent=user_agent,
-                # PROXY NOT SUPPORTED YET.
-                #proxy=({
-                #    'type': proxy_type,
-                #    'uri': f"{proxy_username+':'+proxy_password+'@' if use_proxy else ''}{proxy_address}:{proxy_port}"
-                #} if use_proxy else None),
                 **{"data[blob]": blob}
             )
 

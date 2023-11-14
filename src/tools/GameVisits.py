@@ -84,7 +84,7 @@ class GameVisits(Tool):
         try:
             stdout, stderr = proc.communicate(timeout=timeout)
             if stderr:
-               raise Exception("Failed to open instance. " + str(stderr))
+               raise Exception("Failed to communicate with instance. " + str(stderr))
         except subprocess.TimeoutExpired:
             self.kill(proc.pid)
 

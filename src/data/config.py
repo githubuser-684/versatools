@@ -50,6 +50,15 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "DiscordRPC": {
+		"client_id": "467570845993271307",
+		"state": "Adobe",
+		"details": "Editing",
+		"small_text": "Adobe",
+		"small_image": "adobe",
+		"large_text": "Illustrator",
+		"large_image": "illustrator"
+	},
     "DisplayNameChanger": {
         "new_display_name": "VersatoolsBEST",
         "use_proxy": True,

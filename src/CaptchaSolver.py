@@ -7,6 +7,7 @@ from utils import Suppressor, Utils
 import httpx
 from urllib.parse import unquote
 from Proxy import Proxy
+from data.public_keys import public_keys
 
 class CaptchaSolver(Proxy):
     def __init__(self, captcha_service:str, api_key:str):
@@ -15,17 +16,11 @@ class CaptchaSolver(Proxy):
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
-    @Utils.handle_exception(3, False)
-    def get_rblx_public_key(self, user_agent:str, action_type:str, client) -> str:
+    def get_rblx_public_key(self, action_type):
         """
         Gets the public key for the specified action type
         """
-        reqpk_url = "https://apis.rbxcdn.com/captcha/v1/metadata"
-        reqpk_headers = {"User-Agent": user_agent, "Accept": "*/*", "Accept-Language": "en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty",  "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "cross-site", "Te": "trailers", "Connection": "close", }
-        reqpk_response = client.get(reqpk_url, headers=reqpk_headers)
-        public_key = reqpk_response.json()["funCaptchaPublicKeys"][action_type]
-
-        return public_key
+        return public_keys[action_type]
 
     def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, client) -> httpx.Response:
         """
@@ -45,7 +40,7 @@ class CaptchaSolver(Proxy):
         rblx_metadata = json.loads(base64.b64decode(response_headers["Rblx-Challenge-Metadata"]))
         blob = rblx_metadata["dataExchangeBlob"]
         unified_captcha_id = rblx_metadata["unifiedCaptchaId"]
-        public_key = self.get_rblx_public_key(user_agent, action_type, client)
+        public_key = self.get_rblx_public_key(action_type)
         website_url = "https://www.roblox.com"
         website_subdomain = "roblox-api.arkoselabs.com"
 

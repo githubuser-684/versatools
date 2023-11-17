@@ -8,6 +8,7 @@ import httpx
 from urllib.parse import unquote
 from Proxy import Proxy
 from data.public_keys import public_keys
+import random
 
 class CaptchaSolver(Proxy):
     def __init__(self, captcha_service:str, api_key:str):
@@ -34,6 +35,35 @@ class CaptchaSolver(Proxy):
         website_subdomain = "roblox-api.arkoselabs.com"
 
         # solve captcha using specified service
+        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, user_agent)
+
+        self.send_metrics_records(client, user_agent, meta_action_type)
+
+        metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
+
+        # get headers from response
+        req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
+        del req_headers["content-length"]
+
+        # challenge_continue
+        self.challenge_continue(req_headers, captcha_id, metadata, client)
+
+        # send request again but with captcha token
+        req_url, req_headers, req_json, req_data = self.build_captcha_res(response, req_headers, captcha_id, metadata_base64, token)
+
+        final_response = client.post(req_url, headers=req_headers, json=req_json, data=req_data)
+
+        return final_response
+
+    def get_captcha_data(self, metadata_base64):
+        metadata = json.loads(base64.b64decode(metadata_base64))
+        blob = metadata["dataExchangeBlob"]
+        unified_captcha_id = metadata["unifiedCaptchaId"]
+        action_type = metadata["actionType"]
+
+        return blob, unified_captcha_id, action_type
+
+    def send_to_solver(self, website_url, website_subdomain, public_key, blob, user_agent):
         if self.captcha_service == "anti-captcha":
             solver = funcaptchaProxyless()
             solver.set_verbose(0)
@@ -120,29 +150,58 @@ class CaptchaSolver(Proxy):
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")
 
-        metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
+        return token
 
-        # get headers from response
-        req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
-        del req_headers["content-length"]
+    def send_metrics_records(self, client, user_agent, meta_action_type):
+        req_url = "https://apis.roblox.com/account-security-service/v1/metrics/record"
+        req_headers = self.get_roblox_headers(user_agent)
+        req_json = {
+            "labelValues": {
+                "action_type": meta_action_type,
+                "application_type": "unknown",
+                "event_type": "FunCaptcha_Initialized",
+                "version": "V2"
+            },
+            "name": "event_captcha",
+            "value": 1
+        }
 
-        # challenge_continue
-        self.challenge_continue(req_headers, captcha_id, metadata, client)
+        response = client.post(req_url, headers=req_headers, json=req_json)
 
-        # send request again but with captcha token
-        req_url, req_headers, req_json, req_data = self.build_captcha_res(response, req_headers, captcha_id, metadata_base64, token)
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
 
-        final_response = client.post(req_url, headers=req_headers, json=req_json, data=req_data)
+        req_json = {
+            "labelValues": {
+                "action_type": meta_action_type,
+                "application_type": "unknown",
+                "event_type": "FunCaptcha_Success",
+                "version": "V2"
+            },
+            "name": "event_captcha",
+            "value": 1
+        }
 
-        return final_response
+        response = client.post(req_url, headers=req_headers, json=req_json)
 
-    def get_captcha_data(self, metadata_base64):
-        metadata = json.loads(base64.b64decode(metadata_base64))
-        blob = metadata["dataExchangeBlob"]
-        unified_captcha_id = metadata["unifiedCaptchaId"]
-        action_type = metadata["actionType"]
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
 
-        return blob, unified_captcha_id, action_type
+        req_json = {
+            "labelValues": {
+                "action_type": meta_action_type,
+                "application_type": "unknown",
+                "event_type": "FunCaptcha_Success",
+                "version": "V2"
+            },
+            "name": "solve_time_captcha",
+            "value": random.randint(1000, 2000)
+        }
+
+        response = requests.post(req_url, headers=req_headers, json=req_json)
+
+        if response.status_code != 200:
+            raise Exception(Utils.return_res(response))
 
     def build_metadata(self, unified_captcha_id, token, action_type):
         metadata = f"{{\"unifiedCaptchaId\":\"{unified_captcha_id}\",\"captchaToken\":\"{token}\",\"actionType\":\"{action_type}\"}}"

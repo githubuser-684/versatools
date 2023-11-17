@@ -120,6 +120,12 @@ config = {
         "use_proxy": True,
         "max_workers": 50
     },
+    "ItemBuyer": {
+        "item_id": 0,
+        "max_generations": 100,
+        "use_proxy": True,
+        "max_workers": None
+    },
     "MessageBot": {
         "recipient_id": 1,
         "subject": "Hello",

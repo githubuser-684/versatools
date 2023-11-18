@@ -124,7 +124,7 @@ class CaptchaSolver(Proxy):
 
             # polling
             # wait for captcha to be solved
-            tries = 10
+            tries = 20
             while taskStatus in ["idle", "processing"] and tries > 0:
                 captcha_response = httpx.post('https://api.capbypass.com/getTaskResult', json={
                     "clientKey": self.api_key,

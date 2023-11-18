@@ -156,6 +156,14 @@ config = {
         "max_sites": None,
         "max_workers": None
     },
+    "ReportBot": {
+        "report_type": "user",
+        "thing_id": 1,
+        "comment": "Roblox scammed me! Please ban him!",
+        "max_generations": 100,
+        "use_proxy": True,
+        "max_workers": None
+    },
     "RegionUnlocker": {
         "use_proxy": True,
         "max_workers": None

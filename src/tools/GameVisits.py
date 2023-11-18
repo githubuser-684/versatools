@@ -115,5 +115,8 @@ class GameVisits(Tool):
         raise FileNotFoundError("Could not find path to Roblox executable")
 
     def remove_singleton_mutex(self):
-        while self.exit_flag is False:
+        while True:
             win32event.CreateMutex(None, 1, "ROBLOX_singletonMutex")
+
+            if self.exit_flag is False:
+                break

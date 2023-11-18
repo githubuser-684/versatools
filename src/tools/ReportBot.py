@@ -70,10 +70,13 @@ class ReportBot(Tool):
             if response.status_code != 200:
                 raise Exception(Utils.return_res(response))
 
-            if "Your report has been sent." not in response.text:
-                return False, f"{Utils.return_res(response)} Report message not found."
+            # get message <h4>here</h4>
+            try:
+                message = re.search(r'<div id="report-body" class="section-content">\s*<div id="report-header" class="section-header">\s*<h4>(.*?)<\/h4>', response.text).group(1)
+            except AttributeError:
+                return False, f"{Utils.return_res(response)} Failed to get report response."
 
-            return True, "Your report has been sent."
+            return True, message
 
     def get_report_url(self, report_type, thing_id):
         if report_type == "user":

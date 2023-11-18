@@ -161,7 +161,9 @@ class CaptchaSolver(Proxy):
 
         ua = req_headers["user-agent"]
         csrf_token = req_headers["x-csrf-token"]
+        cookie = req_headers["cookie"]
         continue_headers = self.get_roblox_headers(ua, csrf_token)
+        continue_headers["Cookie"] = cookie
 
         req_json={"challengeId": captcha_id, "challengeMetadata": metadata, "challengeType": "captcha"}
 

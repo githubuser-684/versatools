@@ -56,9 +56,9 @@ class CaptchaSolver(Proxy):
         self.challenge_continue(init_headers, captcha_id, metadata, client)
 
         # send request again but with captcha token
-        req_url, req_headers, req_json = self.build_captcha_res(init_req, captcha_id, metadata_base64, token)
+        req_url, req_headers = self.build_captcha_res(init_req, captcha_id, metadata_base64)
 
-        final_response = client.post(req_url, headers=req_headers, json=req_json)
+        final_response = client.post(req_url, headers=req_headers)
 
         return final_response
 
@@ -207,7 +207,7 @@ class CaptchaSolver(Proxy):
 
         return req_url, headers, req_json, req_data
 
-    def build_captcha_res(self, init_req, captcha_id, metadata_base64, token):
+    def build_captcha_res(self, init_req, captcha_id, metadata_base64):
         (
             init_url,
             init_headers,
@@ -222,15 +222,7 @@ class CaptchaSolver(Proxy):
         req_headers["rblx-challenge-type"] = "captcha"
         req_headers["rblx-challenge-metadata"] = metadata_base64
 
-        req_json = {}
-
-        if init_json != {}:
-            req_json = init_json
-            req_json["captchaToken"] = token
-            req_json["captchaId"] = captcha_id
-            req_json["captchaProvider"] = "PROVIDER_ARKOSE_LABS"
-
-        return req_url, req_headers, req_json
+        return req_url, req_headers
 
     def get_balance(self):
         """

@@ -6,12 +6,12 @@ import os
 import win32event
 from utils import Utils
 import urllib.parse
+from Proxy import Proxy
 
-class RobloxClient():
-    def __init__(self):
-        self.roblox_player_path = self.find_roblox_player()
+class RobloxClient(Proxy):
+    def __init__(self, roblox_player_path):
+        self.roblox_player_path = roblox_player_path
 
-    @staticmethod
     def get_auth_ticket(self, cookie, user_agent, csrf_token):
         headers = self.get_roblox_headers(user_agent, csrf_token)
 
@@ -50,7 +50,8 @@ class RobloxClient():
             f'launchtime:{Utils.utc_sec()}+placelauncherurl:{urllib.parse.quote(launcherurl)}'\
                 f'+browsertrackerid:{browser_tracker_id}+robloxLocale:en_en+gameLocale:en_en+channel:+LaunchExp:InApp'
 
-    def find_roblox_player(self):
+    @staticmethod
+    def find_roblox_player():
         user_home = os.path.expanduser("~")
         program_files_x86 = os.environ.get("ProgramFiles(x86)")
 

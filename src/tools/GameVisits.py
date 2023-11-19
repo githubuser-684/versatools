@@ -18,18 +18,17 @@ class GameVisits(Tool):
 
         eel.write_terminal("\x1B[1;33mWarning: on Windows 11, it may not be possible to run multiple roblox instances\x1B[0;0m")
 
-        self.roblox_player_path = RobloxClient.find_roblox_player()
+        roblox_player_path = RobloxClient.find_roblox_player()
 
         if max_workers == None or max_workers > 1:
-            # remove singleton mutex
-            threading.Thread(target=RobloxClient.remove_singleton_mutex).start()
+            threading.Thread(target=Tool.run_until_exit(RobloxClient.remove_singleton_mutex)).start()
 
         req_sent = 0
         req_failed = 0
         total_req = max_generations
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
-            results = [self.executor.submit(self.visit_game, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
+            results = [self.executor.submit(self.visit_game, roblox_player_path, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -45,12 +44,12 @@ class GameVisits(Tool):
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "New visits")
 
     @Utils.handle_exception()
-    def visit_game(self, cookie, place_id, timeout):
+    def visit_game(self, roblox_player_path, cookie, place_id, timeout):
         csrf_token = self.get_csrf_token(cookie)
         user_agent = self.get_random_user_agent()
 
-        client = RobloxClient(self.roblox_player_path)
-        auth_ticket = client.get_auth_ticket(cookie, user_agent, csrf_token)
-        client.launch_place(auth_ticket, place_id, timeout)
+        rblx_client = RobloxClient(roblox_player_path)
+        auth_ticket = rblx_client.get_auth_ticket(cookie, user_agent, csrf_token)
+        rblx_client.launch_place(auth_ticket, place_id, timeout)
 
         return True, "Cookie visited the game"

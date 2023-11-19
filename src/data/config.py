@@ -105,6 +105,7 @@ config = {
     },
     "GameVote": {
         "game_id": 0,
+        "timeout": 10,
         "dislike": False,
         "max_generations": 100,
         "use_proxy": True,

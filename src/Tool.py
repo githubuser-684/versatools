@@ -177,5 +177,16 @@ class Tool(Proxy, ABC):
             return result
         return wrapper
 
+    @staticmethod
+    def run_until_exit(func):
+        def wrapper(instance, *args, **kwargs):
+            while True:
+                result = func(instance, *args, **kwargs)
+
+                if instance.exit_flag:
+                    break
+            return result
+        return wrapper
+
     def __str__(self) -> str:
         return "A Versatools tool. " + self.description

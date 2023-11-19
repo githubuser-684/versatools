@@ -68,9 +68,5 @@ class RobloxClient(Proxy):
         raise FileNotFoundError("Could not find path to Roblox executable")
 
     @staticmethod
-    def remove_singleton_mutex(self):
-        while True:
-            win32event.CreateMutex(None, 1, "ROBLOX_singletonMutex")
-
-            if self.exit_flag is False:
-                break
+    def remove_singleton_mutex():
+        win32event.CreateMutex(None, 1, "ROBLOX_singletonMutex")

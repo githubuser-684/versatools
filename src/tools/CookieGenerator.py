@@ -2,6 +2,7 @@ import random
 import string
 import concurrent.futures
 import httpx
+import eel
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
 from utils import Utils
@@ -14,6 +15,8 @@ class CookieGenerator(Tool):
 
     @Tool.handle_exit
     def run(self):
+        eel.write_terminal("\x1B[1;33mWarning: Cookies generated using our tool are flagged and region locked.\x1B[0;0m")
+
         # open cookies.txt for writing in it
         f = open(self.cookies_file_path, 'a')
 

@@ -56,9 +56,9 @@ class CaptchaSolver(Proxy):
         self.challenge_continue(init_headers, captcha_id, metadata, client)
 
         # send request again but with captcha token
-        req_url, req_headers = self.build_captcha_res(init_req, captcha_id, metadata_base64)
+        req_url, req_headers, req_json = self.build_captcha_res(init_req, captcha_id, metadata_base64, meta_action_type)
 
-        final_response = client.post(req_url, headers=req_headers)
+        final_response = client.post(req_url, headers=req_headers, json=req_json)
 
         return final_response
 
@@ -207,7 +207,7 @@ class CaptchaSolver(Proxy):
 
         return req_url, headers, req_json, req_data
 
-    def build_captcha_res(self, init_req, captcha_id, metadata_base64):
+    def build_captcha_res(self, init_req, captcha_id, metadata_base64, meta_action_type):
         (
             init_url,
             init_headers,
@@ -222,7 +222,13 @@ class CaptchaSolver(Proxy):
         req_headers["rblx-challenge-type"] = "captcha"
         req_headers["rblx-challenge-metadata"] = metadata_base64
 
-        return req_url, req_headers
+
+        req_json = {}
+
+        if meta_action_type == "Signup":
+            req_json = init_json
+
+        return req_url, req_headers, req_json
 
     def get_balance(self):
         """

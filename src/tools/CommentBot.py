@@ -59,7 +59,7 @@ class CommentBot(Tool):
             req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
 
             init_res = client.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies)
-            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", user_agent, client)
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", client)
 
         success = response.status_code == 200 and response.get('ErrorCode') is None
 

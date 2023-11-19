@@ -48,8 +48,10 @@ class FollowBot(Tool):
             req_url = f"https://friends.roblox.com/v1/users/{user_id}/follow"
             req_cookies = {".ROBLOSECURITY": cookie}
             req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            del req_headers["Content-Type"]
 
             init_res = client.post(req_url, headers=req_headers, cookies=req_cookies)
-            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", user_agent, client)
+
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", client)
 
         return (response.status_code == 200), Utils.return_res(response)

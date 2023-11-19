@@ -143,7 +143,7 @@ class CookieGenerator(Tool):
             is_girl = random.choice([True, False])
 
             sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, client)
-            sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", user_agent, client)
+            sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", client)
 
         try:
             cookie = sign_up_res.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]

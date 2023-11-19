@@ -8,7 +8,6 @@ import httpx
 from urllib.parse import unquote
 from Proxy import Proxy
 from data.public_keys import public_keys
-import random
 
 class CaptchaSolver(Proxy):
     def __init__(self, captcha_service:str, api_key:str):
@@ -17,7 +16,7 @@ class CaptchaSolver(Proxy):
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
-    def solve_captcha(self, response:httpx.Response, action_type:str, user_agent:str, client) -> httpx.Response:
+    def solve_captcha(self, response:httpx.Response, action_type:str, client) -> httpx.Response:
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -27,7 +26,20 @@ class CaptchaSolver(Proxy):
         elif response.status_code != 403: # no captcha
             return response
 
-        metadata = response.headers["Rblx-Challenge-Metadata"]
+        # extract initial request data
+        init_url, init_headers, init_json, init_data = self.extract_init_req(response)
+        init_req = (
+            init_url,
+            init_headers,
+            init_json,
+            init_data
+        )
+
+        try:
+            metadata = response.headers["Rblx-Challenge-Metadata"]
+        except KeyError:
+            raise Exception(f"No metadata found. {Utils.return_res(response)}")
+
         blob, captcha_id, meta_action_type = self.get_captcha_data(metadata)
 
         public_key = public_keys[action_type]
@@ -35,21 +47,18 @@ class CaptchaSolver(Proxy):
         website_subdomain = "roblox-api.arkoselabs.com"
 
         # solve captcha using specified service
+        user_agent = init_headers["user-agent"]
         token = self.send_to_solver(website_url, website_subdomain, public_key, blob, user_agent)
 
         metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
 
-        # get headers from response
-        req_headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
-        del req_headers["content-length"]
-
         # challenge_continue
-        self.challenge_continue(req_headers, captcha_id, metadata, client)
+        self.challenge_continue(init_headers, captcha_id, metadata, client)
 
         # send request again but with captcha token
-        req_url, req_headers, req_json, req_data = self.build_captcha_res(response, req_headers, captcha_id, metadata_base64, token)
+        req_url, req_headers, req_json = self.build_captcha_res(init_req, captcha_id, metadata_base64, token)
 
-        final_response = client.post(req_url, headers=req_headers, json=req_json, data=req_data)
+        final_response = client.post(req_url, headers=req_headers, json=req_json)
 
         return final_response
 
@@ -156,13 +165,14 @@ class CaptchaSolver(Proxy):
 
         return metadata, metadata_base64
 
-    def challenge_continue(self, req_headers, captcha_id, metadata, client):
+    def challenge_continue(self, init_headers, captcha_id, metadata, client):
         req_url = "https://apis.roblox.com/challenge/v1/continue"
 
-        ua = req_headers["user-agent"]
-        csrf_token = req_headers["x-csrf-token"]
-        cookie = req_headers["cookie"]
-        continue_headers = self.get_roblox_headers(ua, csrf_token)
+        user_agent = init_headers["user-agent"]
+        csrf_token = init_headers["x-csrf-token"]
+        continue_headers = self.get_roblox_headers(user_agent, csrf_token)
+
+        cookie = init_headers["cookie"]
         continue_headers["Cookie"] = cookie
 
         req_json={"challengeId": captcha_id, "challengeMetadata": metadata, "challengeType": "captcha"}
@@ -172,20 +182,22 @@ class CaptchaSolver(Proxy):
         if result.status_code != 200:
             raise Exception(Utils.return_res(result))
 
-    def build_captcha_res(self, response, req_headers, captcha_id, metadata_base64, token):
+    def extract_init_req(self, response):
         req_url = str(response.request.url)
 
-        req_headers['Rblx-Challenge-Id'] = captcha_id
-        req_headers["Rblx-Challenge-Type"] = "captcha"
-        req_headers["Rblx-Challenge-Metadata"] = metadata_base64
+        # extract headers
+        headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
+        del headers["content-length"]
+        del headers["connection"]
+        del headers["host"]
 
-        # error bytes to json
+        # get content
         req_json = {}
         req_data = {}
 
         req_content = bytes.decode(response.request._content)
 
-        if response.request.headers["content-type"] == "application/x-www-form-urlencoded":
+        if response.request.headers.get("content-type") == "application/x-www-form-urlencoded":
             pairs = req_content.split('&')
             for pair in pairs:
                 key, value = pair.split('=')
@@ -193,11 +205,32 @@ class CaptchaSolver(Proxy):
         else:
             req_json = json.loads(req_content) if req_content != "" else {}
 
-        req_json["captchaToken"] = token
-        req_json["captchaId"] = captcha_id
-        req_json["captchaProvider"] = "PROVIDER_ARKOSE_LABS"
+        return req_url, headers, req_json, req_data
 
-        return req_url, req_headers, req_json, req_data
+    def build_captcha_res(self, init_req, captcha_id, metadata_base64, token):
+        (
+            init_url,
+            init_headers,
+            init_json,
+            init_data
+        ) = init_req
+
+        req_url = init_url
+        req_headers = init_headers
+
+        req_headers['rblx-challenge-id'] = captcha_id
+        req_headers["rblx-challenge-type"] = "captcha"
+        req_headers["rblx-challenge-metadata"] = metadata_base64
+
+        req_json = {}
+
+        if init_json != {}:
+            req_json = init_json
+            req_json["captchaToken"] = token
+            req_json["captchaId"] = captcha_id
+            req_json["captchaProvider"] = "PROVIDER_ARKOSE_LABS"
+
+        return req_url, req_headers, req_json
 
     def get_balance(self):
         """

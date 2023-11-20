@@ -94,7 +94,10 @@ class CookieGenerator(Tool):
         Generates a random and complex password
         """
         length = 10
-        return ''.join(random.choices(string.ascii_uppercase + string.digits + string.punctuation, k=length))
+        password = ''.join(random.choices(string.ascii_uppercase + string.digits + string.punctuation, k=length))
+        password.replace(":", "v")
+
+        return password
 
     def generate_birthday(self):
         """
@@ -153,4 +156,4 @@ class CookieGenerator(Tool):
         except Exception:
             raise Exception(Utils.return_res(sign_up_res))
 
-        return True, cookie
+        return True, f"{username}:{password}:{cookie}"

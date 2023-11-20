@@ -1,6 +1,7 @@
 import os
 import concurrent.futures
 import httpx
+import re
 from Tool import Tool
 from utils import Utils
 
@@ -12,7 +13,7 @@ class CookieChecker(Tool):
 
     @Tool.handle_exit
     def run(self):
-        cookies = self.get_cookies()
+        cookies, lines = self.get_cookies(None, True)
 
         if self.config["delete_invalid_cookies"]:
             f = open(self.cache_file_path, 'w')
@@ -39,7 +40,12 @@ class CookieChecker(Tool):
                     failed_cookies += 1
 
                 if self.config["delete_invalid_cookies"] and is_working:
-                    f.write(cookie + "\n")
+                    # write line that contains cookie
+                    pattern = re.compile(rf'.*{re.escape(cookie)}.*')
+                    matched_lines = [line for line in lines if pattern.search(line)]
+                    matched_line = matched_lines[0]
+
+                    f.write(matched_line + "\n")
                     f.flush()
 
                 self.print_status(working_cookies, failed_cookies, total_cookies, response_text, is_working, "Working")

@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from Proxy import Proxy
 from utils import Utils
 import eel
+import re
 from data.useragents import useragents
 
 class Tool(Proxy, ABC):
@@ -106,23 +107,30 @@ class Tool(Proxy, ABC):
             "IsPremium": result["IsPremium"]
         }
 
-    def get_cookies(self, amount = None) -> list:
+    def get_cookies(self, amount = None, provide_lines = False) -> list:
         """
         Gets cookies from cookies.txt file
         """
         f = open(self.cookies_file_path, 'r+')
-        cookies = f.read().splitlines()
+        lines = f.read().splitlines()
         f.close()
 
         # ignore duplicates
-        cookies = [*set(cookies)]
-        random.shuffle(cookies)
+        lines = [*set(lines)]
+        random.shuffle(lines)
+
+        # take only the cookie (not u:p)
+        pattern = re.compile(r'_\|WARNING:-DO-NOT-SHARE-THIS\.-.*')
+        cookies = [match.group(0) for line in lines for match in [pattern.search(line)] if match]
 
         if len(cookies) == 0:
             raise Exception("No cookies found. Make sure to generate some first")
 
         if amount is not None and amount < len(cookies):
             cookies = cookies[:amount]
+
+        if provide_lines:
+            return cookies, lines
 
         return cookies
 

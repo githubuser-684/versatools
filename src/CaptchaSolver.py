@@ -37,10 +37,9 @@ class CaptchaSolver(Proxy):
 
         try:
             metadata = response.headers["Rblx-Challenge-Metadata"]
+            blob, captcha_id, meta_action_type = self.get_captcha_data(metadata)
         except KeyError:
             raise Exception(f"No metadata found. {Utils.return_res(response)}")
-
-        blob, captcha_id, meta_action_type = self.get_captcha_data(metadata)
 
         public_key = public_keys[action_type]
         website_url = "https://www.roblox.com"

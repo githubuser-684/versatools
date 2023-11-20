@@ -1,6 +1,7 @@
 import os
 import concurrent.futures
 import httpx
+import re
 from Tool import Tool
 from utils import Utils
 
@@ -12,7 +13,7 @@ class CookieRefresher(Tool):
 
     @Tool.handle_exit
     def run(self):
-        cookies = self.get_cookies()
+        cookies, lines = self.get_cookies(None, True)
 
         f = open(self.new_cookies_file_path, 'w')
         f.seek(0)
@@ -27,14 +28,20 @@ class CookieRefresher(Tool):
 
             for future in concurrent.futures.as_completed(results):
                 try:
-                    has_worked, response_text = future.result()
+                    has_worked, response_text, old_cookie = future.result()
                 except Exception as err:
                     has_worked, response_text = False, str(err)
 
                 if has_worked:
                     req_sent += 1
                     cookie = response_text
-                    f.write(cookie+"\n")
+
+                    # search for the user:pass: part of the line
+                    pattern = re.compile(rf'(.*?){re.escape(old_cookie)}.*')
+                    matched_lines = [pattern.search(line) for line in lines if pattern.search(line)]
+                    user_pass_part = matched_lines[0].group(1)
+
+                    f.write(user_pass_part+cookie+"\n")
                     f.flush()
                 else:
                     req_failed += 1
@@ -66,8 +73,8 @@ class CookieRefresher(Tool):
             data = client.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers)
 
         try:
-            cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
+            new_cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:
             raise Exception(Utils.return_res(data))
 
-        return True, cookie
+        return True, new_cookie, cookie

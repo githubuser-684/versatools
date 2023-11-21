@@ -179,7 +179,7 @@ class CaptchaSolver(Proxy):
         req_headers["rblx-challenge-metadata"] = metadata_base64
 
 
-        req_json = {}
+        req_json = None
 
         if meta_action_type == "Signup":
             req_json = init_req["json"]

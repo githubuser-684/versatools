@@ -1,5 +1,5 @@
 from Tool import Tool
-import httpx
+import httpc
 import concurrent.futures
 from utils import Utils
 
@@ -37,15 +37,15 @@ class StatusChanger(Tool):
         """
         Changes the status of a user
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             req_url = "https://accountinformation.roblox.com/v1/description"
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
             req_data = {"description": new_status }
 
             response = client.post(req_url, headers=req_headers, cookies=req_cookies, data=req_data)

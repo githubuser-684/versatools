@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -37,14 +37,14 @@ class ItemBuyer(Tool):
 
     @Utils.handle_exception(2)
     def get_product_data(self, item_id, cookie):
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
 
             req_url = f"https://www.roblox.com/catalog/{item_id}"
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent)
+            req_headers = httpc.get_roblox_headers(user_agent)
 
             response = client.get(req_url, headers=req_headers, cookies=req_cookies)
 
@@ -66,15 +66,15 @@ class ItemBuyer(Tool):
         """
         Buy an item from the catalog
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             req_url = "https://economy.roblox.com/v1/purchases/products/" + product_id
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
             req_json={"expectedCurrency": expected_currency, "expectedPrice": expected_price, "expectedSellerId": expected_seller_id}
 
             response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)

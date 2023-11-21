@@ -4,6 +4,7 @@ import concurrent.futures
 import threading
 import eel
 from RobloxClient import RobloxClient
+import httpc
 
 class GameVisits(Tool):
     def __init__(self, app):
@@ -46,7 +47,7 @@ class GameVisits(Tool):
     @Utils.handle_exception()
     def visit_game(self, roblox_player_path, cookie, place_id, timeout):
         csrf_token = self.get_csrf_token(cookie)
-        user_agent = self.get_random_user_agent()
+        user_agent = httpc.get_random_user_agent()
 
         rblx_client = RobloxClient(roblox_player_path)
         auth_ticket = rblx_client.get_auth_ticket(cookie, user_agent, csrf_token)

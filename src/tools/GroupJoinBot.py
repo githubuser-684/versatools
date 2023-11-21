@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
@@ -39,16 +39,16 @@ class GroupJoinBot(Tool):
         Send a join request to a group
         """
 
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
+        with httpc.Session(proxies=proxies) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
-            user_agent = self.get_random_user_agent()
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             req_url = f"https://groups.roblox.com/v1/groups/{group_id}/users"
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
             req_json={"redemptionToken": "", "sessionId": ""}
 
             init_res = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)

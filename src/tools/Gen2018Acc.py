@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 from utils import Utils
 import math
@@ -14,10 +14,10 @@ class Gen2018Acc(Tool):
         user_id = 73223429
         default_pass = "insaneclient101"
 
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+        user_agent = httpc.get_random_user_agent()
 
-        with httpx.Client(proxies=proxies) as client:
+        with httpc.Session(proxies=proxies) as client:
             followers_count = self.get_followers_count(user_id, client, user_agent)
             follower_per_page = 18
             max_pages = math.ceil(followers_count / follower_per_page)
@@ -39,7 +39,7 @@ class Gen2018Acc(Tool):
         Get the amount of followers of a user
         """
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers/count"
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
         response = client.get(req_url, headers=req_headers)
 
@@ -59,7 +59,7 @@ class Gen2018Acc(Tool):
         Get a page of followers
         """
         req_url = f"https://friends.roblox.com/v1/users/{user_id}/followers?sortOrder=Desc&limit={follower_per_page}{'&cursor='+cursor if cursor else ''}"
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
         response = client.get(req_url, headers=req_headers)
         if response.status_code != 200:

@@ -1,4 +1,4 @@
-import httpx
+import httpc
 import subprocess
 import psutil
 import random
@@ -13,11 +13,11 @@ class RobloxClient(Proxy):
         self.roblox_player_path = roblox_player_path
 
     def get_auth_ticket(self, cookie, user_agent, csrf_token):
-        headers = self.get_roblox_headers(user_agent, csrf_token)
+        headers = httpc.get_roblox_headers(user_agent, csrf_token)
 
         cookies = { ".ROBLOSECURITY": cookie }
 
-        response = httpx.post("https://auth.roblox.com/v1/authentication-ticket/", headers=headers, cookies=cookies)
+        response = httpc.post("https://auth.roblox.com/v1/authentication-ticket/", headers=headers, cookies=cookies)
         try:
             return response.headers["rbx-authentication-ticket"]
         except Exception:

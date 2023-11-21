@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -43,7 +43,7 @@ class CookieVerifier(Tool):
         """
         req_url = "https://accountsettings.roblox.com/v1/email"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
         response = client.get(req_url, headers=req_headers, cookies=req_cookies)
 
@@ -110,7 +110,7 @@ class CookieVerifier(Tool):
         """
         req_url = "https://accountsettings.roblox.com/v1/email"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json={"emailAddress": email_addr}
 
         response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
@@ -169,7 +169,7 @@ class CookieVerifier(Tool):
 
         req_url = "https://accountinformation.roblox.com/v1/email/verify"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json = {"ticket": ticket}
         response = client.post(req_url, json=req_json, headers=req_headers, cookies=req_cookies)
 
@@ -181,10 +181,10 @@ class CookieVerifier(Tool):
         """
         Verifies a cookie
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             # make sure email is not already verified

@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -49,7 +49,7 @@ class MessageBot(Tool):
         """
         req_url = "https://apis.roblox.com/user-settings-api/v1/user-settings"
         req_cookies = {".ROBLOSECURITY": cookie, "RBXEventTrackerV2":f"browserid={random.randint(190000000,200000000)}"}
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json={"whoCanMessageMe": "All"}
 
         response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
@@ -62,15 +62,15 @@ class MessageBot(Tool):
         """
         Send a message to a user
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             req_url = "https://privatemessages.roblox.com/v1/messages/send"
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
             req_json={"body": body, "recipientid": recipient_id, "subject": subject}
 
             response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)

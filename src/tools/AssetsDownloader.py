@@ -1,5 +1,5 @@
 import os
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -94,7 +94,7 @@ class AssetsDownloader(Tool):
             sortType = 4
 
         req_url = f"https://catalog.roblox.com/v1/search/items"
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
         req_params = {
             "category": "Clothing",
             "limit": 120,
@@ -107,7 +107,7 @@ class AssetsDownloader(Tool):
             "keyword": self.config["keyword"]
         }
 
-        response = httpx.get(req_url, headers=req_headers, params=req_params, proxies=proxies)
+        response = httpc.get(req_url, headers=req_headers, params=req_params, proxies=proxies)
         result = response.json()
         data = result["data"]
         cursor = result["nextPageCursor"]
@@ -122,8 +122,8 @@ class AssetsDownloader(Tool):
         assets = []
         cursor = None
 
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+        user_agent = httpc.get_random_user_agent()
 
         while len(assets) < amount:
             data, cursor = self.get_assets_page("ClassicShirts" if self.config["asset_type"] == "shirt" else "ClassicPants", cursor, proxies, user_agent)
@@ -147,11 +147,11 @@ class AssetsDownloader(Tool):
         directory = self.shirts_files_directory if asset.get("shirt") else self.pants_files_directory
 
         asset_id = asset["id"]
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
-            headers = self.get_roblox_headers(user_agent)
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
+            headers = httpc.get_roblox_headers(user_agent)
 
             assetdelivery = client.get(f'https://assetdelivery.roblox.com/v1/assetId/{asset_id}', headers=headers).json()['location']
             assetid = str(client.get(assetdelivery, headers=headers).content).split('<url>http://www.roblox.com/asset/?id=')[1].split('</url>')[0]
@@ -181,5 +181,5 @@ class AssetsDownloader(Tool):
     def ensure_template_exists(self):
         if not os.path.exists(self.cache_template_path):
             with open(self.cache_template_path, 'wb') as f:
-                png = httpx.get(f'https://i.ibb.co/cXJs5Rj/asset-template.png').content
+                png = httpc.get(f'https://i.ibb.co/cXJs5Rj/asset-template.png').content
                 f.write(png)

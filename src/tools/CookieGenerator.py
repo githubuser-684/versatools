@@ -1,7 +1,7 @@
 import random
 import string
 import concurrent.futures
-import httpx
+import httpc
 import eel
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
@@ -50,7 +50,7 @@ class CookieGenerator(Tool):
         """
         csrf_response = client.post("https://auth.roblox.com/v2/login")
         try:
-            csrf_token = csrf_response.headers["x-csrf-token"]
+            csrf_token = csrf_response.headers["X-Csrf-Token"]
         except KeyError:
             raise Exception(Utils.return_res(csrf_response))
 
@@ -62,7 +62,7 @@ class CookieGenerator(Tool):
         Verifies if a username is valid
         """
         req_url = "https://auth.roblox.com/v1/usernames/validate"
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "context": "Signup", "username": username}
 
         response = client.post(req_url, headers=req_headers, json=req_json)
@@ -111,7 +111,7 @@ class CookieGenerator(Tool):
         Sends a signup request to the auth.roblox.com endpoint
         """
         req_url = "https://auth.roblox.com/v2/signup"
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
         result = client.post(req_url, headers=req_headers, json=req_json)
 
@@ -123,11 +123,11 @@ class CookieGenerator(Tool):
         Generates a ROBLOSECURITY cookie
         Returns a tuple with the error and the cookie
         """
-        proxies = self.get_random_proxies() if use_proxy else None
+        proxies = self.get_random_proxy() if use_proxy else None
 
-        with httpx.Client(proxies=proxies) as client:
+        with httpc.Session(proxies=proxies) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
-            user_agent = self.get_random_user_agent()
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(client)
 
             birthday = self.generate_birthday()
@@ -152,7 +152,7 @@ class CookieGenerator(Tool):
             sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", client)
 
         try:
-            cookie = sign_up_res.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
+            cookie = httpc.extract_cookie(sign_up_res, ".ROBLOSECURITY")
         except Exception:
             raise Exception(Utils.return_res(sign_up_res))
 

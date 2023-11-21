@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from CaptchaSolver import CaptchaSolver
@@ -47,15 +47,15 @@ class CommentBot(Tool):
         Send a comment to an asset
         """
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             req_url = "https://www.roblox.com/comments/post"
             req_cookies = { ".ROBLOSECURITY": cookie }
-            req_headers = self.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token, "application/x-www-form-urlencoded")
             req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
 
             init_res = client.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies)

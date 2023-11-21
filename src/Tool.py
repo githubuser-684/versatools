@@ -1,12 +1,11 @@
 import json
 import random
-import httpx
+import httpc
 from abc import ABC, abstractmethod
 from Proxy import Proxy
 from utils import Utils
 import eel
 import re
-from data.useragents import useragents
 
 class Tool(Proxy, ABC):
     def __init__(self, name: str, description: str, color: int, app: object):
@@ -64,21 +63,15 @@ class Tool(Proxy, ABC):
 
         return self.config
 
-    def get_random_user_agent(self) -> str:
-        """
-        Generates a random user agent
-        """
-        return random.choice(useragents)
-
-    def get_csrf_token(self, cookie:str, client = httpx) -> str:
+    def get_csrf_token(self, cookie:str, client = httpc) -> str:
         """
         Retrieve a CSRF token from Roblox
         """
-        headers = {'Cookie': ".ROBLOSECURITY=" + cookie } if cookie else None
-        response = client.post("https://auth.roblox.com/v2/logout", headers=headers)
+        cookies = {'.ROBLOSECURITY':cookie }
+        response = client.post("https://auth.roblox.com/v2/logout", cookies=cookies)
 
         try:
-            csrf_token = response.headers["x-csrf-token"]
+            csrf_token = response.headers["X-Csrf-Token"]
         except KeyError:
             raise Exception(Utils.return_res(response))
 
@@ -90,7 +83,7 @@ class Tool(Proxy, ABC):
         """
         req_url = "https://www.roblox.com/mobileapi/userinfo"
         req_cookies = { ".ROBLOSECURITY": cookie }
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
         response = client.get(req_url, headers=req_headers, cookies=req_cookies)
         if (response.status_code != 200):
@@ -137,9 +130,9 @@ class Tool(Proxy, ABC):
     def get_random_cookie(self) -> str:
         return self.get_cookies(1)[0]
 
-    def get_random_proxies(self) -> dict:
+    def get_random_proxy(self) -> dict:
         """
-        Gets random proxies dict from proxies.txt file for httpx module
+        Gets random proxy dict
         """
         try:
             f = open(self.app.proxies_file_path, 'r')
@@ -155,11 +148,11 @@ class Tool(Proxy, ABC):
         # get random line
         random_line = proxies_list[random.randint(0, len(proxies_list) - 1)]
         random_line = Utils.clear_line(random_line)
-        # get proxies dict for httpx module
+        # get proxies dict for httpc module
         proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(random_line)
-        proxies = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
+        proxy = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
-        return proxies
+        return proxy
 
     def print_status(self, req_worked, req_failed, total_req, response_text, has_worked, action_verb):
         """

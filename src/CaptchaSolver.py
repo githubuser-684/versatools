@@ -4,8 +4,7 @@ from anticaptchaofficial.funcaptchaproxyon import *
 from twocaptcha import TwoCaptcha
 import capsolver
 from utils import Suppressor, Utils
-import httpx
-from urllib.parse import unquote
+import httpc
 from Proxy import Proxy
 from data.public_keys import public_keys
 
@@ -16,7 +15,7 @@ class CaptchaSolver(Proxy):
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
-    def solve_captcha(self, response:httpx.Response, action_type:str, client) -> httpx.Response:
+    def solve_captcha(self, response, action_type:str, client):
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -25,15 +24,6 @@ class CaptchaSolver(Proxy):
             raise Exception(Utils.return_res(response))
         elif response.status_code != 403: # no captcha
             return response
-
-        # extract initial request data
-        init_url, init_headers, init_json, init_data = self.extract_init_req(response)
-        init_req = (
-            init_url,
-            init_headers,
-            init_json,
-            init_data
-        )
 
         try:
             metadata = response.headers["Rblx-Challenge-Metadata"]
@@ -46,16 +36,16 @@ class CaptchaSolver(Proxy):
         website_subdomain = "roblox-api.arkoselabs.com"
 
         # solve captcha using specified service
-        user_agent = init_headers["user-agent"]
+        user_agent = response.request["headers"]["User-Agent"]
         token = self.send_to_solver(website_url, website_subdomain, public_key, blob, user_agent)
 
         metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
 
         # challenge_continue
-        self.challenge_continue(init_headers, captcha_id, metadata, client)
+        self.challenge_continue(response.request, captcha_id, metadata, client)
 
         # send request again but with captcha token
-        req_url, req_headers, req_json = self.build_captcha_res(init_req, captcha_id, metadata_base64, meta_action_type)
+        req_url, req_headers, req_json = self.build_captcha_res(response.request, captcha_id, metadata_base64, meta_action_type)
 
         final_response = client.post(req_url, headers=req_headers, json=req_json)
 
@@ -106,7 +96,7 @@ class CaptchaSolver(Proxy):
 
             token = solution["token"]
         elif self.captcha_service == "capbypass":
-            captcha_response = httpx.post('https://api.capbypass.com/createTask', json={
+            captcha_response = httpc.post('https://api.capbypass.com/createTask', json={
                 "clientKey": self.api_key,
                 "task": {
                     "type":"FunCaptchaTaskProxyLess",
@@ -132,7 +122,7 @@ class CaptchaSolver(Proxy):
             # wait for captcha to be solved
             tries = 20
             while taskStatus in ["idle", "processing"] and tries > 0:
-                captcha_response = httpx.post('https://api.capbypass.com/getTaskResult', json={
+                captcha_response = httpc.post('https://api.capbypass.com/getTaskResult', json={
                     "clientKey": self.api_key,
                     "taskId": taskId
                 })
@@ -164,58 +154,26 @@ class CaptchaSolver(Proxy):
 
         return metadata, metadata_base64
 
-    def challenge_continue(self, init_headers, captcha_id, metadata, client):
+    def challenge_continue(self, init_req, captcha_id, metadata, client):
         req_url = "https://apis.roblox.com/challenge/v1/continue"
 
-        user_agent = init_headers["user-agent"]
-        csrf_token = init_headers["x-csrf-token"]
-        continue_headers = self.get_roblox_headers(user_agent, csrf_token)
+        user_agent = init_req["headers"]["User-Agent"]
+        csrf_token = init_req["headers"]["X-Csrf-Token"]
+        continue_headers = httpc.get_roblox_headers(user_agent, csrf_token)
 
-        cookie = init_headers["cookie"]
-        continue_headers["Cookie"] = cookie
+        cookies = init_req.get("cookies")
 
         req_json={"challengeId": captcha_id, "challengeMetadata": metadata, "challengeType": "captcha"}
 
-        result = client.post(req_url, headers=continue_headers, json=req_json)
+        result = client.post(req_url, headers=continue_headers, json=req_json, cookies=cookies)
 
         if result.status_code != 200:
             raise Exception(Utils.return_res(result))
 
-    def extract_init_req(self, response):
-        req_url = str(response.request.url)
-
-        # extract headers
-        headers = json.loads((str(response.request.headers).replace("Headers(", "")[:-1]).replace("'", '"'))
-        del headers["content-length"]
-        del headers["connection"]
-        del headers["host"]
-
-        # get content
-        req_json = {}
-        req_data = {}
-
-        req_content = bytes.decode(response.request._content)
-
-        if response.request.headers.get("content-type") == "application/x-www-form-urlencoded":
-            pairs = req_content.split('&')
-            for pair in pairs:
-                key, value = pair.split('=')
-                req_data[key] = unquote(value).replace('+', ' ')
-        else:
-            req_json = json.loads(req_content) if req_content != "" else {}
-
-        return req_url, headers, req_json, req_data
 
     def build_captcha_res(self, init_req, captcha_id, metadata_base64, meta_action_type):
-        (
-            init_url,
-            init_headers,
-            init_json,
-            init_data
-        ) = init_req
-
-        req_url = init_url
-        req_headers = init_headers
+        req_url = init_req["url"]
+        req_headers = init_req["headers"]
 
         req_headers['rblx-challenge-id'] = captcha_id
         req_headers["rblx-challenge-type"] = "captcha"
@@ -225,7 +183,7 @@ class CaptchaSolver(Proxy):
         req_json = {}
 
         if meta_action_type == "Signup":
-            req_json = init_json
+            req_json = init_req["json"]
 
         return req_url, req_headers, req_json
 
@@ -252,7 +210,7 @@ class CaptchaSolver(Proxy):
                 'clientKey': self.api_key,
             }
 
-            response = httpx.post(req_url, json=req_data)
+            response = httpc.post(req_url, json=req_data)
             try:
                 balance = response.json()["balance"]
             except Exception:

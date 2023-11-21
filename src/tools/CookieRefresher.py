@@ -1,6 +1,6 @@
 import os
 import concurrent.futures
-import httpx
+import httpc
 import re
 from Tool import Tool
 from utils import Utils
@@ -60,15 +60,15 @@ class CookieRefresher(Tool):
 
     @Utils.handle_exception()
     def refresh_cookie(self, cookie:str, use_proxy:bool):
-        proxies = self.get_random_proxies() if use_proxy else None
+        proxies = self.get_random_proxy() if use_proxy else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             xcsrf_token = self.get_csrf_token(cookie, client)
 
             # Creating a new cookie
             reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
-            req_headers = self.get_roblox_headers(user_agent, xcsrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, xcsrf_token)
 
             data = client.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers)
 

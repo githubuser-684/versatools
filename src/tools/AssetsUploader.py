@@ -1,5 +1,5 @@
 import os
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -48,9 +48,9 @@ class AssetsUploader(Tool):
     def upload_asset(self, asset):
         time.sleep(self.config["timeout"])
 
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
+        with httpc.Session(proxies=proxies) as client:
             csrf_token = self.get_csrf_token(self.config["cookie"], client)
 
             asset_file = asset["file"]
@@ -59,7 +59,7 @@ class AssetsUploader(Tool):
             asset_type = asset["type"]
             asset_path = os.path.join(self.assets_files_directory, f"./{asset_type}s/{asset_file}")
 
-            user_agent = self.get_random_user_agent()
+            user_agent = httpc.get_random_user_agent()
 
             req_json = {
                 "displayName": asset_name,
@@ -76,7 +76,7 @@ class AssetsUploader(Tool):
             req_url = "https://apis.roblox.com/assets/user-auth/v1/assets"
             req_cookies = { ".ROBLOSECURITY": self.config["cookie"] }
 
-            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
             del req_headers["Content-Type"]
 
             with open(asset_path, "rb") as f:
@@ -115,7 +115,7 @@ class AssetsUploader(Tool):
         req_cookies = {".ROBLOSECURITY": self.config["cookie"]}
         req_json={"priceConfiguration": {"priceInRobux": self.config["robux_price"]}, "releaseConfiguration": {"saleAvailabilityLocations": [0, 1]}, "saleStatus": "OnSale"}
 
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
 
         response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
 
@@ -125,7 +125,7 @@ class AssetsUploader(Tool):
     def get_asset_id(self, operationId, client, user_agent):
         req_url = f"https://apis.roblox.com/assets/user-auth/v1/operations/{operationId}"
         req_cookies = { ".ROBLOSECURITY": self.config["cookie"] }
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
         result = client.get(req_url, headers=req_headers, cookies=req_cookies)
         if result.status_code != 200:
@@ -139,10 +139,10 @@ class AssetsUploader(Tool):
 
     @Utils.handle_exception(3, False)
     def get_asset_name(self, asset_id, client, csrf_token):
-        user_agent = self.get_random_user_agent()
+        user_agent = httpc.get_random_user_agent()
 
         req_url = "https://catalog.roblox.com/v1/catalog/items/details"
-        req_headers = self.get_roblox_headers(user_agent, csrf_token)
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json = {
           "items": [
             {

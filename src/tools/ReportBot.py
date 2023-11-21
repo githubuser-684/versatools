@@ -1,9 +1,8 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
 import re
-import json
 
 class ReportBot(Tool):
     def __init__(self, app):
@@ -44,17 +43,17 @@ class ReportBot(Tool):
 
     @Utils.handle_exception()
     def send_report(self, report_type, thing_id, comment, cookie, use_proxy):
-        proxies = self.get_random_proxies() if use_proxy else None
+        proxies = self.get_random_proxy() if use_proxy else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             verif_token = self.get_verif_token(report_type, thing_id, cookie, client, user_agent)
             req_url, redirect_url = self.get_report_url(report_type, thing_id)
 
             req_cookies = {
                 ".ROBLOSECURITY": cookie,
             }
-            req_headers = self.get_roblox_headers(user_agent, None, "application/x-www-form-urlencoded")
+            req_headers = httpc.get_roblox_headers(user_agent, None, "application/x-www-form-urlencoded")
             req_data = {
                 "__RequestVerificationToken": verif_token,
                 "ReportCategory": "9",
@@ -100,7 +99,7 @@ class ReportBot(Tool):
         """
         req_url, redirect_url = self.get_report_url(report_type, thing_id)
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
         response = client.get(req_url, headers=req_headers, cookies=req_cookies)
 

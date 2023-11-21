@@ -1,6 +1,6 @@
 from Tool import Tool
 import concurrent.futures
-import httpx
+import httpc
 import re
 from data.proxy_sites import proxy_sites
 from utils import Utils
@@ -56,7 +56,7 @@ class ProxyScraper(Tool):
         """
         Scrapes proxies from a proxy site
         """
-        req = httpx.get(proxy_site_url)
+        req = httpc.get(proxy_site_url)
         res = req.text
         proxies_list = re.findall('(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\:(?:[\d]{2,5})', res)
 

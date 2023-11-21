@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
@@ -50,10 +50,10 @@ class GameVote(Tool):
         """
         Send a vote to a game
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             rblx_client = RobloxClient(roblox_player_path)
@@ -62,7 +62,7 @@ class GameVote(Tool):
 
             req_url = f"https://www.roblox.com/voting/vote?assetId={game_id}&vote={'true' if vote else 'false'}"
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
 
             response = client.post(req_url, headers=req_headers, cookies=req_cookies)
 

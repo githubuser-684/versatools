@@ -1,4 +1,4 @@
-import httpx
+import httpc
 from utils import Utils
 
 class Proxy():
@@ -10,7 +10,7 @@ class Proxy():
         Checks if a proxy is working
         """
         try:
-            response = httpx.get('https://www.roblox.com', proxies=proxies, timeout=timeout)
+            response = httpc.get('https://www.roblox.com', proxies=proxies, timeout=timeout)
             if response.status_code != 200:
                 return False
         except Exception:
@@ -141,25 +141,14 @@ class Proxy():
             raise ValueError("Invalid Parameters. If proxy has auth, make sure to provide username and password")
 
         if auth:
-            proxies = { "all://": f"{proxy_type}://{proxy_user}:{proxy_pass}@{proxy_ip}:{proxy_port}/" }
+            proxy = f"{proxy_type}://{proxy_user}:{proxy_pass}@{proxy_ip}:{proxy_port}/"
+
         else:
-            proxies = { "all://": f"{proxy_type}://{proxy_ip}:{proxy_port}/" }
+            proxy = f"{proxy_type}://{proxy_ip}:{proxy_port}/"
+
+        proxies = {
+            "http": proxy,
+            "https": proxy
+        }
 
         return proxies
-
-    def get_roblox_headers(self, user_agent = None, csrf_token = None, content_type = None):
-        """
-        Returns a dict of headers for Roblox requests
-        """
-        req_headers = {"Accept": "application/json, text/plain, */*", "Accept-Language": "en-US;", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json;charset=utf-8", "Origin": "https://www.roblox.com", "Referer": "https://www.roblox.com/", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-site", "Te": "trailers"}
-
-        if user_agent is not None:
-            req_headers["User-Agent"] = user_agent
-
-        if content_type is not None:
-            req_headers["Content-Type"] = content_type
-
-        if csrf_token is not None:
-            req_headers["X-Csrf-Token"] = csrf_token
-
-        return req_headers

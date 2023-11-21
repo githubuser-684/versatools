@@ -1,5 +1,5 @@
 import concurrent.futures
-import httpx
+import httpc
 import os
 import re
 from Tool import Tool
@@ -54,11 +54,11 @@ class AdsScraper(Tool):
             directory = self.square_ads_directory
             scrape_url = "https://www.roblox.com/user-sponsorship/3"
 
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
-            headers = self.get_roblox_headers(user_agent)
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
+            headers = httpc.get_roblox_headers(user_agent)
 
             result = client.get(scrape_url, headers=headers)
             response = result.text

@@ -1,5 +1,5 @@
 import concurrent.futures
-import httpx
+import httpc
 from Tool import Tool
 from utils import Utils
 
@@ -41,14 +41,14 @@ class ModelSales(Tool):
         """
         Get the product ID of an asset
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
-        user_agent = self.get_random_user_agent()
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+        user_agent = httpc.get_random_user_agent()
 
         req_url = f"https://apis.roblox.com/toolbox-service/v1/items/details?assetIds={asset_id}"
         req_cookies = {".ROBLOSECURITY": cookie}
-        req_headers = self.get_roblox_headers(user_agent)
+        req_headers = httpc.get_roblox_headers(user_agent)
 
-        response = httpx.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
+        response = httpc.get(req_url, headers=req_headers, cookies=req_cookies, proxies=proxies)
 
         try:
             product_id = response.json()["data"][0]["product"]["productId"]
@@ -62,15 +62,15 @@ class ModelSales(Tool):
         """
         Buy a product
         """
-        proxies = self.get_random_proxies() if self.config["use_proxy"] else None
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpx.Client(proxies=proxies) as client:
-            user_agent = self.get_random_user_agent()
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)
 
             req_url = f"https://apis.roblox.com/creator-marketplace-purchasing-service/v1/products/{product_id}/purchase"
             req_cookies = {".ROBLOSECURITY": cookie}
-            req_headers = self.get_roblox_headers(user_agent, csrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
             req_json = {"assetId": asset_id, "assetType": 10, "expectedPrice": 0, "searchId": ""}
 
             response = client.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies)

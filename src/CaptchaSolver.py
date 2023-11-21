@@ -170,7 +170,6 @@ class CaptchaSolver(Proxy):
         if result.status_code != 200:
             raise Exception(Utils.return_res(result))
 
-
     def build_captcha_res(self, init_req, captcha_id, metadata_base64, meta_action_type):
         req_url = init_req["url"]
         req_headers = init_req["headers"]

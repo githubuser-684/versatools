@@ -70,6 +70,7 @@ class Session():
                 client_identifier="chrome112",
                 random_tls_extension_order=True,
             )
+            self.session.proxies = self.proxies
         else:
             if self.proxies:
                 self.proxies = {
@@ -96,10 +97,27 @@ class Session():
         data = kwargs.get("data")
         params = kwargs.get("params")
 
+        timeout = kwargs.get("timeout")
+
+        args = {
+            "headers": headers,
+            "cookies": cookies,
+            "params": params,
+        }
+
+        if method != "GET":
+            args["json"] = json_data
+            args["data"] = data
+
+        if not self.spoof_tls:
+            args["timeout"] = timeout
+        else:
+            self.session.timeout_seconds = timeout or 10
+
         if method == "GET":
-            response = self.session.get(url, headers=headers, cookies=cookies, params=params)
+            response = self.session.get(url, **args)
         elif method == "POST":
-            response = self.session.post(url, headers=headers, cookies=cookies, json=json_data, data=data, params=params)
+            response = self.session.post(url, **args)
         else:
             raise ValueError(f"Unsupported HTTP method: {method}")
 

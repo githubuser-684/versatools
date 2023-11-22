@@ -19,7 +19,7 @@ class RobloxClient(Proxy):
 
         response = httpc.post("https://auth.roblox.com/v1/authentication-ticket/", headers=headers, cookies=cookies)
         try:
-            return response.headers["rbx-authentication-ticket"]
+            return response.headers["Rbx-Authentication-Ticket"]
         except Exception:
             raise Exception("Rbx-auth-ticket not found. " + Utils.return_res(response))
 

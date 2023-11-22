@@ -53,7 +53,7 @@ python -m unittest discover src
 To package the program into an exe:
 
 ```bash
-python -m eel src/main.py src/web --windowed --icon="icon.ico"
+python -m eel src/main.py src/web --windowed --icon="icon.ico" --add-binary '.venv/Lib/site-packages/tls_client/dependencies/tls-client-64.dll;tls_client/dependencies'
 ```
 
 ## File templates

@@ -9,3 +9,4 @@ Eel==0.16.0
 watchdog==3.0.0
 psutil==5.9.6
 tls-client==0.2.2
+pywin32==306

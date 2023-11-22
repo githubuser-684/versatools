@@ -41,7 +41,7 @@ class GroupJoinBot(Tool):
 
         proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
-        with httpc.Session(proxies=proxies) as client:
+        with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
             user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(cookie, client)

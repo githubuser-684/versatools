@@ -3,7 +3,7 @@ from utils import Utils
 
 class Proxy():
     def __init__(self):
-        self.supported_proxy_protocols = ["http", "https", "socks4", "socks5"]
+        self.supported_proxy_protocols = ["http"]
 
     def test_proxy(self, proxies: dict, timeout:int) -> bool:
         """

@@ -23,7 +23,7 @@
 
 This installation is designed for Windows. If you want to use Versatools on Mac/Linux, run it from source.
 
-Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases). Install `versatools-setup.exe`
+Download the latest stable Windows release from [here](https://garry.lol/versatools/).
 
 ## Running from source
 

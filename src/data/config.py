@@ -51,14 +51,14 @@ config = {
         "max_workers": None
     },
     "DiscordRPC": {
-		"client_id": "467570845993271307",
-		"state": "Adobe",
-		"details": "Editing",
-		"small_text": "Adobe",
-		"small_image": "adobe",
-		"large_text": "Illustrator",
-		"large_image": "illustrator"
-	},
+        "client_id": "467570845993271307",
+        "state": "Adobe",
+        "details": "Editing",
+        "small_text": "Adobe",
+        "small_image": "adobe",
+        "large_text": "Illustrator",
+        "large_image": "illustrator"
+    },
     "DisplayNameChanger": {
         "new_display_name": "VersatoolsBEST",
         "use_proxy": True,
@@ -137,8 +137,8 @@ config = {
     },
     "ModelSales": {
         "asset_id": 0,
-	"leave_review_when_bought": False,
-	"review_message": "nice model",
+        "leave_review_when_bought": False,
+        "review_message": "nice model",
         "max_generations": 100,
         "use_proxy": True,
         "max_workers": None

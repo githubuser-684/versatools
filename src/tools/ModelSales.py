@@ -90,7 +90,7 @@ class ModelSales(Tool):
 
         return is_bought, Utils.return_res(response)
 
-    @Utils.handle_exception(3)
+    @Utils.handle_exception(3, False)
     def leave_review(self, asset_id, cookie, review_message, user_agent, csrf_token, client):
         """
         Leave a review when bought

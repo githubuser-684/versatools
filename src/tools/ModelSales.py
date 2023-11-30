@@ -11,7 +11,9 @@ class ModelSales(Tool):
     def run(self):
         asset_id = self.config["asset_id"]
         cookies = self.get_cookies(self.config["max_generations"])
-
+        leave_review_when_bought = self.config["leave_review_when_bought"]
+        review_message = self.config["review_message"]
+        
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)
@@ -80,4 +82,33 @@ class ModelSales(Tool):
         except Exception:
             raise Exception("Failed to access purchased key " + Utils.return_res(response))
 
+        if leave_review_when_bought:
+            leave_review(asset_id, product_id, cookie, review_message)
+
         return is_bought, Utils.return_res(response)
+
+    @Utils.handle_exception(3)
+    def leave_review(self, asset_id, product_id, cookie, review):
+        """
+        Leave a review when bought
+        """
+        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+
+        with httpc.Session(proxies=proxies) as client:
+            user_agent = httpc.get_random_user_agent()
+            csrf_token = self.get_csrf_token(cookie, client)
+
+            req_url = f""https://apis.roblox.com/asset-reviews-api/v1/assets/{asset_id}/comments""
+            req_cookies = {".ROBLOSECURITY": cookie}
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
+            req_json = {"text": review, "parentId": None}
+
+            response = client.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies)
+
+        try:
+            reviewed = (response.status_code == 200)
+        except Exception:
+            raise Exception("Failed to leave review " + Utils.return_res(response))
+
+        return reviewed, Utils.return_res(response)
+

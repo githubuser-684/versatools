@@ -11,6 +11,8 @@ class ModelSales(Tool):
     def run(self):
         asset_id = self.config["asset_id"]
         cookies = self.get_cookies(self.config["max_generations"])
+        leave_review_when_bought = self.config["leave_review_when_bought"]
+        review_message = self.config["review_message"]
 
         req_sent = 0
         req_failed = 0
@@ -19,7 +21,7 @@ class ModelSales(Tool):
         product_id = self.get_product_id(asset_id, cookies[0])
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.buy_product, asset_id, product_id, cookie) for cookie in cookies]
+            results = [self.executor.submit(self.buy_product, asset_id, product_id, leave_review_when_bought, review_message, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
                 try:
@@ -58,7 +60,7 @@ class ModelSales(Tool):
         return product_id
 
     @Utils.handle_exception(3)
-    def buy_product(self, asset_id, product_id, cookie):
+    def buy_product(self, asset_id, product_id, leave_review_when_bought, review_message, cookie):
         """
         Buy a product
         """
@@ -75,9 +77,29 @@ class ModelSales(Tool):
 
             response = client.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies)
 
-        try:
-            is_bought = (response.status_code == 200 and response.json()["purchased"] is True)
-        except Exception:
-            raise Exception("Failed to access purchased key " + Utils.return_res(response))
+            try:
+                is_bought = (response.status_code == 200 and response.json()["purchased"] is True)
+            except Exception:
+                raise Exception("Failed to access purchased key " + Utils.return_res(response))
+
+            if leave_review_when_bought:
+                self.leave_review(asset_id, cookie, review_message, user_agent, csrf_token, client)
 
         return is_bought, Utils.return_res(response)
+
+    @Utils.handle_exception(3)
+    def leave_review(self, asset_id, cookie, review_message, user_agent, csrf_token, client):
+        """
+        Leave a review when bought
+        """
+        req_url = f"https://apis.roblox.com/asset-reviews-api/v1/assets/{asset_id}/comments"
+        req_cookies = {".ROBLOSECURITY": cookie}
+        req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
+        req_json = {"text": review_message, "parentId": None}
+
+        response = client.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies)
+
+        reviewed = response.status_code == 200
+
+        return reviewed, Utils.return_res(response)
+

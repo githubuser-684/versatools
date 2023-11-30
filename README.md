@@ -68,22 +68,16 @@ All attributes are mandatory. Removing them will break the program.
 ### files/cookies.txt
 
 Add your cookies in this file. You can generate them using our Cookie Generator tool.
+Versatools understands both UPC and C format for cookies.
 
 ### files/proxies.txt
 
-You can use this template to add your proxies. We currently support HTTP, SOCKS4 and SOCKS5 proxies.
-
-```
-8.8.8.8:5001 (here will be http by default)
-socks4:8.8.8.8:5002
-socks5:8.8.8.8:5003:username:password
-```
-
-or you can decide to not specify the type of proxy and let the proxy checker check it for you.
+You can use this template to add your proxies. We currently only support HTTP proxies.
+Here are some examples of valid proxies lines:
 
 ```
 8.8.8.8:5001
-8.8.8.8:5002
+http:8.8.8.8:5001
 8.8.8.8:5003:username:password
 ```
 

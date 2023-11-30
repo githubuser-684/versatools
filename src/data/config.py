@@ -137,6 +137,7 @@ config = {
     },
     "ModelSales": {
         "asset_id": 0,
+	"leave_review_when_bought": False
         "max_generations": 100,
         "use_proxy": True,
         "max_workers": None

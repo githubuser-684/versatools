@@ -80,10 +80,13 @@ class ModelSales(Tool):
             try:
                 is_bought = (response.status_code == 200 and response.json()["purchased"] is True)
             except Exception:
-                raise Exception("Failed to access purchased key " + Utils.return_res(response))
+                return False, "Failed to access purchased key " + Utils.return_res(response)
 
             if leave_review_when_bought:
-                self.leave_review(asset_id, cookie, review_message, user_agent, csrf_token, client)
+                reviewed, response = self.leave_review(asset_id, cookie, review_message, user_agent, csrf_token, client)
+
+                if not reviewed:
+                    return False, "Failed to leave review " + Utils.return_res(response)
 
         return is_bought, Utils.return_res(response)
 
@@ -99,7 +102,7 @@ class ModelSales(Tool):
 
         response = client.post(req_url, headers=req_headers, json=req_json, cookies=req_cookies)
 
-        reviewed = response.status_code == 200
+        reviewed = response.status_code == 201
 
-        return reviewed, Utils.return_res(response)
+        return reviewed, response
 

@@ -114,12 +114,14 @@ class TestProxy(unittest.TestCase):
     def test_get_proxies(self):
         proxies = self.tool.get_proxies("http", "8.8.8.8", 80, "admin", "1234")
         self.assertEqual(proxies, {
-            "all://": "http://admin:1234@8.8.8.8:80/"
+            "http": "http://admin:1234@8.8.8.8:80/",
+            "https": "http://admin:1234@8.8.8.8:80/",
         })
 
         proxies = self.tool.get_proxies("socks4", "8.8.8.8", 80)
         self.assertEqual(proxies, {
-            "all://": "socks4://8.8.8.8:80/"
+            "http": "socks4://8.8.8.8:80/",
+            "https": "socks4://8.8.8.8:80/"
         })
 
         with self.assertRaises(Exception):

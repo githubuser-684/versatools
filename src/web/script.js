@@ -6,6 +6,7 @@ class WebApp {
 		this.toolName = null;
 
 		this.ensureInternetConnection();
+		this.preventRefresh();
 		this.terminal = this.setupXTermJs("terminal");
 		this.jsonEditor = this.setupJsonEditor();
 		this.toolsInfo = this.setupSelectTools();
@@ -18,6 +19,14 @@ class WebApp {
 			// exit
 			window.close();
 		}
+	}
+
+	preventRefresh() {
+		document.addEventListener("keydown", function (e) {
+			if (e.key == "F5" || e.key == "F11" || e.key == "F12" || (e.ctrlKey && e.key == "r")) {
+				e.preventDefault();
+			}
+		});
 	}
 
 	setupXTermJs(elementId) {

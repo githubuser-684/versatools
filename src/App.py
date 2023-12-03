@@ -179,14 +179,7 @@ class App():
         eel.set_proxies_loaded(amount)
 
     def set_cookies_loaded(self):
-        try:
-            f = open(self.cookies_file_path, 'r')
-        except FileNotFoundError:
-            amount = 0
-
-        cookies_list = f.readlines()
-        cookies_list = [*set(cookies_list)] # remove duplicates
-        amount = len(cookies_list)
+        amount = len(self.tools[0].get_cookies())
 
         if amount == self.cookies_loaded:
             return

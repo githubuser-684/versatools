@@ -179,7 +179,10 @@ class App():
         eel.set_proxies_loaded(amount)
 
     def set_cookies_loaded(self):
-        amount = len(self.tools[0].get_cookies())
+        try:
+            amount = len(self.tools[0].get_cookies())
+        except Exception:
+            amount = 0
 
         if amount == self.cookies_loaded:
             return

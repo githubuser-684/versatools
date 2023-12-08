@@ -17,6 +17,9 @@ class UP2UPC(Tool):
     def run(self):
         user_pass_list = self.get_user_pass()
 
+        if len(user_pass_list) == 0:
+            raise Exception("No user-pass found in files/user-pass.txt")
+
         f = open(self.cookies_file_path, 'w')
 
         worked_gen = 0

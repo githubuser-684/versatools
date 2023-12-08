@@ -70,6 +70,9 @@ class App():
         """
         res = httpx.get("https://garry.lol/versatools/uploads/version.txt")
 
+        if res.status_code != 200:
+            return False
+
         return res.text != version
 
     def update_versatools(self):

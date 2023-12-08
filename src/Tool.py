@@ -67,7 +67,7 @@ class Tool(Proxy, ABC):
         """
         Retrieve a CSRF token from Roblox
         """
-        cookies = {'.ROBLOSECURITY':cookie }
+        cookies = {'.ROBLOSECURITY':cookie } if cookie is not None else None
         response = client.post("https://auth.roblox.com/v2/login", cookies=cookies)
 
         try:
@@ -100,7 +100,7 @@ class Tool(Proxy, ABC):
             "IsPremium": result["IsPremium"]
         }
 
-    def get_cookies(self, amount = None, provide_lines = False) -> list:
+    def get_cookies(self, amount = None, provide_lines = False, **kwargs) -> list:
         """
         Gets cookies from cookies.txt file
         """
@@ -116,7 +116,7 @@ class Tool(Proxy, ABC):
         pattern = re.compile(r'_\|WARNING:-DO-NOT-SHARE-THIS\.-.*')
         cookies = [match.group(0) for line in lines for match in [pattern.search(line)] if match]
 
-        if len(cookies) == 0:
+        if len(cookies) == 0 and kwargs.get("ignore_zero_cookie") != True:
             raise Exception("No cookies found. Make sure to generate some first")
 
         if amount is not None and amount < len(cookies):

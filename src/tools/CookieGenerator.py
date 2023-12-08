@@ -43,19 +43,6 @@ class CookieGenerator(Tool):
                 self.print_status(worked_gen, failed_gen, total_gen, response_text, has_generated, "Generated")
         f.close()
 
-    @Utils.handle_exception(3, False)
-    def get_csrf_token(self, client) -> str:
-        """
-        Gets a csrf token from the auth.roblox.com endpoint
-        """
-        csrf_response = client.post("https://auth.roblox.com/v2/login")
-        try:
-            csrf_token = csrf_response.headers["X-Csrf-Token"]
-        except KeyError:
-            raise Exception(Utils.return_res(csrf_response))
-
-        return csrf_token
-
     @Utils.handle_exception(2, False)
     def verify_username(self, user_agent:str, csrf_token:str, username:str, birthday: str, client):
         """
@@ -128,7 +115,7 @@ class CookieGenerator(Tool):
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
             user_agent = httpc.get_random_user_agent()
-            csrf_token = self.get_csrf_token(client)
+            csrf_token = self.get_csrf_token(None, client)
 
             birthday = self.generate_birthday()
 

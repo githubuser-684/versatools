@@ -180,5 +180,10 @@ config = {
         "query": "elon musk",
         "//image_search_api_url": "https://rapidapi.com/emailmatteoutile/api/image-search-api2",
         "image_search_api_key": "xx"
+    },
+    "UPConverter": {
+        "captcha_solver": "capbypass",
+        "use_proxy": True,
+        "max_workers": None
     }
 }

@@ -1,6 +1,6 @@
 import os
 # pylint: disable=unused-import
-from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,CookieVerifier,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot,Gen2018Acc,ModelSales,AssetsUploader,ModelVote,AdsScraper,ProxyScraper,GameVisits,DiscordRpc,ItemBuyer,ReportBot
+from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,CookieVerifier,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot,Gen2018Acc,ModelSales,AssetsUploader,ModelVote,AdsScraper,ProxyScraper,GameVisits,DiscordRpc,ItemBuyer,ReportBot,UP2UPC
 from Tool import Tool
 from utils import Utils
 import json
@@ -179,10 +179,7 @@ class App():
         eel.set_proxies_loaded(amount)
 
     def set_cookies_loaded(self):
-        try:
-            amount = len(self.tools[0].get_cookies())
-        except Exception:
-            amount = 0
+        amount = len(self.tools[0].get_cookies(ignore_zero_cookie=True))
 
         if amount == self.cookies_loaded:
             return

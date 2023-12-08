@@ -53,4 +53,4 @@ if __name__ == "__main__":
         app.set_proxies_loaded()
         app.set_cookies_loaded()
 
-        eel.show('index.html', port=3043, size=(1425, 885))
+        eel.start('index.html', port=3043, size=(1425, 885))

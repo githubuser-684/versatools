@@ -80,7 +80,7 @@ class App():
             download_url = 'https://garry.lol/versatools/uploads/versatools-setup.exe'
             installable_path = os.path.join(self.cache_directory, "./versatools-setup.exe")
 
-            response = httpx.get(download_url)
+            response = httpx.get(download_url, follow_redirects=True)
             open(installable_path, "wb").write(response.content)
 
             os.system(f"start {installable_path} /verysilent")

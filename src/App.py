@@ -84,15 +84,9 @@ class App():
             response = httpx.get(download_url, follow_redirects=True)
             open(installable_path, "wb").write(response.content)
 
-            subprocess.run([installable_path, '/verysilent'], check=True)
-        except Exception as err:
-            return str(err)
-
-        return True
-
-    def restart_versatools(self):
-        try:
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            # shutdown with subprocess
+            subprocess.Popen([installable_path, '/silent', '/nocancel'])
+            return True
         except Exception as err:
             return str(err)
 

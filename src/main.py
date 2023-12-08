@@ -38,10 +38,6 @@ if __name__ == "__main__":
     def update_versatools():
         return app.update_versatools()
 
-    @eel.expose
-    def restart_versatools():
-        return app.restart_versatools()
-
     eel.init('src/web')
 
     is_update_available = app.check_update()

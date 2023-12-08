@@ -14,6 +14,7 @@ from threading import Thread
 from FilesChangeHandler import FilesChangeHandler
 import traceback
 import httpx
+import subprocess
 
 @eel.expose
 def get_tools_info():
@@ -83,7 +84,7 @@ class App():
             response = httpx.get(download_url, follow_redirects=True)
             open(installable_path, "wb").write(response.content)
 
-            os.system(f"start {installable_path} /verysilent")
+            subprocess.run([installable_path, '/verysilent'], check=True)
         except Exception as err:
             return str(err)
 

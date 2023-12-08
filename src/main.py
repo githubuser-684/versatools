@@ -34,10 +34,23 @@ if __name__ == "__main__":
     def set_tool_config(tool_name, config):
         return app.set_tool_config(tool_name, config)
 
-    # start web app
-    eel.init('src/web')
-    show_menu()
-    app.set_proxies_loaded()
-    app.set_cookies_loaded()
+    @eel.expose
+    def update_versatools():
+        return app.update_versatools()
 
-    eel.start('index.html', port=3042, size=(1425, 885))
+    @eel.expose
+    def restart_versatools():
+        return app.restart_versatools()
+
+    eel.init('src/web')
+
+    is_update_available = app.check_update()
+
+    if is_update_available:
+        eel.start('update.html', port=3042, size=(1425, 885))
+    else:
+        show_menu()
+        app.set_proxies_loaded()
+        app.set_cookies_loaded()
+
+        eel.show('index.html', port=3043, size=(1425, 885))

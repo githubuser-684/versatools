@@ -1,16 +1,19 @@
 import os
+import sys
 # pylint: disable=unused-import
 from tools import ProxyChecker,CookieGenerator,CookieRefresher,CookieChecker,CookieVerifier,TShirtGenerator,MessageBot,FriendRequestBot,StatusChanger,FollowBot,GameVote,FavoriteBot,DisplayNameChanger,SolverBalanceChecker,GroupJoinBot,AssetsDownloader,CommentBot,Gen2018Acc,ModelSales,AssetsUploader,ModelVote,AdsScraper,ProxyScraper,GameVisits,DiscordRpc,ItemBuyer,ReportBot,UP2UPC
 from Tool import Tool
 from utils import Utils
 import json
 from data.config import config
+from data.version import version
 import eel
 import time
 from watchdog.observers import Observer
 from threading import Thread
 from FilesChangeHandler import FilesChangeHandler
 import traceback
+import httpx
 
 @eel.expose
 def get_tools_info():
@@ -59,6 +62,35 @@ class App():
         self.tools = [t(self) for t in Tool.__subclasses__()]
 
         self.start_watching_files() # used for syncing config changes with UI
+
+    @staticmethod
+    def check_update():
+        """
+        Checks if update is available
+        """
+        res = httpx.get("https://garry.lol/versatools/uploads/version.txt")
+
+        return res.text != version
+
+    def update_versatools(self):
+        try:
+            download_url = 'https://garry.lol/versatools/uploads/versatools-setup.exe'
+            installable_path = os.path.join(self.cache_directory, "./versatools-setup.exe")
+
+            response = httpx.get(download_url)
+            open(installable_path, "wb").write(response.content)
+
+            os.system(f"start {installable_path} /verysilent")
+        except Exception as err:
+            return str(err)
+
+        return True
+
+    def restart_versatools(self):
+        try:
+            os.execl(sys.executable, sys.executable, *sys.argv)
+        except Exception as err:
+            return str(err)
 
     def launch_tool(self, tool_name):
         """

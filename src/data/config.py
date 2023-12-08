@@ -167,10 +167,6 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
-    "RegionUnlocker": {
-        "use_proxy": True,
-        "max_workers": None
-    },
     "StatusChanger": {
         "new_status": "Hello I'm a bot :D",
         "use_proxy": True,

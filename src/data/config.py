@@ -181,5 +181,9 @@ config = {
         "captcha_solver": "capbypass",
         "use_proxy": True,
         "max_workers": None
+    },
+    "VipServerScraper": {
+        "use_proxy": False,
+        "max_workers": None
     }
 }

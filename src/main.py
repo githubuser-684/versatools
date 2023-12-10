@@ -14,6 +14,9 @@ from App import App
 from App import show_menu
 import eel
 from threading import Thread
+import win32event
+import win32api
+import winerror
 
 def start_eel(start_url, **kwargs):
     args = {
@@ -30,6 +33,11 @@ def start_eel(start_url, **kwargs):
 
 if __name__ == "__main__":
     freeze_support() # needed for multiprocessing on windows
+
+    # add mutex to prevent multiple instances of the app
+    win32_mutex = win32event.CreateMutex(None, 1, "VersatoolsMutex")
+    if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
+        raise Exception("Another instance of Versatools is already running")
 
     app = App()
 

@@ -1,13 +1,10 @@
 import sys
-import os
+import io
 import subprocess as sps
-# redirect stdout, stderr and stdin to logs.txt
 # this is needed as the app is consoleless
 if hasattr(sys, "_MEIPASS"):
-    with open(os.path.join(os.path.dirname(__file__), "./logs.txt"), "a") as f_logs:
-        sys.stdout = f_logs
-        sys.stderr = f_logs
-        sps.PIPE = f_logs
+    buffer = io.StringIO()
+    sys.stdout = sys.stderr = sps.PIPE = buffer
 
 from multiprocessing import freeze_support
 from App import App

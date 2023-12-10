@@ -6,7 +6,7 @@ class WebApp {
 		this.toolName = null;
 
 		this.ensureInternetConnection();
-		this.preventRefresh();
+		this.loadData();
 		this.terminal = this.setupXTermJs("terminal");
 		this.jsonEditor = this.setupJsonEditor();
 		this.toolsInfo = this.setupSelectTools();
@@ -21,12 +21,12 @@ class WebApp {
 		}
 	}
 
-	preventRefresh() {
-		document.addEventListener("keydown", function (e) {
-			if (e.key == "F5" || e.key == "F11" || e.key == "F12" || (e.ctrlKey && e.key == "r")) {
-				e.preventDefault();
-			}
-		});
+	async loadData() {
+		const proxiesEl = document.getElementById("proxies-loaded");
+		proxiesEl.innerHTML = await eel.get_proxies_loaded()();
+
+		const cookiesEl = document.getElementById("cookies-loaded");
+		cookiesEl.innerHTML = await eel.get_cookies_loaded()();
 	}
 
 	setupXTermJs(elementId) {
@@ -227,20 +227,6 @@ eel.expose(set_stats);
 function set_stats(stats) {
 	const statsEl = document.getElementById("stats");
 	statsEl.innerHTML = stats;
-}
-
-eel.expose(set_proxies_loaded);
-function set_proxies_loaded(amount) {
-	const amountEl = document.getElementById("proxies-loaded");
-	amountEl.innerHTML = amount;
-	console.log(amount + " proxies loaded");
-}
-
-eel.expose(set_cookies_loaded);
-function set_cookies_loaded(amount) {
-	const amountEl = document.getElementById("cookies-loaded");
-	amountEl.innerHTML = amount;
-	console.log(amount + " cookies loaded");
 }
 
 eel.expose(tool_finished);

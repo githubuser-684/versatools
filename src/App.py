@@ -192,7 +192,7 @@ class App():
         except ValueError:
             pass
 
-    def set_proxies_loaded(self):
+    def get_proxies_loaded(self):
         try:
             f = open(self.proxies_file_path, 'r')
         except FileNotFoundError:
@@ -202,20 +202,18 @@ class App():
         proxies_list = [*set(proxies_list)] # remove duplicates
         amount = len(proxies_list)
 
-        if amount == self.proxies_loaded:
-            return
+        if amount != self.proxies_loaded:
+            self.proxies_loaded = amount
 
-        self.proxies_loaded = amount
-        eel.set_proxies_loaded(amount)
+        return amount
 
-    def set_cookies_loaded(self):
+    def get_cookies_loaded(self):
         amount = len(self.tools[0].get_cookies(ignore_zero_cookie=True))
 
-        if amount == self.cookies_loaded:
-            return
+        if amount != self.cookies_loaded:
+            self.cookies_loaded = amount
 
-        self.cookies_loaded = amount
-        eel.set_cookies_loaded(amount)
+        return amount
 
     def start_watching_files(self):
         thread = Thread(target = self.watch_files_changes)

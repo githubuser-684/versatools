@@ -18,6 +18,14 @@ if __name__ == "__main__":
     app = App()
 
     @eel.expose
+    def get_cookies_loaded():
+        return app.get_cookies_loaded()
+
+    @eel.expose
+    def get_proxies_loaded():
+        return app.get_proxies_loaded()
+
+    @eel.expose
     def launch_app_tool(tool_name):
         thread = Thread(target=lambda: app.launch_tool(tool_name))
         thread.start()
@@ -46,7 +54,5 @@ if __name__ == "__main__":
         eel.start('update.html', port=3042, size=(500, 500))
     else:
         show_menu()
-        app.set_proxies_loaded()
-        app.set_cookies_loaded()
 
         eel.start('index.html', port=3043, size=(1425, 885))

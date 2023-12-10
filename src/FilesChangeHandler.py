@@ -1,4 +1,5 @@
 from watchdog.events import FileSystemEventHandler
+import eel
 
 class FilesChangeHandler(FileSystemEventHandler):
     """
@@ -14,6 +15,6 @@ class FilesChangeHandler(FileSystemEventHandler):
         if event.src_path.endswith('config.json'):
             self.app.set_tool_config_ui()
         elif event.src_path.endswith('cookies.txt'):
-            self.app.set_cookies_loaded()
+            eel.reload_cookies()()
         elif event.src_path.endswith('proxies.txt'):
-            self.app.set_proxies_loaded()
+            eel.reload_proxies()()

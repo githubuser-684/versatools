@@ -79,4 +79,4 @@ if __name__ == "__main__":
     else:
         show_menu()
 
-        start_eel('index.html', mode='edge')
+        start_eel('index.html')

@@ -6,7 +6,8 @@ class WebApp {
 		this.toolName = null;
 
 		this.ensureInternetConnection();
-		this.loadData();
+		this.loadProxies();
+		this.loadCookies();
 		this.terminal = this.setupXTermJs("terminal");
 		this.jsonEditor = this.setupJsonEditor();
 		this.toolsInfo = this.setupSelectTools();
@@ -21,10 +22,12 @@ class WebApp {
 		}
 	}
 
-	async loadData() {
+	async loadProxies() {
 		const proxiesEl = document.getElementById("proxies-loaded");
 		proxiesEl.innerHTML = await eel.get_proxies_loaded()();
+	}
 
+	async loadCookies() {
 		const cookiesEl = document.getElementById("cookies-loaded");
 		cookiesEl.innerHTML = await eel.get_cookies_loaded()();
 	}
@@ -232,4 +235,14 @@ function set_stats(stats) {
 eel.expose(tool_finished);
 function tool_finished() {
 	app.finishedRun();
+}
+
+eel.expose(reload_cookies);
+function reload_cookies() {
+	app.loadCookies();
+}
+
+eel.expose(reload_proxies);
+function reload_proxies() {
+	app.loadProxies();
 }

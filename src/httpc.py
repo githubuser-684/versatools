@@ -102,26 +102,19 @@ class Session():
         return self._make_request("POST", url, **kwargs)
 
     def _make_request(self, method, url, **kwargs):
-        headers = kwargs.get("headers")
-        cookies = kwargs.get("cookies")
-        json_data = kwargs.get("json")
-        data = kwargs.get("data")
-        params = kwargs.get("params")
-        files = kwargs.get("files")
-
-        timeout = kwargs.get("timeout")
-
-        # args that work for all types of requests
         args = {
-            "headers": headers,
-            "cookies": cookies,
-            "params": params,
+            "headers": kwargs.get("headers"),
+            "cookies": kwargs.get("cookies"),
+            "json": kwargs.get("json"),
+            "data": kwargs.get("data"),
+            "params": kwargs.get("params"),
+            "files": kwargs.get("files")
         }
 
-        if method != "GET":
-            args["json"] = json_data
-            args["data"] = data
-            args["files"] = files
+        # remove all args that are nulls
+        args = {k: v for k, v in args.items() if v is not None}
+
+        timeout = kwargs.get("timeout")
 
         if not self.spoof_tls:
             args["timeout"] = timeout

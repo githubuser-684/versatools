@@ -114,6 +114,13 @@ config = {
     "Gen2018Acc": {
         "use_proxy": False
     },
+    "GroupAllyBot": {
+        "cookie": "_|WARNING:",
+        "start_group_id": 9999999,
+        "your_group_id": 0,
+        "use_proxy": False,
+        "max_generations": 100,
+    },
     "GroupJoinBot": {
         "group_id": 0,
         "max_generations": 100,

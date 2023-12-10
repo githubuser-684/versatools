@@ -34,6 +34,7 @@ class VipServerScraper(Tool):
 
                 self.print_status(req_sent, req_failed, total_req, response_text, is_success, "Scraped")
 
+    @Utils.handle_exception(2)
     def get_pages_game(self):
         user_agent = httpc.get_random_user_agent()
         proxies = self.get_random_proxy() if self.config["use_proxy"] else None
@@ -52,6 +53,7 @@ class VipServerScraper(Tool):
 
         return pages
 
+    @Utils.handle_exception()
     def get_vip_link(self, page_game):
         page_id = page_game.split("/")[0]
 

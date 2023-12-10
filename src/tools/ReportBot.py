@@ -92,7 +92,7 @@ class ReportBot(Tool):
 
         return req_url, redirect_url
 
-    @Utils.handle_exception(2)
+    @Utils.handle_exception(2, False)
     def get_verif_token(self, report_type, thing_id, cookie, client, user_agent):
         """
         Get the verification token for a report

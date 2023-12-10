@@ -1,16 +1,21 @@
-# fix: https://stackoverflow.com/questions/75232011/why-does-exe-built-using-pyinstaller-isnt-working
-import sys
-import io
-
-buffer = io.StringIO()
-sys.stdout = sys.stderr = buffer
-
-# pylint: disable=wrong-import-position
 from multiprocessing import freeze_support
 from App import App
 from App import show_menu
 import eel
 from threading import Thread
+
+def start_eel(start_url, **kwargs):
+    args = {
+        "port": 3042,
+        "size": (1425, 885)
+    }
+
+    args.update(kwargs)
+
+    try:
+        eel.start(start_url, **args)
+    except EnvironmentError:
+        eel.start(start_url, mode='edge', **args)
 
 if __name__ == "__main__":
     freeze_support() # needed for multiprocessing on windows
@@ -51,8 +56,8 @@ if __name__ == "__main__":
     is_update_available = app.check_update()
 
     if is_update_available:
-        eel.start('update.html', port=3042, size=(500, 500))
+        start_eel('update.html', size=(500, 500))
     else:
         show_menu()
 
-        eel.start('index.html', port=3043, size=(1425, 885))
+        start_eel('index.html', mode='edge')

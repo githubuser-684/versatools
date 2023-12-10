@@ -107,9 +107,11 @@ class Session():
         json_data = kwargs.get("json")
         data = kwargs.get("data")
         params = kwargs.get("params")
+        files = kwargs.get("files")
 
         timeout = kwargs.get("timeout")
 
+        # args that work for all types of requests
         args = {
             "headers": headers,
             "cookies": cookies,
@@ -119,6 +121,7 @@ class Session():
         if method != "GET":
             args["json"] = json_data
             args["data"] = data
+            args["files"] = files
 
         if not self.spoof_tls:
             args["timeout"] = timeout

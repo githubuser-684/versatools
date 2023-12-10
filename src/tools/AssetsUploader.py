@@ -90,7 +90,7 @@ class AssetsUploader(Tool):
             result = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json, files=files)
 
             if (result.status_code != 200):
-                raise Exception(Utils.return_res(result))
+                return False, "Unable to upload asset. "+ Utils.return_res(result)
 
             response = result.json()
 

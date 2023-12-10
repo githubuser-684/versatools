@@ -74,6 +74,9 @@ class CookieChecker(Tool):
 
             response = client.get(req_url, headers=req_headers, cookies=req_cookies)
 
+            if "NewLogin" in response.text:
+                return False, cookie, Utils.return_res(response)
+
             if response.status_code != 200:
                 raise Exception(Utils.return_res(response))
 

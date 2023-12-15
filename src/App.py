@@ -69,7 +69,10 @@ class App():
         """
         Checks if update is available
         """
-        res = httpx.get("https://garry.lol/versatools/uploads/version.txt")
+        try:
+            res = httpx.get("https://garry.lol/versatools/uploads/version.txt")
+        except Exception:
+            return False
 
         if res.status_code != 200:
             return False

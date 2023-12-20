@@ -50,6 +50,11 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "DiscordNitroGen": {
+        "max_generations": 1000,
+        "use_proxy": True,
+        "max_workers": None
+    },
     "DiscordRPC": {
         "client_id": "467570845993271307",
         "state": "Adobe",

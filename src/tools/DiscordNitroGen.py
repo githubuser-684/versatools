@@ -3,6 +3,7 @@ import concurrent.futures
 import httpc
 from Tool import Tool
 from utils import Utils
+import uuid
 
 class DiscordNitroGen(Tool):
     def __init__(self, app):
@@ -59,7 +60,7 @@ class DiscordNitroGen(Tool):
                 'Sec-fetch-site': 'cross-site',
                 'User-Agent': user_agent,
             }
-            req_json={"partnerUserId":"7d1878ee-9288-4235-83a9-01fd70b2f4dc"}
+            req_json={"partnerUserId": str(uuid.uuid4())}
             result = client.post(req_url, headers=req_headers, json=req_json)
 
             response = result.json()

@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     is_update_available = app.check_update()
 
-    if is_update_available:
+    if is_update_available and hasattr(sys, "_MEIPASS"):
         start_eel('update.html', size=(500, 500))
     else:
         show_menu()

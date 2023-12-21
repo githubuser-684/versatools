@@ -15,7 +15,7 @@ class Tool(Proxy, ABC):
         self.name = name
         self.description = description
         self.app = app
-        self.executor = None
+        self.results = None
         self.exit_flag = False
 
         self.config = {}
@@ -162,21 +162,15 @@ class Tool(Proxy, ABC):
         eel.set_stats(f"{action_verb}: {str(req_worked)} | Failed: {str(req_failed)} | Total: {str(total_req)}")
         eel.write_terminal(f"\x1B[1;32mWorked: {response_text}\x1B[0;0m" if has_worked else f"\x1B[1;31mFailed: {response_text}\x1B[0;0m")
 
-    # pylint: disable = unused-argument
     def signal_handler(self):
         """
         Handles the signal
         """
-        if self.executor is not None:
-            self.executor.shutdown(wait=True, cancel_futures=True)
+        if self.results is not None:
+            for future in self.results:
+                future.cancel()
 
-    @staticmethod
-    def handle_exit(func):
-        def wrapper(instance, *args, **kwargs):
-            result = func(instance, *args, **kwargs)
-            instance.exit_flag = True
-            return result
-        return wrapper
+        self.exit_flag = True
 
     @staticmethod
     def run_until_exit(func):

@@ -18,7 +18,6 @@ class AssetsDownloader(Tool):
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
-    @Tool.handle_exit
     def run(self):
         if self.config["sort"] not in self.config["//sorts"]:
             raise Exception(f"Invalid sort config key \"{self.config['sort']}\"")
@@ -32,10 +31,13 @@ class AssetsDownloader(Tool):
         req_failed = 0
         total_req = len(assets)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.download_asset, asset) for asset in assets]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.download_asset, asset) for asset in assets]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_downloaded, response_text = future.result()
                 except Exception as err:

@@ -1,4 +1,5 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
 import concurrent.futures
 import httpc
 from Tool import Tool
@@ -11,7 +12,6 @@ class DiscordNitroGen(Tool):
 
         self.nitro_file_path = os.path.join(self.files_directory, "nitros.txt")
 
-    @Tool.handle_exit
     def run(self):
         f = open(self.nitro_file_path, 'a')
 
@@ -19,10 +19,13 @@ class DiscordNitroGen(Tool):
         failed_gen = 0
         total_gen = self.config["max_generations"]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.generate_nitro, self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.generate_nitro, self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:

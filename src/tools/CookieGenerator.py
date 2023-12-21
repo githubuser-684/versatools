@@ -13,7 +13,6 @@ class CookieGenerator(Tool):
     def __init__(self, app):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
 
-    @Tool.handle_exit
     def run(self):
         eel.write_terminal("\x1B[1;33mWarning: Cookies generated using our tool are flagged and region locked.\x1B[0;0m")
 
@@ -24,10 +23,13 @@ class CookieGenerator(Tool):
         failed_gen = 0
         total_gen = self.config["max_generations"]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.generate_cookie, self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.generate_cookie, self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:

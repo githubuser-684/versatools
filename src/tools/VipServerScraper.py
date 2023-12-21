@@ -8,7 +8,6 @@ class VipServerScraper(Tool):
     def __init__(self, app):
         super().__init__("Vip Server Scraper", "Scrape Roblox VIP servers", 3, app)
 
-    @Tool.handle_exit
     def run(self):
         max_workers = self.config["max_workers"]
 
@@ -18,10 +17,13 @@ class VipServerScraper(Tool):
         req_failed = 0
         total_req = len(pages_game)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
-            results = [self.executor.submit(self.get_vip_link, page_game) for page_game in pages_game]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            self.results = [executor.submit(self.get_vip_link, page_game) for page_game in pages_game]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

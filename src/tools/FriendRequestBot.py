@@ -7,7 +7,6 @@ class FriendRequestBot(Tool):
     def __init__(self, app):
         super().__init__("Friend Request Bot", "Send a lot of friend requests to a user", 5, app)
 
-    @Tool.handle_exit
     def run(self):
         user_id = self.config["user_id"]
         cookies = self.get_cookies(self.config["max_generations"])
@@ -16,10 +15,13 @@ class FriendRequestBot(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.send_friend_request, user_id, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.send_friend_request, user_id, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_sent, response_text = future.result()
                 except Exception as e:

@@ -8,7 +8,6 @@ class MessageBot(Tool):
     def __init__(self, app):
         super().__init__("Message Bot", "Spam someone with the same message", 6, app)
 
-    @Tool.handle_exit
     def run(self):
         subject = self.config["subject"]
         body = self.config["body"]
@@ -26,10 +25,13 @@ class MessageBot(Tool):
         msg_failed = 0
         total_cookies = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.send_message, subject, body, recipient_id, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.send_message, subject, body, recipient_id, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_sent, response_text = future.result()
                 except Exception as e:

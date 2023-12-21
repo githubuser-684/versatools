@@ -8,7 +8,6 @@ class FollowBot(Tool):
     def __init__(self, app):
         super().__init__("Follow Bot", "Increase Followers count of a user", 4, app)
 
-    @Tool.handle_exit
     def run(self):
         user_id = self.config["user_id"]
         cookies = self.get_cookies(self.config["max_generations"])
@@ -17,10 +16,13 @@ class FollowBot(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.send_follow_request, self.config["captcha_solver"], user_id, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.send_follow_request, self.config["captcha_solver"], user_id, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_followed, response_text = future.result()
                 except Exception as e:

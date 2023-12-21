@@ -7,7 +7,6 @@ class ModelSales(Tool):
     def __init__(self, app):
         super().__init__("Model Sales", "Buy your Roblox models tons of times", 3, app)
 
-    @Tool.handle_exit
     def run(self):
         asset_id = self.config["asset_id"]
         cookies = self.get_cookies(self.config["max_generations"])
@@ -20,10 +19,13 @@ class ModelSales(Tool):
 
         product_id = self.get_product_id(asset_id, cookies[0])
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.buy_product, asset_id, product_id, leave_review_when_bought, review_message, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.buy_product, asset_id, product_id, leave_review_when_bought, review_message, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_bought, response_text = future.result()
                 except Exception as e:

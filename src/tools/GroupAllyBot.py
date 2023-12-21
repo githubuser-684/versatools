@@ -8,7 +8,6 @@ class GroupAllyBot(Tool):
     def __init__(self, app):
         super().__init__("Group Ally Bot", "Mass send ally requests to groups", 6, app)
 
-    @Tool.handle_exit
     def run(self):
         cookie = self.config["cookie"]
         start_group_id = self.config["start_group_id"]
@@ -19,10 +18,13 @@ class GroupAllyBot(Tool):
         req_failed = 0
         total_req = max_generations
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.send_ally_request, your_group_id, cookie, i+int(start_group_id)) for i in range(max_generations)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.send_ally_request, your_group_id, cookie, i+int(start_group_id)) for i in range(max_generations)]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_req, response_text = future.result()
                 except Exception as e:

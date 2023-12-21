@@ -17,7 +17,6 @@ class AdsScraper(Tool):
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.ads_directory, self.vertical_ads_directory, self.horizontal_ads_directory, self.square_ads_directory])
 
-    @Tool.handle_exit
     def run(self):
         if (self.config["ad_format"] not in ["vertical", "horizontal", "square"]):
             raise Exception("Invalid ad type. Must be either \"vertical\", \"horizontal\" or \"square\"")
@@ -26,10 +25,13 @@ class AdsScraper(Tool):
         failed_gen = 0
         total_gen = self.config["max_generations"]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.scrape_ad) for gen in range(self.config["max_generations"])]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.scrape_ad) for gen in range(self.config["max_generations"])]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:

@@ -10,7 +10,6 @@ class GameVisits(Tool):
     def __init__(self, app):
         super().__init__("Game Visits", "Boost game visits", 2, app)
 
-    @Tool.handle_exit
     def run(self):
         max_generations = self.config["max_generations"]
         timeout = self.config["timeout"]
@@ -22,16 +21,19 @@ class GameVisits(Tool):
         roblox_player_path = RobloxClient.find_roblox_player()
 
         if max_workers == None or max_workers > 1:
-            threading.Thread(target=Tool.run_until_exit(RobloxClient.remove_singleton_mutex)).start()
+            threading.Thread(target=Tool.run_until_exit, args=(RobloxClient.remove_singleton_mutex,)).start()
 
         req_sent = 0
         req_failed = 0
         total_req = max_generations
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
-            results = [self.executor.submit(self.visit_game, roblox_player_path, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            self.results = [executor.submit(self.visit_game, roblox_player_path, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

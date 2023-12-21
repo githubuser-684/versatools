@@ -9,7 +9,6 @@ class ProxyChecker(Tool):
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-proxies.txt")
 
-    @Tool.handle_exit
     def run(self):
         # make sure format of the file is good
         self.check_proxies_file_format(self.proxies_file_path)
@@ -31,10 +30,12 @@ class ProxyChecker(Tool):
         total_proxies = len(lines)
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
                 is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = future.result()
 
                 if is_working:

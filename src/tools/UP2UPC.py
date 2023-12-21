@@ -5,7 +5,6 @@ from Tool import Tool
 from CaptchaSolver import CaptchaSolver
 from utils import Utils
 
-
 class UP2UPC(Tool):
     def __init__(self, app):
         super().__init__("UP Converter", "Convert user password list to UPC format", 1, app)
@@ -13,7 +12,6 @@ class UP2UPC(Tool):
         self.user_pass_file_path = os.path.join(self.files_directory, "user-pass.txt")
         Utils.ensure_files_exist([self.user_pass_file_path])
 
-    @Tool.handle_exit
     def run(self):
         user_pass_list = self.get_user_pass()
 
@@ -26,10 +24,13 @@ class UP2UPC(Tool):
         failed_gen = 0
         total_gen = len(user_pass_list)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.convert_up, self.config["captcha_solver"], self.config["use_proxy"], user_pass) for user_pass in user_pass_list]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.convert_up, self.config["captcha_solver"], self.config["use_proxy"], user_pass) for user_pass in user_pass_list]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_converted, response_text = future.result()
                 except Exception as e:

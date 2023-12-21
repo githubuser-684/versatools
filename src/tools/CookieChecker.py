@@ -11,7 +11,6 @@ class CookieChecker(Tool):
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-cookies.txt")
 
-    @Tool.handle_exit
     def run(self):
         cookies, lines = self.get_cookies(None, True)
 
@@ -25,10 +24,13 @@ class CookieChecker(Tool):
         total_cookies = len(cookies)
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_working, cookie, response_text = future.result()
                 except Exception as e:

@@ -10,7 +10,6 @@ class GameVote(Tool):
     def __init__(self, app):
         super().__init__("Game Vote", "Increase Like/Dislike count of a game", 1, app)
 
-    @Tool.handle_exit
     def run(self):
         game_id = self.config["game_id"]
         timeout = self.config["timeout"]
@@ -23,16 +22,19 @@ class GameVote(Tool):
         roblox_player_path = RobloxClient.find_roblox_player()
 
         if max_workers == None or max_workers > 1:
-            threading.Thread(target=Tool.run_until_exit(RobloxClient.remove_singleton_mutex)).start()
+            threading.Thread(target=Tool.run_until_exit, args=(RobloxClient.remove_singleton_mutex,)).start()
 
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
-            results = [self.executor.submit(self.send_game_vote, game_id, vote, cookie, roblox_player_path, timeout) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            self.results = [executor.submit(self.send_game_vote, game_id, vote, cookie, roblox_player_path, timeout) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

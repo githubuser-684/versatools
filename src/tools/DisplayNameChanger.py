@@ -8,7 +8,6 @@ class DisplayNameChanger(Tool):
     def __init__(self, app):
         super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
 
-    @Tool.handle_exit
     def run(self):
         new_display_name = self.config["new_display_name"]
         cookies = self.get_cookies()
@@ -19,10 +18,13 @@ class DisplayNameChanger(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.change_display_name, new_display_name, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.change_display_name, new_display_name, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

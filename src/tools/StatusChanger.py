@@ -7,7 +7,6 @@ class StatusChanger(Tool):
     def __init__(self, app):
         super().__init__("Status Changer", "Change the status of a large number of accounts", 7, app)
 
-    @Tool.handle_exit
     def run(self):
         new_status = self.config["new_status"]
         cookies = self.get_cookies()
@@ -16,10 +15,13 @@ class StatusChanger(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     is_changed, response_text = future.result()
                 except Exception as e:

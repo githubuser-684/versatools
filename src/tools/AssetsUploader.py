@@ -15,7 +15,6 @@ class AssetsUploader(Tool):
 
         Utils.ensure_directories_exist([self.assets_files_directory, self.shirts_files_directory, self.pants_files_directory])
 
-    @Tool.handle_exit
     def run(self):
         shirts = os.listdir(self.shirts_files_directory)
         pants = os.listdir(self.pants_files_directory)
@@ -28,10 +27,13 @@ class AssetsUploader(Tool):
         req_failed = 0
         total_req = len(assets)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.upload_asset, asset) for asset in assets]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.upload_asset, asset) for asset in assets]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_uploaded, response_text = future.result()
                 except Exception as err:

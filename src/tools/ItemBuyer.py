@@ -8,7 +8,6 @@ class ItemBuyer(Tool):
     def __init__(self, app):
         super().__init__("Item Buyer", "Have your cookies buy an item from the catalog", 2, app)
 
-    @Tool.handle_exit
     def run(self):
         item_id = self.config["item_id"]
         cookies = self.get_cookies(self.config["max_generations"])
@@ -19,10 +18,13 @@ class ItemBuyer(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            results = [self.executor.submit(self.buy_item, product_id, expected_price, expected_seller_id, expected_currency, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
+            self.results = [executor.submit(self.buy_item, product_id, expected_price, expected_seller_id, expected_currency, cookie) for cookie in cookies]
 
-            for future in concurrent.futures.as_completed(results):
+            for future in concurrent.futures.as_completed(self.results):
+                if future.cancelled():
+                    continue
+
                 try:
                     has_bought, response_text = future.result()
                 except Exception as e:

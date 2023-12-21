@@ -8,7 +8,6 @@ class DiscordRpc(Tool):
     def __init__(self, app):
         super().__init__("Discord RPC", "Change your discord status!", 6, app)
 
-    @Tool.handle_exit
     def run(self):
         client_id = self.config["client_id"]
         rpc_obj = discordRpc.DiscordIpcClient.for_platform(client_id)

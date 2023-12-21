@@ -98,8 +98,6 @@ class App():
         Launches a tool from its name
         """
         tool = self.get_tool_from_name(tool_name)
-        if tool is None:
-            raise Exception("Tool not found")
 
         self.current_tool = tool
         tool.exit_flag = False
@@ -107,12 +105,14 @@ class App():
         try:
             tool.run()
         except KeyboardInterrupt:
+            tool.exit_flag = True
             return
         except Exception as err:
             traceback_str = traceback.format_exc()
             eel.write_terminal(traceback_str)
             eel.write_terminal(f"\x1B[1;31m{str(err)}\x1B[0;0m")
 
+        tool.exit_flag = True
         eel.tool_finished()
 
     def get_tool_from_name(self, tool_name):

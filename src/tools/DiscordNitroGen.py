@@ -63,8 +63,13 @@ class DiscordNitroGen(Tool):
             req_json={"partnerUserId": str(uuid.uuid4())}
             result = client.post(req_url, headers=req_headers, json=req_json)
 
+            if result.status_code != 200:
+                raise Exception(Utils.return_res(result))
+
             response = result.json()
+            token = response.get('token')
 
-            nitro_link = "https://discord.com/billing/partner-promotions/1180231712274387115/"+response['token']
+        if token == None:
+            return False, "Failed to generate token. " + Utils.return_res(result)
 
-        return True, nitro_link
+        return True, "https://discord.com/billing/partner-promotions/1180231712274387115/"+token

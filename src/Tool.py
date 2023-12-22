@@ -140,6 +140,7 @@ class Tool(Proxy, ABC):
             raise FileNotFoundError("files/proxies.txt path not found. Create it, add proxies and try again")
 
         proxies_list = f.readlines()
+        f.close()
         proxies_list = [*set(proxies_list)] # remove duplicates
 
         if len(proxies_list) == 0:

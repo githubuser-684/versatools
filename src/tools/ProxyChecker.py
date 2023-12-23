@@ -15,6 +15,10 @@ class ProxyChecker(Tool):
         # make sure format of the file is good
         self.check_proxies_file_format(self.proxies_file_path)
 
+        # make sure ipinfo token is good
+        if self.config["ipinfo_api_key"] != None and self.config["check_timezone"]:
+            self.check_ipinfo_token(self.config["ipinfo_api_key"])
+
         # get proxies lines
         f = open(self.proxies_file_path, 'r+')
         lines = f.read().splitlines()
@@ -33,7 +37,7 @@ class ProxyChecker(Tool):
 
         # for each line, test the proxy
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.test_proxy_line, line, self.config["check_timezone"], self.config["timeout"]) for line in lines]
+            self.results = [executor.submit(self.test_proxy_line, line, self.config["check_timezone"], self.config["ipinfo_api_key"], self.config["timeout"]) for line in lines]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():
@@ -65,7 +69,14 @@ class ProxyChecker(Tool):
                 f.truncate()
                 f.write(open(self.cache_file_path, 'r').read())
 
-    def test_proxy_line(self, line: str, check_timezone: bool, timeout: int):
+    def check_ipinfo_token(self, token: str):
+        response = httpc.get("https://ipinfo.io/8.8.8.8?token="+token)
+
+        if response.status_code != 200:
+            error_msg = "Error from IpInfo: " + response.text
+            raise Exception(error_msg)
+
+    def test_proxy_line(self, line: str, check_timezone: bool, ipinfo_api_key:str, timeout: int):
         """
         Checks if a line proxy is working
         """
@@ -88,8 +99,18 @@ class ProxyChecker(Tool):
 
         timezone = None
 
-        if check_timezone and self.ip_address_is_valid(proxy_ip):
-            res = httpc.get(f"http://ipinfo.io/{proxy_ip}/json")
+        if is_working and check_timezone:
+            api_key_param = f'?token={ipinfo_api_key}' if ipinfo_api_key else ''
+
+            if self.ip_address_is_valid(proxy_ip):
+                req_url = f'http://ipinfo.io/{proxy_ip}/json{api_key_param}'
+
+                res = httpc.get(req_url)
+            else:
+                req_url = f'http://ipinfo.io/json{api_key_param}'
+
+                res = httpc.get(req_url, proxies=proxies)
+
             timezone = res.json().get("timezone")
 
         return is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass, timezone

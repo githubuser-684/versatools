@@ -165,6 +165,8 @@ config = {
     },
     "ProxyChecker": {
         "check_timezone": False,
+        "ipinfo_api_key": None,
+        "//ipinfo_api_url": "https://ipinfo.io/",
         "delete_failed_proxies": True,
         "timeout": 2,
         "max_workers": None

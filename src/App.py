@@ -202,6 +202,7 @@ class App():
             amount = 0
 
         proxies_list = f.readlines()
+        f.close()
         proxies_list = [*set(proxies_list)] # remove duplicates
         amount = len(proxies_list)
 

@@ -2,6 +2,8 @@ from Tool import Tool
 import os
 import concurrent.futures
 from utils import Utils
+import ipaddress
+import httpc
 
 class ProxyChecker(Tool):
     def __init__(self, app):
@@ -31,12 +33,12 @@ class ProxyChecker(Tool):
 
         # for each line, test the proxy
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.test_proxy_line, line, self.config["timeout"]) for line in lines]
+            self.results = [executor.submit(self.test_proxy_line, line, self.config["check_timezone"], self.config["timeout"]) for line in lines]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():
                     continue
-                is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = future.result()
+                is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass, timezone = future.result()
 
                 if is_working:
                     working_proxies += 1
@@ -44,6 +46,9 @@ class ProxyChecker(Tool):
                     failed_proxies += 1
 
                 line = self.write_proxy_line(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
+
+                if timezone is not None:
+                    line = f"{line} {timezone}"
 
                 if self.config["delete_failed_proxies"] and is_working:
                     f.write(line + "\n")
@@ -60,7 +65,7 @@ class ProxyChecker(Tool):
                 f.truncate()
                 f.write(open(self.cache_file_path, 'r').read())
 
-    def test_proxy_line(self, line: str, timeout: int):
+    def test_proxy_line(self, line: str, check_timezone: bool, timeout: int):
         """
         Checks if a line proxy is working
         """
@@ -81,4 +86,17 @@ class ProxyChecker(Tool):
                     proxy_type = protocol
                     break
 
-        return is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass
+        timezone = None
+
+        if check_timezone and self.ip_address_is_valid(proxy_ip):
+            res = httpc.get(f"http://ipinfo.io/{proxy_ip}/json")
+            timezone = res.json().get("timezone")
+
+        return is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass, timezone
+
+    def ip_address_is_valid(self, ip_string):
+        try:
+            ipaddress.ip_address(ip_string)
+            return True
+        except ValueError:
+            return False

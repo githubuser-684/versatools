@@ -164,6 +164,7 @@ config = {
         "max_workers": None
     },
     "ProxyChecker": {
+        "check_timezone": False,
         "delete_failed_proxies": True,
         "timeout": 2,
         "max_workers": None

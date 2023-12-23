@@ -64,12 +64,14 @@ def format_response(response, method, url, **kwargs):
 def get(url, **kwargs):
     proxies = kwargs.get("proxies")
 
-    return Session(proxies=proxies).get(url, **kwargs)
+    with Session(proxies=proxies) as client:
+        return client.get(url, **kwargs)
 
 def post(url, **kwargs):
     proxies = kwargs.get("proxies")
 
-    return Session(proxies=proxies).post(url, **kwargs)
+    with Session(proxies=proxies) as client:
+        return client.post(url, **kwargs)
 
 class Session():
     def __init__(self, **kwargs):

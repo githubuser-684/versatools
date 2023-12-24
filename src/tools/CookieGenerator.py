@@ -24,7 +24,7 @@ class CookieGenerator(Tool):
         total_gen = self.config["max_generations"]
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.generate_cookie, self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+            self.results = [executor.submit(self.generate_cookie, self.config["vanity"], self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():
@@ -62,19 +62,25 @@ class CookieGenerator(Tool):
         try:
             message = response.json()["message"]
         except KeyError:
-            raise Exception("Unable to access message key " + Utils.return_res(response))
+            message = Utils.return_res(response)
 
-        return message == "Username is valid", message
+        return "Username is valid" in message, message
 
-    def generate_username(self):
+    def generate_username(self, vanity):
         """
         Generates a random username
         """
-        word1 = random.choice(adjectives)
-        word2 = random.choice(nouns)
-        word1 = word1.title()
-        word2 = word2.title()
-        generated_username = f"{word1}{word2}{random.randint(1, 9999)}"
+        if vanity is None:
+            word1 = random.choice(adjectives)
+            word2 = random.choice(nouns)
+            word1 = word1.title()
+            word2 = word2.title()
+            generated_username = f"{word1}{word2}{random.randint(1, 9999)}"
+        else:
+            characters = string.ascii_uppercase + string.digits
+            random_chars = ''.join(random.choice(characters) for _ in range(6))
+
+            generated_username = f"{vanity}_{random_chars}"
 
         return generated_username
 
@@ -107,7 +113,7 @@ class CookieGenerator(Tool):
         return result
 
     @Utils.handle_exception()
-    def generate_cookie(self, captcha_service:str, use_proxy:bool) -> tuple:
+    def generate_cookie(self, vanity:str, captcha_service:str, use_proxy:bool) -> tuple:
         """
         Generates a ROBLOSECURITY cookie
         Returns a tuple with the error and the cookie
@@ -123,7 +129,7 @@ class CookieGenerator(Tool):
 
             retry_count = 0
             while retry_count < 5:
-                username = self.generate_username()
+                username = self.generate_username(vanity)
                 is_username_valid, response_text = self.verify_username(user_agent, csrf_token, username, birthday, client)
 
                 if is_username_valid:

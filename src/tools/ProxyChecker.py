@@ -51,12 +51,12 @@ class ProxyChecker(Tool):
 
                 line = self.write_proxy_line(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
-                if timezone is not None:
-                    line = f"{line} {timezone}"
-
                 if self.config["delete_failed_proxies"] and is_working:
                     f.write(line + "\n")
                     f.flush()
+
+                if timezone is not None:
+                    line = f"{line} {timezone}"
 
                 self.print_status(working_proxies, failed_proxies, total_proxies, line, is_working, "Working")
 

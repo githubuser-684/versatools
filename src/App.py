@@ -33,7 +33,7 @@ def show_menu():
     Show menu in terminal
     """
     eel.clear_terminal()
-    eel.write_terminal("\x1B[1;32mWelcome to Versatools\x1B[0;0m")
+    eel.write_terminal(f"\x1B[1;32mWelcome to Versatools v{version}\x1B[0;0m")
     eel.write_terminal("Best FREE opensource Roblox botting tools written in Python\n")
     eel.write_terminal("\x1B[1;31mOur tools:\x1B[0;0m")
 

@@ -37,6 +37,8 @@ config = {
         "max_workers": None
     },
     "CookieGenerator": {
+        "vanity": None,
+        "custom_password": None,
         "max_generations": 1000,
         "captcha_solver": "capbypass",
         "use_proxy": True,

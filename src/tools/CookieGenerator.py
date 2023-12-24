@@ -24,7 +24,7 @@ class CookieGenerator(Tool):
         total_gen = self.config["max_generations"]
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.generate_cookie, self.config["vanity"], self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+            self.results = [executor.submit(self.generate_cookie, self.config["vanity"], self.config["custom_password"], self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():
@@ -113,7 +113,7 @@ class CookieGenerator(Tool):
         return result
 
     @Utils.handle_exception()
-    def generate_cookie(self, vanity:str, captcha_service:str, use_proxy:bool) -> tuple:
+    def generate_cookie(self, vanity:str, custom_password:str, captcha_service:str, use_proxy:bool) -> tuple:
         """
         Generates a ROBLOSECURITY cookie
         Returns a tuple with the error and the cookie
@@ -140,7 +140,7 @@ class CookieGenerator(Tool):
             if not is_username_valid:
                 raise Exception(f"Failed to generate a valid username after {retry_count} tries. ({response_text})")
 
-            password = self.generate_password()
+            password = custom_password or self.generate_password()
             is_girl = random.choice([True, False])
 
             sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, client)

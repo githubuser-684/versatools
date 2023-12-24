@@ -95,7 +95,8 @@ class Session():
         return self
 
     def __exit__(self, *args, **kwargs):
-        self.session.close()
+        if not self.spoof_tls:
+            self.session.close()
 
     def get(self, url, **kwargs):
         return self._make_request("GET", url, **kwargs)

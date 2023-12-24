@@ -70,7 +70,8 @@ class VipServerScraper(Tool):
 
         try:
             vip_link = re.findall(r'\'countdown\' href="(.+?)"', response.text)[0]
+            game_name = re.findall(r'<h1>(.+?)</h1>', response.text)[0]
         except IndexError:
             return False, "VIP server link not found"
 
-        return (response.status_code == 200), vip_link
+        return (response.status_code == 200), f"{game_name}\x1B[0;0m\n{vip_link}"

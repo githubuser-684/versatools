@@ -198,6 +198,11 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "UsernameSniper": {
+        "username_length": 3,
+        "use_proxy": False,
+        "max_workers": None,
+    },
     "VipServerScraper": {
         "use_proxy": False,
         "max_workers": None

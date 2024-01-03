@@ -89,9 +89,10 @@ class App():
 
             # shutdown with subprocess
             subprocess.Popen([installable_path, '/silent', '/nocancel'])
-            return True
         except Exception as err:
             return str(err)
+
+        return True
 
     def launch_tool(self, tool_name):
         """

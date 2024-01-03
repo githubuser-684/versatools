@@ -82,29 +82,3 @@ class Utils():
         utc_time = datetime.utcnow()
         utc_seconds = round((utc_time - datetime(1970, 1, 1)).total_seconds())
         return utc_seconds
-
-
-class Suppressor():
-    """
-    Context manager to suppress stdout (or any other stream)
-    """
-    def __enter__(self):
-        # pylint: disable =attribute-defined-outside-init
-        self.stdout = sys.stdout
-        sys.stdout = self
-
-    def __exit__(self, exception_type, value, traceback):
-        sys.stdout = self.stdout
-        if exception_type is not None:
-            # Do normal exception handling
-            raise Exception(f"Got exception: {exception_type} {value} {traceback}")
-
-    def write(self, x):
-        """
-        Suppresses the output
-        """
-
-    def flush(self):
-        """
-        Suppresses the output
-        """

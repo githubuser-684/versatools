@@ -47,7 +47,7 @@ class Gen2018Acc(Tool):
 
         try:
             count = response.json()["count"]
-        except Exception:
+        except KeyError:
             raise Exception("Failed to access count key. " + Utils.return_res(response))
 
         return count

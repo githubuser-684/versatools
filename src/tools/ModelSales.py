@@ -81,7 +81,7 @@ class ModelSales(Tool):
 
             try:
                 is_bought = (response.status_code == 200 and response.json()["purchased"] is True)
-            except Exception:
+            except KeyError:
                 return False, "Failed to access purchased key " + Utils.return_res(response)
 
             if leave_review_when_bought:

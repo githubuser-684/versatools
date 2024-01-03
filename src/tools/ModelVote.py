@@ -54,7 +54,7 @@ class ModelVote(Tool):
 
         try:
             success = response.status_code == 200 and response.json()["Success"]
-        except Exception:
+        except KeyError:
             raise Exception("Failed to access Success key. " + Utils.return_res(response))
 
         return success, Utils.return_res(response)

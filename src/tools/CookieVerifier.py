@@ -54,7 +54,7 @@ class CookieVerifier(Tool):
 
         try:
             is_verified = response.json()["verified"]
-        except Exception:
+        except KeyError:
             raise Exception(f"Failed to access verified key {Utils.return_res(response)}")
 
         return is_verified
@@ -73,7 +73,7 @@ class CookieVerifier(Tool):
 
         try:
             domain = response.json()["hydra:member"][0]["domain"]
-        except Exception:
+        except KeyError:
             raise Exception(f"Failed to access domain key {Utils.return_res(response)}")
 
         # create email address
@@ -87,7 +87,7 @@ class CookieVerifier(Tool):
 
         try:
             address = response.json()["address"]
-        except Exception:
+        except KeyError:
             raise Exception(f"Failed to access address key {Utils.return_res(response)}")
 
         # get auth token
@@ -97,7 +97,7 @@ class CookieVerifier(Tool):
 
         try:
             token = response.json()["token"]
-        except Exception:
+        except KeyError:
             raise Exception(f"Failed to access token key {Utils.return_res(response)}")
 
         if response.status_code != 200:
@@ -135,7 +135,7 @@ class CookieVerifier(Tool):
 
         try:
             mails = response.json()["hydra:member"]
-        except Exception:
+        except KeyError:
             raise Exception(f"Failed to access hydra:member key {Utils.return_res(response)}")
 
         if len(mails) == 0:
@@ -158,7 +158,7 @@ class CookieVerifier(Tool):
         try:
             data = response.json()["data"]
             mail = mailparser.parse_from_string(data)
-        except Exception:
+        except KeyError:
             raise Exception(f"Failed to fetch data email {Utils.return_res(response)}")
         return mail
 

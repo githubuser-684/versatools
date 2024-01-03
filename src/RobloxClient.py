@@ -20,7 +20,7 @@ class RobloxClient(Proxy):
         response = httpc.post("https://auth.roblox.com/v1/authentication-ticket/", headers=headers, cookies=cookies)
         try:
             return response.headers["Rbx-Authentication-Ticket"]
-        except Exception:
+        except KeyError:
             raise Exception("Rbx-auth-ticket not found. " + Utils.return_res(response))
 
     def kill(self, proc_pid):

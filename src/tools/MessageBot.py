@@ -84,7 +84,7 @@ class MessageBot(Tool):
 
         try:
             success = response.status_code == 200 and response.json()["success"]
-        except Exception:
+        except KeyError:
             raise Exception("Failed to access success key" + Utils.return_res(response))
 
         return success, Utils.return_res(response)

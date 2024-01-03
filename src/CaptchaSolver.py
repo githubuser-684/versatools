@@ -144,7 +144,7 @@ class CaptchaSolver(Proxy):
 
             token = solution["token"]
         elif self.captcha_service == "capbypass":
-            token = self.solve_capbypass(self, website_url, public_key, website_subdomain, blob)
+            token = self.solve_capbypass(website_url, public_key, website_subdomain, blob)
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")
 

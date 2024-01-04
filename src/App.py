@@ -166,6 +166,30 @@ class App():
                 json_file.truncate()
                 json.dump(ordered_config, json_file, indent=4)
 
+    def update_config_prop(self, prop_name, config):
+        with open(self.config_file_path, "r+") as json_file:
+            file_config = json.load(json_file)
+            file_config[prop_name.replace(" ", "")] = config
+            ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
+            json_file.seek(0)
+            json_file.truncate()
+            json.dump(ordered_config, json_file, indent=4)
+
+    def set_solver_config(self, config):
+        self.update_config_prop("FunCaptchaSolvers", config)
+
+    def get_solver_config(self):
+        try:
+            f = open(self.config_file_path)
+        except FileNotFoundError:
+            raise Exception("\x1B[1;31mConfig file not found. Make sure to have it in files/config.json\x1B[0;0m")
+
+        data = f.read()
+        f.close()
+        x = json.loads(data)
+
+        return x["FunCaptchaSolvers"]
+
     def set_tool_config(self, tool_name, tool_config):
         """
         Changes the config of a tool in config.json and in its instance
@@ -176,13 +200,7 @@ class App():
         tool.config = tool_config
 
         # update config file
-        with open(self.config_file_path, "r+") as json_file:
-            file_config = json.load(json_file)
-            file_config[tool.name.replace(" ", "")] = tool.config
-            ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
-            json_file.seek(0)
-            json_file.truncate()
-            json.dump(ordered_config, json_file, indent=4)
+        self.update_config_prop(tool.name, tool.config)
 
     def set_tool_config_ui(self):
         if self.selected_tool is None:
@@ -240,6 +258,9 @@ class App():
         finally:
             observer.stop()
             observer.join()
+
+    def start_files_dir(self):
+        os.startfile(self.files_directory)
 
     def __str__(self) -> str:
         return "Versatools main class"

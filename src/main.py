@@ -60,8 +60,20 @@ if __name__ == "__main__":
         return app.get_tool_config(tool_name)
 
     @eel.expose
+    def get_solver_config():
+        return app.get_solver_config()
+
+    @eel.expose
+    def set_solver_config(config):
+        return app.set_solver_config(config)
+
+    @eel.expose
     def set_tool_config(tool_name, config):
         return app.set_tool_config(tool_name, config)
+
+    @eel.expose
+    def start_files_dir():
+        return app.start_files_dir()
 
     @eel.expose
     def update_versatools():

@@ -49,7 +49,7 @@ h2 {
 }
 
 .mb {
-	margin-bottom: 20px;
+	margin: 0 0 20px 0;
 }
 
 .text-center {
@@ -226,6 +226,15 @@ h2 {
 	background-color: #730000;
 }
 
+.btn--dark {
+	background-color: var(--c-dark);
+	color: var(--c-white);
+}
+
+.btn--dark:hover {
+	background-color: var(--c-basic);
+}
+
 .divide-exploit {
 	display: flex;
 	flex-direction: row;
@@ -273,4 +282,10 @@ h2 {
 	display: block;
 	width: auto;
 	height: 100%;
+}
+
+.keys-editor {
+	display: block;
+	width: auto;
+	height: 310px;
 }

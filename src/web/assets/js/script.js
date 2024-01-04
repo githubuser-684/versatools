@@ -1,5 +1,3 @@
-const discordInvite = "https://discord.gg/hBCqFHV3cC";
-
 class WebApp {
 	constructor() {
 		this.runState = false;
@@ -79,13 +77,18 @@ class WebApp {
 
 		// setup run btn
 		const btnRun = document.getElementById("btn-run");
+		if (sessionStorage.getItem("running") === "true") {
+			this.toogleRun();
+		}
 		btnRun.addEventListener("click", async () => {
 			this.toogleRun();
 
 			if (this.runState) {
+				sessionStorage.setItem("running", "true");
 				clear_terminal();
 				await eel.launch_app_tool(this.toolName)();
 			} else {
+				sessionStorage.setItem("running", "false");
 				await eel.stop_current_tool()();
 			}
 		});
@@ -145,20 +148,6 @@ class WebApp {
 		const json = JSON.stringify(newConfig, null, 4);
 		this.jsonEditor.setValue(json);
 		this.jsonEditor.selection.clearSelection();
-	}
-
-	static copyDiscordInvite() {
-		const copyText = discordInvite;
-		navigator.clipboard.writeText(copyText);
-
-		Toastify({
-			text: "Discord invite copied! \n" + discordInvite.replace("https://discord", ""),
-			duration: 3000,
-			style: {
-				background: "#1d232c",
-				boxShadow: "none",
-			},
-		}).showToast();
 	}
 }
 

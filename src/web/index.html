@@ -22,7 +22,12 @@
 				<div class="menu__item menu__item--active">
 					<img class="menu__icon" src="/assets/svg/tools.svg" alt="Home" />
 				</div>
-				<div onclick="WebApp.copyDiscordInvite()" class="menu__item">
+				<a href="./settings.html">
+					<div class="menu__item">
+						<img class="menu__icon" src="/assets/svg/settings.svg" alt="Settings" />
+					</div>
+				</a>
+				<div onclick="copyDiscordInvite()" class="menu__item">
 					<img class="menu__icon" src="/assets/svg/discord.svg" alt="Discord" />
 				</div>
 			</nav>
@@ -69,6 +74,7 @@
 
 		<script type="text/javascript" src="/eel.js"></script>
 
-		<script src="/script.js"></script>
+		<script src="/assets/js/script.js"></script>
+		<script src="/assets/js/discord.js"></script>
 	</body>
 </html>

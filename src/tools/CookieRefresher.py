@@ -53,10 +53,11 @@ class CookieRefresher(Tool):
         f.close()
 
         # replace cookies
-        with open(self.cookies_file_path, 'w') as f:
-            f.seek(0)
-            f.truncate()
-            f.write(open(self.new_cookies_file_path, 'r').read())
+        with open(self.cookies_file_path, 'w') as destination_file:
+            with open(self.new_cookies_file_path, 'r') as source_file:
+                destination_file.seek(0)
+                destination_file.truncate()
+                destination_file.write(source_file.read())
 
         os.remove(self.new_cookies_file_path)
 

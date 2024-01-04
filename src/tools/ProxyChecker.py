@@ -64,10 +64,11 @@ class ProxyChecker(Tool):
             f.close()
 
             # replace file with cache
-            with (open(self.proxies_file_path, 'w')) as f:
-                f.seek(0)
-                f.truncate()
-                f.write(open(self.cache_file_path, 'r').read())
+            with open(self.proxies_file_path, 'w') as destination_file:
+                with open(self.cache_file_path, 'r') as source_file:
+                    destination_file.seek(0)
+                    destination_file.truncate()
+                    destination_file.write(source_file.read())
 
     def check_ipinfo_token(self, token: str):
         response = httpc.get("https://ipinfo.io/8.8.8.8?token="+token)

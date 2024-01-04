@@ -56,10 +56,11 @@ class CookieChecker(Tool):
             f.close()
 
             # replace file with cache
-            with (open(self.cookies_file_path, 'w')) as f:
-                f.seek(0)
-                f.truncate()
-                f.write(open(self.cache_file_path, 'r').read())
+            with open(self.cookies_file_path, 'w') as destination_file:
+                with open(self.cache_file_path, 'r') as source_file:
+                    destination_file.seek(0)
+                    destination_file.truncate()
+                    destination_file.write(source_file.read())
 
     @Utils.handle_exception(2)
     def test_cookie(self, cookie, use_proxy):

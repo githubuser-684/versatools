@@ -165,6 +165,11 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "PasswordChanger": {
+        "new_password": "1234newpass",
+        "use_proxy": True,
+        "max_workers": None
+    },
     "ProxyChecker": {
         "check_timezone": False,
         "ipinfo_api_key": None,

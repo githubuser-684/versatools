@@ -57,7 +57,7 @@ class PasswordChanger(Tool):
 
         os.remove(self.new_password_file_path)
 
-    @Utils.handle_exception()
+    @Utils.handle_exception(2)
     def change_password(self, upc, new_password):
         """
         Update password of upc

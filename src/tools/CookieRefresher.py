@@ -61,7 +61,7 @@ class CookieRefresher(Tool):
 
         os.remove(self.new_cookies_file_path)
 
-    @Utils.handle_exception()
+    @Utils.handle_exception(2)
     def refresh_cookie(self, cookie:str, use_proxy:bool):
         proxies = self.get_random_proxy() if use_proxy else None
 

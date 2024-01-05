@@ -14,10 +14,10 @@ def cli():
     pass
 
 @click.command(help="Run a botting tool.")
-@click.option('--name', required=True, help='Specify the tool name or number.')
-def run(name):
+@click.argument('tool_name')
+def run(tool_name):
     global tool
-    tool = app.get_tool_from(name)
+    tool = app.get_tool_from(tool_name)
 
     app.launch_tool(tool)
 
@@ -38,15 +38,15 @@ def tools():
     click.echo(output)
 
 @click.command(help="Get a tool's description.")
-@click.option('--name', required=True, help='Specify the tool name or number.')
-def desc(name):
-    tool = app.get_tool_from(name)
+@click.argument('tool_name')
+def desc(tool_name):
+    tool = app.get_tool_from(tool_name)
     click.echo(tool.description)
 
 @click.command(help="Edit a tool's config.")
-@click.option('--name', required=True, help='Specify the tool name or number.')
-def config(name):
-    tool = app.get_tool_from(name)
+@click.argument('tool_name')
+def config(tool_name):
+    tool = app.get_tool_from(tool_name)
     config_json = json.dumps(tool.config, indent=2)  # Convert config to a formatted JSON string
 
     edited_config = click.edit(config_json)  # Open the editor with the JSON content

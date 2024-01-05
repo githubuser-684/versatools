@@ -4,6 +4,8 @@ import concurrent.futures
 from utils import Utils
 import os
 import re
+import random
+import string
 
 class PasswordChanger(Tool):
     def __init__(self, app):
@@ -18,6 +20,9 @@ class PasswordChanger(Tool):
 
         cookies, lines = self.get_cookies(None, True)
         new_password = self.config["new_password"]
+
+        if new_password == None:
+            new_password = self.generate_password()
 
         req_sent = 0
         req_failed = 0
@@ -56,6 +61,16 @@ class PasswordChanger(Tool):
                 destination_file.write(source_file.read())
 
         os.remove(self.new_password_file_path)
+
+    def generate_password(self):
+        """
+        Generates a random and complex password
+        """
+        length = 10
+        password = ''.join(random.choices(string.ascii_uppercase + string.digits + string.punctuation, k=length))
+        password.replace(":", "v")
+
+        return password
 
     @Utils.handle_exception(2)
     def change_password(self, upc, new_password):

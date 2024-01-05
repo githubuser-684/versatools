@@ -159,7 +159,7 @@ class Tool(Proxy, ABC):
         """
         Prints the status of a request
         """
-        click.secho("\033[1A\033[K\033[1A\033[K"+response_text, fg="red" if not has_worked else "green")
+        click.secho("\033[1A\033[K"+response_text, fg="red" if not has_worked else "green")
 
         output = ""
         output += click.style(f"{action_verb}: {str(req_worked)}", fg="green")

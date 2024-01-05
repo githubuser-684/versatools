@@ -26,7 +26,6 @@ class DiscordNitroGen(Tool):
                     continue
 
                 try:
-                    print("do new future")
                     has_generated, response_text = future.result()
                 except Exception as e:
                     has_generated, response_text = False, str(e)

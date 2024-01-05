@@ -100,11 +100,12 @@ cli.add_command(version)
 if __name__ == "__main__":
     freeze_support()
 
-    def handle(signum, frame):
-        tool.signal_handler()
-        raise KeyboardInterrupt()
+    def sigint_handle(signum, frame):
+        if tool is not None:
+            tool.signal_handler()
+            raise KeyboardInterrupt()
 
-    signal.signal(signal.SIGINT, handle)
+    signal.signal(signal.SIGINT, sigint_handle)
 
     try:
         cli()

@@ -110,6 +110,6 @@ if __name__ == "__main__":
     try:
         cli()
     except Exception as err:
-            traceback_str = traceback.format_exc()
-            click.echo(traceback_str)
-            click.secho(str(err), fg='red')
+        traceback_str = traceback.format_exc()
+        click.echo(traceback_str)
+        click.secho(str(err), fg='red')

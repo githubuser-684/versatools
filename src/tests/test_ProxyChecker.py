@@ -10,7 +10,7 @@ class TestProxyChecker(unittest.TestCase):
         cls.tool = ProxyChecker(cls.app)
 
     def test_test_proxy_line(self):
-        is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.tool.test_proxy_line("http:8.8.8.8:80:admin:1234", 1)
+        is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass, timezone = self.tool.test_proxy_line("http:8.8.8.8:80:admin:1234", False, None, 1)
 
         self.assertEqual(is_working, False)
         self.assertEqual(proxy_type, "http")

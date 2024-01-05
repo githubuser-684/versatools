@@ -7,7 +7,7 @@ import re
 
 class PasswordChanger(Tool):
     def __init__(self, app):
-        super().__init__("Password Changer", "Change password of many cookies", 6, app)
+        super().__init__("Password Changer", "Change password of many cookies", app)
 
         self.new_password_file_path = os.path.join(self.files_directory, "password-changed-cookies.txt")
 

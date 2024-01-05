@@ -5,7 +5,7 @@ from utils import Utils
 
 class ModelVote(Tool):
     def __init__(self, app):
-        super().__init__("Model Vote", "Increase Like/Dislike count of a model", 1, app)
+        super().__init__("Model Vote", "Increase Like/Dislike count of a model", app)
 
     def run(self):
         model_id = self.config["model_id"]

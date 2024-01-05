@@ -4,11 +4,11 @@ import httpc
 from Tool import Tool
 from utils import Utils
 import itertools
-import eel
+import click
 
 class UsernameSniper(Tool):
     def __init__(self, app):
-        super().__init__("Username Sniper", "Search for the shortest Roblox username available", 6, app)
+        super().__init__("Username Sniper", "Search for the shortest Roblox username available", app)
 
         self.usernames_file_path = os.path.join(self.files_directory, "usernames.txt")
         Utils.ensure_files_exist([self.usernames_file_path])
@@ -19,7 +19,7 @@ class UsernameSniper(Tool):
         if username_length < 3 or username_length > 20:
             raise Exception("Usernames can be between 3 and 20 characters long.")
 
-        eel.write_terminal("\x1B[1;33mPlease be patient...it may take some time to calculate all username combinations for a given length.\x1B[0;0m")
+        click.echo("Please be patient...it may take some time to calculate all username combinations for a given length.", fg='yellow')
         all_usernames = self.generate_usernames(username_length)
 
         f = open(self.usernames_file_path, 'a')

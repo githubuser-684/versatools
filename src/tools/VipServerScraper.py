@@ -6,7 +6,7 @@ import concurrent.futures
 
 class VipServerScraper(Tool):
     def __init__(self, app):
-        super().__init__("Vip Server Scraper", "Scrape Roblox VIP servers", 3, app)
+        super().__init__("Vip Server Scraper", "Scrape Roblox VIP servers", app)
 
     def run(self):
         max_workers = self.config["max_workers"]

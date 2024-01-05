@@ -8,7 +8,7 @@ from PIL import Image
 
 class AssetsDownloader(Tool):
     def __init__(self, app):
-        super().__init__("Assets Downloader", "Download most trending assets from Roblox catalog", 1, app)
+        super().__init__("Assets Downloader", "Download most trending assets from Roblox catalog", app)
 
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
         self.shirts_files_directory = os.path.join(self.files_directory, "./assets/shirts")

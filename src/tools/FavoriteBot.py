@@ -6,7 +6,7 @@ from utils import Utils
 
 class FavoriteBot(Tool):
     def __init__(self, app):
-        super().__init__("Favorite Bot", "Increase/Decrease stars count of an asset", 2, app)
+        super().__init__("Favorite Bot", "Increase/Decrease stars count of an asset", app)
 
     def run(self):
         asset_id = self.config["asset_id"]

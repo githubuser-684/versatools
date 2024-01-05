@@ -2,7 +2,7 @@ import random
 import string
 import concurrent.futures
 import httpc
-import eel
+import click
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
 from utils import Utils
@@ -11,10 +11,10 @@ from data.nouns import nouns
 
 class CookieGenerator(Tool):
     def __init__(self, app):
-        super().__init__("Cookie Generator", "Generates Roblox Cookies.", 2, app)
+        super().__init__("Cookie Generator", "Generates Roblox Cookies.", app)
 
     def run(self):
-        eel.write_terminal("\x1B[1;33mWarning: Cookies generated using our tool are flagged and region locked.\x1B[0;0m")
+        click.secho("Warning: Cookies generated using our tool are flagged and region locked.", fg='yellow')
 
         # open cookies.txt for writing in it
         f = open(self.cookies_file_path, 'a')

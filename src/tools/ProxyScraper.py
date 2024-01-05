@@ -7,7 +7,7 @@ from utils import Utils
 
 class ProxyScraper(Tool):
     def __init__(self, app):
-        super().__init__("Proxy Scraper", "Scrapes proxies from a list of websites", 6, app)
+        super().__init__("Proxy Scraper", "Scrapes proxies from a list of websites", app)
 
     def run(self):
         # open proxies file to start writing in it

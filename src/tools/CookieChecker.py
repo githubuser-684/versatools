@@ -7,7 +7,7 @@ from utils import Utils
 
 class CookieChecker(Tool):
     def __init__(self, app):
-        super().__init__("Cookie Checker", "Checks if cookies are valid and shuffle and unduplicate them.", 1, app)
+        super().__init__("Cookie Checker", "Checks if cookies are valid and shuffle and unduplicate them.", app)
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-cookies.txt")
 

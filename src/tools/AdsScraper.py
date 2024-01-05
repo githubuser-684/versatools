@@ -7,7 +7,7 @@ from utils import Utils
 
 class AdsScraper(Tool):
     def __init__(self, app):
-        super().__init__("Ads Scraper", "Scrapes ads.", 6, app)
+        super().__init__("Ads Scraper", "Scrapes ads.", app)
 
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
         self.ads_directory = os.path.join(self.assets_files_directory, "./ads")

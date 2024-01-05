@@ -3,11 +3,11 @@ from Tool import Tool
 from utils import Utils
 import math
 import random
-import eel
+import click
 
 class Gen2018Acc(Tool):
     def __init__(self, app):
-        super().__init__("Gen 2018 Acc", "2018 old roblox account generator", 6, app)
+        super().__init__("Gen 2018 Acc", "2018 old roblox account generator", app)
 
     def run(self):
         user_id = 73223429
@@ -30,7 +30,7 @@ class Gen2018Acc(Tool):
 
             username = followers[random.randint(0, len(followers)-1)]["name"]
 
-        eel.write_terminal(f"\x1B[1;32m2018 Account Generated: {username}:{default_pass}\x1B[0;0m")
+        click.echo(f"\x1B[1;32m2018 Account Generated: {username}:{default_pass}\x1B[0;0m")
 
     @Utils.handle_exception(3)
     def get_followers_count(self, user_id, client, user_agent):

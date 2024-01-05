@@ -2,17 +2,17 @@ import httpc
 from Tool import Tool
 import concurrent.futures
 from utils import Utils
-import eel
+import click
 
 class DisplayNameChanger(Tool):
     def __init__(self, app):
-        super().__init__("Display Name Changer", "Change Display Name of your bots", 3, app)
+        super().__init__("Display Name Changer", "Change Display Name of your bots", app)
 
     def run(self):
         new_display_name = self.config["new_display_name"]
         cookies = self.get_cookies()
 
-        eel.write_terminal("\x1B[1;33mWarning: Display names can only be changed once every week\x1B[0;0m")
+        click.secho("Warning: Display names can only be changed once every week", fg="yellow")
 
         req_sent = 0
         req_failed = 0

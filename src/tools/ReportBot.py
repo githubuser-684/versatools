@@ -6,7 +6,7 @@ import re
 
 class ReportBot(Tool):
     def __init__(self, app):
-        super().__init__("Report Bot", "Report massively something offending", 3, app)
+        super().__init__("Report Bot", "Report massively something offending", app)
 
         self.report_types = ["user", "game", "group"]
 

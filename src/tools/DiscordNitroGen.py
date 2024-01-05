@@ -1,5 +1,4 @@
 import os
-from concurrent.futures import ThreadPoolExecutor
 import concurrent.futures
 import httpc
 from Tool import Tool
@@ -8,7 +7,7 @@ import uuid
 
 class DiscordNitroGen(Tool):
     def __init__(self, app):
-        super().__init__("Discord Nitro Gen", "Generates Nitro links from OperaGX promotion.", 5, app)
+        super().__init__("Discord Nitro Gen", "Generates Nitro links from OperaGX promotion.", app)
 
         self.nitro_file_path = os.path.join(self.files_directory, "nitros.txt")
 
@@ -19,14 +18,15 @@ class DiscordNitroGen(Tool):
         failed_gen = 0
         total_gen = self.config["max_generations"]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.generate_nitro, self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.generate_nitro, self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():
                     continue
 
                 try:
+                    print("do new future")
                     has_generated, response_text = future.result()
                 except Exception as e:
                     has_generated, response_text = False, str(e)

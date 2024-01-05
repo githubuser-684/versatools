@@ -1,10 +1,10 @@
 from Tool import Tool
 from CaptchaSolver import CaptchaSolver
-import eel
+import click
 
 class SolverBalanceChecker(Tool):
     def __init__(self, app):
-        super().__init__("Solver Balance Checker", "Check balance of your solvers", 5, app)
+        super().__init__("Solver Balance Checker", "Check balance of your solvers", app)
 
     def run(self):
         solvers = ["anti-captcha", "2captcha", "capsolver", "capbypass"]
@@ -14,6 +14,6 @@ class SolverBalanceChecker(Tool):
                 captcha_solver = CaptchaSolver(solver_name, self.captcha_tokens[solver_name])
                 try:
                     balance = captcha_solver.get_balance()
-                    eel.write_terminal(f"\x1B[1;32m{solver_name.title()}: {balance}$\x1B[0;0m")
+                    click.echo(f"{solver_name.title()}: {balance}$")
                 except Exception as e:
-                    eel.write_terminal(f"\x1B[1;31m{solver_name.title()}: ERROR {e}\x1B[0;0m")
+                    click.echo(f"{solver_name.title()}: ERROR {e}")

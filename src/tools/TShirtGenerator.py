@@ -5,12 +5,12 @@ import urllib.request
 from PIL import Image
 from resizeimage import resizeimage
 from Tool import Tool
-import eel
+import click
 from utils import Utils
 
 class TShirtGenerator(Tool):
     def __init__(self, app):
-        super().__init__("T-Shirt Generator", "Generate a t-shirt from a query", 2, app)
+        super().__init__("T-Shirt Generator", "Generate a t-shirt from a query", app)
 
         self.cache_img_path = os.path.join(self.cache_directory, "original-image")
         self.img_path = os.path.join(self.files_directory, "rblx-t-shirt.png")
@@ -61,5 +61,5 @@ class TShirtGenerator(Tool):
                 cover = resizeimage.resize_cover(image, [585, 559], validate=False)
                 cover.save(self.img_path, image.format)
 
-        eel.write_terminal("Image label: " + image_label)
-        eel.write_terminal("\x1B[0;32m" + query + " t-shirt was saved in files folder as rblx-t-shirt.png\x1B[0;0m")
+        click.echo("Image label: " + image_label)
+        click.echo("\x1B[0;32m" + query + " t-shirt was saved in files folder as rblx-t-shirt.png\x1B[0;0m")

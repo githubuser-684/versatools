@@ -2,16 +2,16 @@ from Tool import Tool
 import discordRpc
 import time
 from time import mktime
-import eel
+import click
 
 class DiscordRpc(Tool):
     def __init__(self, app):
-        super().__init__("Discord RPC", "Change your discord status!", 6, app)
+        super().__init__("Discord RPC", "Change your discord status!",app)
 
     def run(self):
         client_id = self.config["client_id"]
         rpc_obj = discordRpc.DiscordIpcClient.for_platform(client_id)
-        eel.write_terminal("RPC connection successful.")
+        click.echo("RPC connection successful.")
 
         time.sleep(5)
         start_time = mktime(time.localtime())

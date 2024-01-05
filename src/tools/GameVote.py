@@ -3,12 +3,12 @@ from Tool import Tool
 import concurrent.futures
 from utils import Utils
 import threading
-import eel
+import click
 from RobloxClient import RobloxClient
 
 class GameVote(Tool):
     def __init__(self, app):
-        super().__init__("Game Vote", "Increase Like/Dislike count of a game", 1, app)
+        super().__init__("Game Vote", "Increase Like/Dislike count of a game", app)
 
     def run(self):
         game_id = self.config["game_id"]
@@ -17,7 +17,7 @@ class GameVote(Tool):
         cookies = self.get_cookies(self.config["max_generations"])
         max_workers = self.config["max_workers"]
 
-        eel.write_terminal("\x1B[1;33mWarning: on Windows 11, it may not be possible to run multiple roblox instances\x1B[0;0m")
+        click.secho("Warning: on Windows 11, it may not be possible to run multiple roblox instances", fg="yellow")
 
         roblox_player_path = RobloxClient.find_roblox_player()
 

@@ -6,7 +6,7 @@ from utils import Utils
 
 class GroupAllyBot(Tool):
     def __init__(self, app):
-        super().__init__("Group Ally Bot", "Mass send ally requests to groups", 6, app)
+        super().__init__("Group Ally Bot", "Mass send ally requests to groups", app)
 
     def run(self):
         cookie = self.config["cookie"]

@@ -6,7 +6,7 @@ import random
 
 class MessageBot(Tool):
     def __init__(self, app):
-        super().__init__("Message Bot", "Spam someone with the same message", 6, app)
+        super().__init__("Message Bot", "Spam someone with the same message", app)
 
     def run(self):
         subject = self.config["subject"]

@@ -6,7 +6,7 @@ import re
 
 class ItemBuyer(Tool):
     def __init__(self, app):
-        super().__init__("Item Buyer", "Have your cookies buy an item from the catalog", 2, app)
+        super().__init__("Item Buyer", "Have your cookies buy an item from the catalog", app)
 
     def run(self):
         item_id = self.config["item_id"]

@@ -4,14 +4,13 @@ import httpc
 from abc import ABC, abstractmethod
 from Proxy import Proxy
 from utils import Utils
-import eel
+import click
 import re
 
 class Tool(Proxy, ABC):
-    def __init__(self, name: str, description: str, color: int, app: object):
+    def __init__(self, name: str, description: str,  app: object):
         super().__init__()
 
-        self.color = color
         self.name = name
         self.description = description
         self.app = app
@@ -159,19 +158,24 @@ class Tool(Proxy, ABC):
         """
         Prints the status of a request
         """
+        print ("\033[A                             \033[A") # delete last line
 
-        eel.set_stats(f"{action_verb}: {str(req_worked)} | Failed: {str(req_failed)} | Total: {str(total_req)}")
-        eel.write_terminal(f"\x1B[1;32mWorked: {response_text}\x1B[0;0m" if has_worked else f"\x1B[1;31mFailed: {response_text}\x1B[0;0m")
+        click.secho(response_text, fg="red" if not has_worked else "green")
+
+        output = ""
+        output += click.style(f"{action_verb}: {str(req_worked)}", fg="green")
+        output += " | "
+        output += click.style(f"Failed: {str(req_failed)}", fg="red")
+        output += " | "
+        output += f"Total: {str(total_req)}"
+
+        click.echo(output)
 
     def signal_handler(self):
         """
         Handles the signal
         """
-        if self.results is not None:
-            for future in self.results:
-                future.cancel()
-
-        self.exit_flag = True
+        self.executor.shutdown(wait=False, cancel_futures=True)
 
     @staticmethod
     def run_until_exit(func):

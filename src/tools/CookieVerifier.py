@@ -10,7 +10,7 @@ from urllib.parse import unquote
 
 class CookieVerifier(Tool):
     def __init__(self, app):
-        super().__init__("Cookie Verifier", "Verify your cookies!", 4, app)
+        super().__init__("Cookie Verifier", "Verify your cookies!", app)
 
     def run(self):
         cookies = self.get_cookies()

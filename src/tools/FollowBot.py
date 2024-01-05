@@ -6,7 +6,7 @@ from utils import Utils
 
 class FollowBot(Tool):
     def __init__(self, app):
-        super().__init__("Follow Bot", "Increase Followers count of a user", 4, app)
+        super().__init__("Follow Bot", "Increase Followers count of a user", app)
 
     def run(self):
         user_id = self.config["user_id"]

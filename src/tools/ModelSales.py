@@ -5,7 +5,7 @@ from utils import Utils
 
 class ModelSales(Tool):
     def __init__(self, app):
-        super().__init__("Model Sales", "Buy your Roblox models tons of times", 3, app)
+        super().__init__("Model Sales", "Buy your Roblox models tons of times", app)
 
     def run(self):
         asset_id = self.config["asset_id"]

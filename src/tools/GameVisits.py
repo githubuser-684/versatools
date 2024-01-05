@@ -2,13 +2,13 @@ from Tool import Tool
 from utils import Utils
 import concurrent.futures
 import threading
-import eel
+import click
 from RobloxClient import RobloxClient
 import httpc
 
 class GameVisits(Tool):
     def __init__(self, app):
-        super().__init__("Game Visits", "Boost game visits", 2, app)
+        super().__init__("Game Visits", "Boost game visits", app)
 
     def run(self):
         max_generations = self.config["max_generations"]
@@ -16,7 +16,7 @@ class GameVisits(Tool):
         place_id = self.config["place_id"]
         max_workers = self.config["max_workers"]
 
-        eel.write_terminal("\x1B[1;33mWarning: on Windows 11, it may not be possible to run multiple roblox instances\x1B[0;0m")
+        click.secho("Warning: on Windows 11, it may not be possible to run multiple roblox instances", fg="yellow")
 
         roblox_player_path = RobloxClient.find_roblox_player()
 

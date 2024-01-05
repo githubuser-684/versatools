@@ -7,7 +7,7 @@ from utils import Utils
 
 class CookieRefresher(Tool):
     def __init__(self, app):
-        super().__init__("Cookie Refresher", "Refresh your .ROBLOSECURITY cookies!", 7, app)
+        super().__init__("Cookie Refresher", "Refresh your .ROBLOSECURITY cookies!", app)
 
         self.new_cookies_file_path = os.path.join(self.files_directory, "refreshed-cookies.txt")
 

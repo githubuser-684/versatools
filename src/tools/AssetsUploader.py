@@ -7,7 +7,7 @@ import time
 
 class AssetsUploader(Tool):
     def __init__(self, app):
-        super().__init__("Assets Uploader", "Integrates with AssetsDownloader to upload clothing", 8, app)
+        super().__init__("Assets Uploader", "Integrates with AssetsDownloader to upload clothing", app)
 
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
         self.shirts_files_directory = os.path.join(self.files_directory, "./assets/shirts")

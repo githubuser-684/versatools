@@ -1,91 +1,104 @@
-import sys
-import io
-import subprocess as sps
-# this is needed as the app is consoleless
-if hasattr(sys, "_MEIPASS"):
-    buffer = io.StringIO()
-    sys.stdout = sys.stderr = sps.PIPE = buffer
-
 from multiprocessing import freeze_support
+import click
 from App import App
-from App import show_menu
-import eel
+import random
+import json
+import signal
 from threading import Thread
-import win32event
-import win32api
-import winerror
 
-def start_eel(start_url, **kwargs):
-    args = {
-        "port": 3042,
-        "size": (1425, 885)
-    }
+app = App()
+global tool
 
-    args.update(kwargs)
+@click.group()
+def cli():
+    pass
 
-    try:
-        eel.start(start_url, **args)
-    except EnvironmentError:
-        eel.start(start_url, mode='edge', **args)
+@click.command(help="Run a botting tool.")
+@click.option('--name', required=True, help='Specify the tool name or number.')
+def run(name):
+    global tool
+    tool = app.get_tool_from(name)
+
+    app.launch_tool(tool)
+
+@click.command(help="Get botting tools list.")
+def tools():
+    tools = app.tools
+
+    output = "─══════════════════════════☆☆══════════════════════════─\n"
+    for i, tool in enumerate(tools):
+        random_color = random.choice(['red', 'green', 'yellow', 'blue', 'magenta', 'cyan'])
+
+        output += f"({i+1}) "
+        output += click.style(tool.name, fg=random_color)
+        output += " | "
+
+    output = output[:-3]
+    output += "\n─══════════════════════════☆☆══════════════════════════─"
+    click.echo(output)
+
+@click.command(help="Get a tool's description.")
+@click.option('--name', required=True, help='Specify the tool name or number.')
+def desc(name):
+    tool = app.get_tool_from(name)
+    click.echo(tool.description)
+
+@click.command(help="Edit a tool's config.")
+@click.option('--name', required=True, help='Specify the tool name or number.')
+def config(name):
+    tool = app.get_tool_from(name)
+    config_json = json.dumps(tool.config, indent=2)  # Convert config to a formatted JSON string
+
+    edited_config = click.edit(config_json)  # Open the editor with the JSON content
+
+    if edited_config is not None:
+        updated_config = json.loads(edited_config)
+        app.set_tool_config(tool, updated_config)
+        click.echo(f"Configuration for {tool.name} updated.")
+    else:
+        click.echo("No changes made.")
+
+@click.command(help="Setup your captcha solver keys.")
+def setup():
+    config = app.get_solver_config()
+    config_json = json.dumps(config, indent=2)  # Convert config to a formatted JSON string
+
+    edited_config = click.edit(config_json)  # Open the editor with the JSON content
+
+    if edited_config is not None:
+        updated_config = json.loads(edited_config)
+        app.set_solver_config(updated_config)
+        click.echo(f"Captcha solver keys updated.")
+    else:
+        click.echo("No changes made.")
+
+@click.command(help="Check amount of proxies and cookies loaded.")
+def loaded():
+    proxies_loaded = app.get_proxies_loaded()
+    cookies_loaded = app.get_cookies_loaded()
+    click.echo(f"Proxies loaded: {proxies_loaded}")
+    click.echo(f"Cookies loaded: {cookies_loaded}")
+
+@click.command(help="Display the version of the application.")
+def version():
+    version = app.get_version()
+    click.echo(version)
+
+cli.add_command(run)
+cli.add_command(tools)
+cli.add_command(desc)
+cli.add_command(config)
+cli.add_command(setup)
+cli.add_command(loaded)
+cli.add_command(version)
 
 if __name__ == "__main__":
-    freeze_support() # needed for multiprocessing on windows
+    freeze_support()
 
-    # add mutex to prevent multiple instances of the app
-    win32_mutex = win32event.CreateMutex(None, 1, "VersatoolsMutex")
-    if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
-        raise Exception("Another instance of Versatools is already running")
+    def handle(signum, frame):
+        tool.signal_handler()
+        raise KeyboardInterrupt()
 
-    app = App()
+    signal.signal(signal.SIGINT, handle)
 
-    @eel.expose
-    def get_cookies_loaded():
-        return app.get_cookies_loaded()
-
-    @eel.expose
-    def get_proxies_loaded():
-        return app.get_proxies_loaded()
-
-    @eel.expose
-    def launch_app_tool(tool_name):
-        thread = Thread(target=lambda: app.launch_tool(tool_name))
-        thread.start()
-
-    @eel.expose
-    def stop_current_tool():
-        app.current_tool.signal_handler()
-
-    @eel.expose
-    def get_tool_config(tool_name):
-        return app.get_tool_config(tool_name)
-
-    @eel.expose
-    def get_solver_config():
-        return app.get_solver_config()
-
-    @eel.expose
-    def set_solver_config(config):
-        return app.set_solver_config(config)
-
-    @eel.expose
-    def set_tool_config(tool_name, config):
-        return app.set_tool_config(tool_name, config)
-
-    @eel.expose
-    def start_files_dir():
-        return app.start_files_dir()
-
-    @eel.expose
-    def update_versatools():
-        return app.update_versatools()
-
-    eel.init('src/web')
-
-    is_update_available = app.check_update()
-
-    if is_update_available and hasattr(sys, "_MEIPASS"):
-        start_eel('update.html', size=(500, 500))
-    else:
-        show_menu()
-
-        start_eel('index.html')
+    cli()

@@ -7,7 +7,7 @@ import httpc
 
 class ProxyChecker(Tool):
     def __init__(self, app):
-        super().__init__("Proxy Checker", "Checks proxies from a list of http proxies", 1, app)
+        super().__init__("Proxy Checker", "Checks proxies from a list of http proxies", app)
 
         self.cache_file_path = os.path.join(self.cache_directory, "verified-proxies.txt")
 

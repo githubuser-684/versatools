@@ -3,6 +3,7 @@ import os
 import functools
 import sys
 from datetime import datetime
+import difflib
 
 class Utils():
     """
@@ -82,3 +83,16 @@ class Utils():
         utc_time = datetime.utcnow()
         utc_seconds = round((utc_time - datetime(1970, 1, 1)).total_seconds())
         return utc_seconds
+
+    @staticmethod
+    def get_closest_match(str, str_list):
+        """
+        Returns the closest match from a list of string
+        """
+        closest_match = difflib.get_close_matches(str, str_list, n=1)
+
+        # if there's a match, return it
+        if len(closest_match) > 0:
+            return closest_match[0]
+        else:
+            return None

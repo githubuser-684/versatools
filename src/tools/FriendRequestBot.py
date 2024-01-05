@@ -5,7 +5,7 @@ from utils import Utils
 
 class FriendRequestBot(Tool):
     def __init__(self, app):
-        super().__init__("Friend Request Bot", "Send a lot of friend requests to a user", 5, app)
+        super().__init__("Friend Request Bot", "Send a lot of friend requests to a user", app)
 
     def run(self):
         user_id = self.config["user_id"]

@@ -6,7 +6,7 @@ from utils import Utils
 
 class GroupJoinBot(Tool):
     def __init__(self, app):
-        super().__init__("Group Join Bot", "Enhance the size of your group members", 7, app)
+        super().__init__("Group Join Bot", "Enhance the size of your group members", app)
 
     def run(self):
         group_id = self.config["group_id"]

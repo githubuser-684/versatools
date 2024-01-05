@@ -5,7 +5,7 @@ from utils import Utils
 
 class StatusChanger(Tool):
     def __init__(self, app):
-        super().__init__("Status Changer", "Change the status of a large number of accounts", 7, app)
+        super().__init__("Status Changer", "Change the status of a large number of accounts", app)
 
     def run(self):
         new_status = self.config["new_status"]

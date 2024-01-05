@@ -14,6 +14,6 @@ class SolverBalanceChecker(Tool):
                 captcha_solver = CaptchaSolver(solver_name, self.captcha_tokens[solver_name])
                 try:
                     balance = captcha_solver.get_balance()
-                    click.echo(f"{solver_name.title()}: {balance}$")
+                    click.secho(f"{solver_name.title()}: {balance}$", fg="green")
                 except Exception as e:
-                    click.echo(f"{solver_name.title()}: ERROR {e}")
+                    click.secho(f"{solver_name.title()}: ERROR {e}", fg="red")

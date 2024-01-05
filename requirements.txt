@@ -9,3 +9,4 @@ psutil==5.9.6
 tls-client==0.2.2
 pywin32==306
 httpx==0.25.0
+click==8.1.7

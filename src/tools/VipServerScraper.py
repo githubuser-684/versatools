@@ -17,8 +17,8 @@ class VipServerScraper(Tool):
         req_failed = 0
         total_req = len(pages_game)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            self.results = [executor.submit(self.get_vip_link, page_game) for page_game in pages_game]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
+            self.results = [self.executor.submit(self.get_vip_link, page_game) for page_game in pages_game]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

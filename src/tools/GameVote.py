@@ -28,8 +28,8 @@ class GameVote(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            self.results = [executor.submit(self.send_game_vote, game_id, vote, cookie, roblox_player_path, timeout) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
+            self.results = [self.executor.submit(self.send_game_vote, game_id, vote, cookie, roblox_player_path, timeout) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

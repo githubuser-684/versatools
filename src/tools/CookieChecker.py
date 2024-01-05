@@ -24,8 +24,8 @@ class CookieChecker(Tool):
         total_cookies = len(cookies)
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

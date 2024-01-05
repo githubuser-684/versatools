@@ -24,8 +24,8 @@ class UP2UPC(Tool):
         failed_gen = 0
         total_gen = len(user_pass_list)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.convert_up, self.config["captcha_solver"], self.config["use_proxy"], user_pass) for user_pass in user_pass_list]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.convert_up, self.config["captcha_solver"], self.config["use_proxy"], user_pass) for user_pass in user_pass_list]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

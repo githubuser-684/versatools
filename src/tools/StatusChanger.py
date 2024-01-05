@@ -15,8 +15,8 @@ class StatusChanger(Tool):
         req_failed = 0
         total_req = len(cookies)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

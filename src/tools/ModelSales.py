@@ -19,8 +19,8 @@ class ModelSales(Tool):
 
         product_id = self.get_product_id(asset_id, cookies[0])
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.buy_product, asset_id, product_id, leave_review_when_bought, review_message, cookie) for cookie in cookies]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.buy_product, asset_id, product_id, leave_review_when_bought, review_message, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

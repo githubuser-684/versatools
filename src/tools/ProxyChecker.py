@@ -36,8 +36,8 @@ class ProxyChecker(Tool):
         total_proxies = len(lines)
 
         # for each line, test the proxy
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.test_proxy_line, line, self.config["check_timezone"], self.config["ipinfo_api_key"], self.config["timeout"]) for line in lines]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.test_proxy_line, line, self.config["check_timezone"], self.config["ipinfo_api_key"], self.config["timeout"]) for line in lines]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

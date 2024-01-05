@@ -31,8 +31,8 @@ class AssetsDownloader(Tool):
         req_failed = 0
         total_req = len(assets)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.download_asset, asset) for asset in assets]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.download_asset, asset) for asset in assets]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

@@ -16,6 +16,7 @@ class Tool(Proxy, ABC):
         self.app = app
         self.results = None
         self.exit_flag = False
+        self.executor = None
 
         self.config = {}
         self.captcha_tokens = {}
@@ -158,9 +159,7 @@ class Tool(Proxy, ABC):
         """
         Prints the status of a request
         """
-        print ("\033[A                             \033[A") # delete last line
-
-        click.secho(response_text, fg="red" if not has_worked else "green")
+        click.secho("\033[1A\033[K\033[1A\033[K"+response_text, fg="red" if not has_worked else "green")
 
         output = ""
         output += click.style(f"{action_verb}: {str(req_worked)}", fg="green")
@@ -175,7 +174,10 @@ class Tool(Proxy, ABC):
         """
         Handles the signal
         """
-        self.executor.shutdown(wait=False, cancel_futures=True)
+        if self.executor:
+            self.executor.shutdown(wait=False, cancel_futures=True)
+
+        self.exit_flag = True
 
     @staticmethod
     def run_until_exit(func):

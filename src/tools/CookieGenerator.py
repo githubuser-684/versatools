@@ -23,8 +23,8 @@ class CookieGenerator(Tool):
         failed_gen = 0
         total_gen = self.config["max_generations"]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.generate_cookie, self.config["vanity"], self.config["custom_password"], self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.generate_cookie, self.config["vanity"], self.config["custom_password"], self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

@@ -18,8 +18,8 @@ class GroupAllyBot(Tool):
         req_failed = 0
         total_req = max_generations
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.send_ally_request, your_group_id, cookie, i+int(start_group_id)) for i in range(max_generations)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.send_ally_request, your_group_id, cookie, i+int(start_group_id)) for i in range(max_generations)]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

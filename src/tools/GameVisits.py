@@ -27,8 +27,8 @@ class GameVisits(Tool):
         req_failed = 0
         total_req = max_generations
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            self.results = [executor.submit(self.visit_game, roblox_player_path, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as self.executor:
+            self.results = [self.executor.submit(self.visit_game, roblox_player_path, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

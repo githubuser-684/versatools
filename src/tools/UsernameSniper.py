@@ -28,8 +28,8 @@ class UsernameSniper(Tool):
         failed_gen = 0
         total_gen = len(all_usernames)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as executor:
-            self.results = [executor.submit(self.check_username, username, self.config["use_proxy"]) for username in all_usernames]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
+            self.results = [self.executor.submit(self.check_username, username, self.config["use_proxy"]) for username in all_usernames]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():

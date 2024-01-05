@@ -79,6 +79,10 @@ def loaded():
     click.echo(f"Proxies loaded: {proxies_loaded}")
     click.echo(f"Cookies loaded: {cookies_loaded}")
 
+@click.command(help="Open Versatools' output files directory.")
+def files():
+    app.start_files_dir()
+
 @click.command(help="Display the version of the application.")
 def version():
     version = app.get_version()
@@ -90,6 +94,7 @@ cli.add_command(desc)
 cli.add_command(config)
 cli.add_command(setup)
 cli.add_command(loaded)
+cli.add_command(files)
 cli.add_command(version)
 
 if __name__ == "__main__":

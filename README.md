@@ -21,9 +21,9 @@
 
 ## Installation
 
-This installation is designed for Windows. If you want to use Versatools on Mac/Linux, run it from source.
+This installation is designed for advanced users. To install Versatools, you can either download the latest release or run the program from source (Must have git and python installed).
 
-Download the latest stable Windows release from [here](https://garry.lol/versatools/).
+Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases/tag/v3.0.0).
 
 ## Running from source
 

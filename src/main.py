@@ -4,7 +4,7 @@ from App import App
 import random
 import json
 import signal
-from threading import Thread
+import traceback
 
 app = App()
 global tool
@@ -101,4 +101,9 @@ if __name__ == "__main__":
 
     signal.signal(signal.SIGINT, handle)
 
-    cli()
+    try:
+        cli()
+    except Exception as err:
+            traceback_str = traceback.format_exc()
+            click.echo(traceback_str)
+            click.secho(str(err), fg='red')

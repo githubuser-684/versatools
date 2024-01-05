@@ -34,12 +34,7 @@ class App():
         return version
 
     def launch_tool(self, tool):
-        try:
-            tool.run()
-        except Exception as err:
-            traceback_str = traceback.format_exc()
-            click.echo(traceback_str)
-            click.secho(str(err), fg='red')
+        tool.run()
 
     def get_tool_from(self, tool_identifier):
         """

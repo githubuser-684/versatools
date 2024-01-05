@@ -108,7 +108,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, sigint_handle)
 
     try:
-        cli()
+        cli(prog_name='versatools')
     except Exception as err:
         traceback_str = traceback.format_exc()
         click.echo(traceback_str)

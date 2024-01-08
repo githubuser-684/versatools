@@ -19,7 +19,7 @@ class UsernameSniper(Tool):
         if username_length < 3 or username_length > 20:
             raise Exception("Usernames can be between 3 and 20 characters long.")
 
-        click.echo("Please be patient...it may take some time to calculate all username combinations for a given length.", fg='yellow')
+        click.secho("Please be patient...it may take some time to calculate all username combinations for a given length.", fg='yellow')
         all_usernames = self.generate_usernames(username_length)
 
         f = open(self.usernames_file_path, 'a')

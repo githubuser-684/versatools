@@ -59,8 +59,6 @@ python -m unittest discover src
 
 ## File templates
 
-Versatools folder is located by default in `C:\Users\%username%\Documents\versatools`
-
 ### files/config.json
 
 All attributes are mandatory. Removing them will break the program.

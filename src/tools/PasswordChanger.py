@@ -21,9 +21,6 @@ class PasswordChanger(Tool):
         cookies, lines = self.get_cookies(None, True)
         new_password = self.config["new_password"]
 
-        if new_password == None:
-            new_password = self.generate_password()
-
         req_sent = 0
         req_failed = 0
         total_req = len(cookies)
@@ -77,6 +74,9 @@ class PasswordChanger(Tool):
         """
         Update password of upc
         """
+        if new_password == None:
+            new_password = self.generate_password()
+
         try:
             username = upc.split(":")[0]
             current_password = upc.split(":")[1]

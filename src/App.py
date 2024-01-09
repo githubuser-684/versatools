@@ -5,10 +5,7 @@ from utils import Utils
 import json
 from data.config import config
 from data.version import version
-import traceback
 import click
-import atexit
-from threading import Thread
 
 class App():
     def __init__(self):

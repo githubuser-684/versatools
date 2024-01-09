@@ -96,7 +96,8 @@ class Proxy():
         """
         Gets all proxy values from a line according to different line formats
         """
-        num_item = len(line.split(":"))
+        line_split = line.split(":")
+        num_item = len(line_split)
 
         proxy_type = None
         proxy_user = None
@@ -106,19 +107,19 @@ class Proxy():
         if num_item in [2, 4]:
             proxy_type_provided = False
             proxy_type = "http"
-            proxy_ip = line.split(":")[0]
-            proxy_port = line.split(":")[1]
+            proxy_ip = line_split[0]
+            proxy_port = line_split[1]
             if num_item == 4:
-                proxy_user = line.split(":")[2]
-                proxy_pass = line.split(":")[3]
+                proxy_user = line_split[2]
+                proxy_pass = line_split[3]
         elif num_item in [3, 5]:
             proxy_type_provided = True
-            proxy_type = line.split(":")[0].lower()
-            proxy_ip = line.split(":")[1]
-            proxy_port = line.split(":")[2]
+            proxy_type = line_split[0].lower()
+            proxy_ip = line_split[1]
+            proxy_port = line_split[2]
             if num_item == 5:
-                proxy_user = line.split(":")[3]
-                proxy_pass = line.split(":")[4]
+                proxy_user = line_split[3]
+                proxy_pass = line_split[4]
         else:
             raise ValueError("Incorrect proxy line format")
 

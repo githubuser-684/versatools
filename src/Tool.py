@@ -35,6 +35,7 @@ class Tool(Proxy, ABC):
         """
         Runs the tool
         """
+        raise NotImplementedError("Domain Driven Design")
 
     def load_config(self):
         """

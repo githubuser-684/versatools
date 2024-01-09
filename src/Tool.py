@@ -162,8 +162,7 @@ class Tool(Proxy, ABC):
         """
         click.secho("\033[1A\033[K"+response_text, fg="red" if not has_worked else "green")
 
-        output = ""
-        output += click.style(f"{action_verb}: {str(req_worked)}", fg="green")
+        output = click.style(f"{action_verb}: {str(req_worked)}", fg="green")
         output += " | "
         output += click.style(f"Failed: {str(req_failed)}", fg="red")
         output += " | "

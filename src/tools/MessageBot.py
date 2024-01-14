@@ -76,14 +76,15 @@ class MessageBot(Tool):
             req_json={"body": body, "recipientid": recipient_id, "subject": subject}
 
             response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
+            result = response.json()
 
-            if (not response.json()["success"] and response.json()["shortMessage"] == "SenderPrivacySettingsTooHigh"):
+            if (not result.get("success") and result.get("shortMessage") == "SenderPrivacySettingsTooHigh"):
                 self.allow_sending_msgs(cookie, client, user_agent, csrf_token)
                 # try again
                 response = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
 
         try:
-            success = response.status_code == 200 and response.json()["success"]
+            success = response.status_code == 200 and result["success"]
         except KeyError:
             raise Exception("Failed to access success key" + Utils.return_res(response))
 

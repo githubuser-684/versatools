@@ -104,6 +104,9 @@ class Session():
     def post(self, url, **kwargs):
         return self._make_request("POST", url, **kwargs)
 
+    def patch(self, url, **kwargs):
+        return self._make_request("PATCH", url, **kwargs)
+
     def _make_request(self, method, url, **kwargs):
         args = {
             "headers": kwargs.get("headers"),
@@ -128,6 +131,8 @@ class Session():
             response = self.session.get(url, **args)
         elif method == "POST":
             response = self.session.post(url, **args)
+        elif method == "PATCH":
+            response = self.session.patch(url, **args)
         else:
             raise ValueError(f"Unsupported HTTP method: {method}")
 

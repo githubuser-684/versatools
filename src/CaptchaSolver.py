@@ -37,7 +37,7 @@ class CaptchaSolver(Proxy):
 
         # solve captcha using specified service
         user_agent = response.request["headers"]["User-Agent"]
-        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, user_agent)
+        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, user_agent, client)
 
         metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
 
@@ -59,7 +59,7 @@ class CaptchaSolver(Proxy):
 
         return blob, unified_captcha_id, action_type
 
-    def solve_capbypass(self, website_url, public_key, website_subdomain, blob):
+    def solve_capbypass(self, website_url, public_key, website_subdomain, blob, proxy):
         captcha_response = httpc.post('https://api.capbypass.com/createTask', json={
             "clientKey": self.api_key,
             "task": {
@@ -67,7 +67,8 @@ class CaptchaSolver(Proxy):
                 "websiteURL": website_url,
                 "websitePublicKey": public_key,
                 "funcaptchaApiJSSubdomain": "https://"+website_subdomain,
-                "data": "{\"blob\": \""+blob+"\"}"
+                "data": "{\"blob\": \""+blob+"\"}",
+                "proxy": proxy
             }
         })
 
@@ -108,7 +109,9 @@ class CaptchaSolver(Proxy):
         except KeyError:
             raise Exception(Utils.return_res(captcha_response))
 
-    def send_to_solver(self, website_url, website_subdomain, public_key, blob, user_agent):
+    def send_to_solver(self, website_url, website_subdomain, public_key, blob, user_agent, client):
+        proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port = self.extract_auth_proxies(client.proxies)
+
         if self.captcha_service == "anti-captcha":
             solver = funcaptchaProxyless()
             solver.set_verbose(0)
@@ -144,7 +147,8 @@ class CaptchaSolver(Proxy):
 
             token = solution["token"]
         elif self.captcha_service == "capbypass":
-            token = self.solve_capbypass(website_url, public_key, website_subdomain, blob)
+            proxy = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
+            token = self.solve_capbypass(website_url, public_key, website_subdomain, blob, proxy)
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")
 

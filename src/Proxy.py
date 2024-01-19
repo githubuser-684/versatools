@@ -1,5 +1,6 @@
 import httpc
 from utils import Utils
+import re
 
 class Proxy():
     def __init__(self):
@@ -153,3 +154,18 @@ class Proxy():
         }
 
         return proxies
+
+    def extract_auth_proxies(self, proxies:str) -> tuple:
+        """
+        Extracts auth proxies values from a string
+        Should return a tuple of (proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port)
+        """
+        proxies = proxies["http"]
+        pattern = r'(\w+):\/\/([^:@]+):([^@]+)@([^:]+):(\d+)\/'
+        matches = re.findall(pattern, proxies)
+
+        if matches:
+            for match in matches:
+                return match
+        else:
+            raise Exception("Invalid proxy format. Authentication is needed")

@@ -160,7 +160,7 @@ class Proxy():
         Extracts auth proxies values from a string
         Should return a tuple of (proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port)
         """
-        proxies = proxies["http"]
+        proxies = proxies.get("http") or proxies.get("all://")
         pattern = r'(\w+):\/\/([^:@]+):([^@]+)@([^:]+):(\d+)\/'
         matches = re.findall(pattern, proxies)
 

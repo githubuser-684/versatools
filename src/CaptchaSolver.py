@@ -110,6 +110,9 @@ class CaptchaSolver(Proxy):
             raise Exception(Utils.return_res(captcha_response))
 
     def send_to_solver(self, website_url, website_subdomain, public_key, blob, user_agent, client):
+        proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port = self.extract_auth_proxies(client.proxies)
+        proxy = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
+
         if self.captcha_service == "anti-captcha":
             solver = funcaptchaProxyless()
             solver.set_verbose(0)
@@ -137,17 +140,15 @@ class CaptchaSolver(Proxy):
         elif self.captcha_service == "capsolver":
             capsolver.api_key = self.api_key
             solution = capsolver.solve({
-                "type": "FunCaptchaTaskProxyLess",
+                "type": "FunCaptchaTask",
                 "websitePublicKey": public_key,
                 "websiteURL": website_url,
-                "data": f"{{\"blob\":\"{blob}\"}}"
+                "data": f"{{\"blob\":\"{blob}\"}}",
+                "proxy": proxy
             })
 
             token = solution["token"]
         elif self.captcha_service == "capbypass":
-            proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port = self.extract_auth_proxies(client.proxies)
-
-            proxy = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
             token = self.solve_capbypass(website_url, public_key, website_subdomain, blob, proxy)
         else:
             raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")

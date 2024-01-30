@@ -1,50 +1,16 @@
 from multiprocessing import freeze_support
 import click
 from App import App
-import random
 import json
 import signal
 import traceback
+from os import system, name
 
 app = App()
+
 global tool
+tool = None
 
-@click.group()
-def cli():
-    pass
-
-@click.command(help="Run a botting tool.")
-@click.argument('tool_name')
-def run(tool_name):
-    global tool
-    tool = app.get_tool_from(tool_name)
-
-    app.launch_tool(tool)
-
-@click.command(help="Get botting tools list.")
-def tools():
-    tools = app.tools
-
-    output = "─══════════════════════════☆☆══════════════════════════─\n"
-    for i, tool in enumerate(tools):
-        random_color = random.choice(['red', 'green', 'yellow', 'blue', 'magenta', 'cyan'])
-
-        output += f"({i+1}) "
-        output += click.style(tool.name, fg=random_color)
-        output += " | "
-
-    output = output[:-3]
-    output += "\n─══════════════════════════☆☆══════════════════════════─"
-    click.echo(output)
-
-@click.command(help="Get a tool's description.")
-@click.argument('tool_name')
-def desc(tool_name):
-    tool = app.get_tool_from(tool_name)
-    click.echo(tool.description)
-
-@click.command(help="Edit a tool's config.")
-@click.argument('tool_name')
 def config(tool_name):
     tool = app.get_tool_from(tool_name)
     config_json = json.dumps(tool.config, indent=2)  # Convert config to a formatted JSON string
@@ -54,11 +20,10 @@ def config(tool_name):
     if edited_config is not None:
         updated_config = json.loads(edited_config)
         app.set_tool_config(tool, updated_config)
-        click.echo(f"Configuration for {tool.name} updated.")
+        click.secho(f"Configuration for {tool.name} updated.", fg='green')
     else:
-        click.echo("No changes made.")
+        click.secho("No changes made.", fg='bright_black')
 
-@click.command(help="Setup your captcha solver keys.")
 def setup():
     config = app.get_solver_config()
     config_json = json.dumps(config, indent=2)  # Convert config to a formatted JSON string
@@ -68,48 +33,139 @@ def setup():
     if edited_config is not None:
         updated_config = json.loads(edited_config)
         app.set_solver_config(updated_config)
-        click.echo(f"Captcha solver keys updated.")
+        click.secho(f"Configuration for captcha tokens updated.", fg='green')
     else:
-        click.echo("No changes made.")
+        click.secho("No changes made.", fg='bright_black')
 
-@click.command(help="Check amount of proxies and cookies loaded.")
-def loaded():
-    proxies_loaded = app.get_proxies_loaded()
-    cookies_loaded = app.get_cookies_loaded()
-    click.echo(f"Proxies loaded: {proxies_loaded}")
-    click.echo(f"Cookies loaded: {cookies_loaded}")
-
-@click.command(help="Open Versatools' output files directory.")
 def files():
     app.start_files_dir()
 
-@click.command(help="Display the version of the application.")
 def version():
     version = app.get_version()
-    click.echo(version)
+    return version
 
-cli.add_command(run)
-cli.add_command(tools)
-cli.add_command(desc)
-cli.add_command(config)
-cli.add_command(setup)
-cli.add_command(loaded)
-cli.add_command(files)
-cli.add_command(version)
+def clear_terminal():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
 
-if __name__ == "__main__":
-    freeze_support()
+def display_logo():
+    logo = f"""                                                        /$$                         /$$
+                                                       | $$                        | $$
+    /$$    /$$ /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$  /$$$$$$    /$$$$$$   /$$$$$$ | $$  /$$$$$$$
+   |  $$  /$$//$$__  $$ /$$__  $$ /$$_____/ |____  $$|_  $$_/   /$$__  $$ /$$__  $$| $$ /$$_____/
+    \  $$/$$/| $$$$$$$$| $$  \__/|  $$$$$$   /$$$$$$$  | $$    | $$  \ $$| $$  \ $$| $$|  $$$$$$
+     \  $$$/ | $$_____/| $$       \____  $$ /$$__  $$  | $$ /$$| $$  | $$| $$  | $$| $$ \____  $$
+      \  $/  |  $$$$$$$| $$       /$$$$$$$/|  $$$$$$$  |  $$$$/|  $$$$$$/|  $$$$$$/| $$ /$$$$$$$/
+       \_/    \_______/|__/      |_______/  \_______/   \___/   \______/  \______/ |__/|_______/
 
-    def sigint_handle(signum, frame):
-        if tool is not None:
-            tool.signal_handler()
+    Version {version()} | Free | Open Source | Made by garryybd#0
+"""
+    click.secho(logo, fg='yellow')
+
+def show_menu():
+    tools = app.tools
+
+    for i, tool in enumerate(tools):
+        tool_name_str = click.style(f"   {(' ' if i<9 else '') + str(i+1)} - ", fg='yellow') + tool.name
+        space = " " * (25 - len(tool.name))
+        tool_desc_str = click.style(tool.description, fg='bright_black')
+
+        click.secho(tool_name_str + space + tool_desc_str)
+
+    click.echo(click.style("   99 - ", fg='yellow') +"Exit")
+
+    tool_name = None
+    invalid_option = True
+
+    while invalid_option:
+        choice = input(click.style("\n ► Select an option: ", fg='yellow'))
+
+        if choice == "99":
             raise KeyboardInterrupt()
+
+        # select tool
+        if choice.isdigit() and int(choice) > 0 and int(choice) <= len(tools):
+            tool_name = tools[int(choice) - 1].name
+            invalid_option = False
+        else:
+            click.secho("Invalid option. Please try again.", fg='red')
+
+    click.secho(f" ✓ Selected tool: {tool_name}", fg='green')
+    return tool_name
+
+def sigint_handle(signum, frame):
+    click.secho("\n ✖ Stopping tool please wait... █▒▒▒▒▒▒▒▒▒ 0%", fg='yellow')
+    if tool is not None:
+        tool.signal_handler()
+        raise KeyboardInterrupt()
+
+def reset_signal_handler():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+def launch_tool(tool_name):
+    global tool
 
     signal.signal(signal.SIGINT, sigint_handle)
 
     try:
-        cli(prog_name='versatools')
+        tool = app.get_tool_from(tool_name)
+        app.launch_tool(tool)
+
+        reset_signal_handler()
+    except (KeyboardInterrupt, EOFError):
+        reset_signal_handler()
+
+        click.secho(" ✖ Tool stopped by user ██████████ 100%", fg='red')
     except Exception as err:
+        reset_signal_handler()
+
         traceback_str = traceback.format_exc()
         click.echo(traceback_str)
         click.secho(str(err), fg='red')
+
+def last_step(tool_name):
+    click.secho("\n    1 - Run", fg='green')
+    click.secho("    2 - Config tool", fg='yellow')
+    click.secho("    3 - Add proxies / cookies", fg='magenta')
+    click.secho("    4 - Setup captcha solver keys", fg='blue')
+    click.secho("    5 - Return to menu", fg='cyan')
+
+    wait_option = True
+    option = None
+
+    while wait_option:
+        wait_option = False
+        option = input(click.style("\n ► Select an option: ", fg='yellow'))
+
+        if option == "1":
+            launch_tool(tool_name)
+        elif option == "2":
+            config(tool_name)
+        elif option == "3":
+            files()
+        elif option == "4":
+            setup()
+        elif option == "5":
+            break
+        else:
+            click.secho("Invalid option. Please try again.", fg='red')
+            wait_option = True
+
+def run_program():
+    clear_terminal()
+    display_logo()
+    tool_name = show_menu()
+    last_step(tool_name)
+    input("\nPress Enter to come back to the menu...")
+
+if __name__ == "__main__":
+    freeze_support()
+
+    while True:
+        try:
+            run_program()
+        except (KeyboardInterrupt, EOFError):
+            click.secho("\n 〜 See you next time :)", fg='blue')
+            break

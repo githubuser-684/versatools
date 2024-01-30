@@ -5,7 +5,6 @@ from utils import Utils
 import json
 from data.config import config
 from data.version import version
-import click
 
 class App():
     def __init__(self):
@@ -45,8 +44,6 @@ class App():
 
         if tool_name is None:
             raise Exception("Tool not found")
-
-        click.echo("Tool selected: " + tool_name)
 
         return self.get_tool_from_name(tool_name)
 

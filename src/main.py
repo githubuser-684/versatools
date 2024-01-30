@@ -136,10 +136,10 @@ def last_step(tool_name):
     option = None
 
     while wait_option:
-        wait_option = False
         option = input(click.style("\n ► Select an option: ", fg='yellow'))
 
         if option == "1":
+            wait_option = False
             launch_tool(tool_name)
         elif option == "2":
             config(tool_name)

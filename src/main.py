@@ -111,6 +111,7 @@ def launch_tool(tool_name):
 
     try:
         tool = app.get_tool_from(tool_name)
+        tool.load_config()
         app.launch_tool(tool)
 
         reset_signal_handler()

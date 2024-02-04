@@ -34,8 +34,7 @@ class CaptchaSolver(Proxy):
         website_subdomain = "roblox-api.arkoselabs.com"
 
         # solve captcha using specified service
-        user_agent = response.request["headers"]["User-Agent"]
-        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, user_agent, client)
+        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, client)
 
         metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
 
@@ -106,12 +105,9 @@ class CaptchaSolver(Proxy):
             tries -= 1
             time.sleep(1)
 
-        try:
-            return solution
-        except KeyError:
-            raise Exception(Utils.return_res(captcha_response))
+        return solution
 
-    def send_to_solver(self, website_url, website_subdomain, public_key, blob, user_agent, client):
+    def send_to_solver(self, website_url, website_subdomain, public_key, blob, client):
         proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port = self.extract_auth_proxies(client.proxies)
         proxy = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
 

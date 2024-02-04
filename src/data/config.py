@@ -99,16 +99,8 @@ config = {
         "max_workers": 5
     },
     "FunCaptchaSolvers": {
-        "//solvers_name": [
-            "anti-captcha",
-            "2captcha",
-            "capsolver",
-            "capbypass"
-        ],
-        "anti-captcha_token": "xx",
-        "2captcha_token": "xx",
-        "capsolver_token": "xx",
-        "capbypass": "xx"
+        "//capbypass_link": "https://capbypass.com/",
+        "capbypass": "your_api_key_here",
     },
     "GameVote": {
         "game_id": 0,

@@ -1,8 +1,6 @@
 import base64
-from anticaptchaofficial.funcaptchaproxyless import *
-from anticaptchaofficial.funcaptchaproxyon import *
-from twocaptcha import TwoCaptcha
-import capsolver
+import json
+import time
 from utils import Utils
 import httpc
 from Proxy import Proxy
@@ -60,10 +58,10 @@ class CaptchaSolver(Proxy):
         return blob, unified_captcha_id, action_type
 
     def solve_capbypass(self, website_url, public_key, website_subdomain, blob, proxy):
-        captcha_response = httpc.post('https://api.capbypass.com/createTask', json={
+        captcha_response = httpc.post('https://capbypass.com/api/createTask', json={
             "clientKey": self.api_key,
             "task": {
-                "type":"FunCaptchaTaskProxyLess",
+                "type": "FunCaptchaTaskProxyLess",
                 "websiteURL": website_url,
                 "websitePublicKey": public_key,
                 "funcaptchaApiJSSubdomain": "https://"+website_subdomain,
@@ -72,40 +70,44 @@ class CaptchaSolver(Proxy):
             }
         })
 
-        result = captcha_response.json()
-
         try:
-            taskId = result["taskId"]
-            taskStatus = result["status"]
-        except KeyError:
-            if result.get("errorDescription") == "Invalid Key":
-                raise Exception("Invalid Capbypass API key")
+            result = captcha_response.json()
 
+            taskId = result["taskId"]
+            errorId = result["errorId"]
+        except Exception:
+            raise Exception("create task error. " + Utils.return_res(captcha_response))
+
+        if errorId != 0:
             raise Exception(Utils.return_res(captcha_response))
 
         # polling
         # wait for captcha to be solved
         tries = 50
-        while taskStatus in ["idle", "processing"] and tries > 0:
-            captcha_response = httpc.post('https://api.capbypass.com/getTaskResult', json={
+        solution = None
+
+        while not solution and tries > 0:
+            captcha_response = httpc.post('https://capbypass.com/api/getTaskResult', json={
                 "clientKey": self.api_key,
                 "taskId": taskId
             })
 
-            result = captcha_response.json()
             try:
-                taskStatus = result["status"]
+                result = captcha_response.json()
+
+                solution = result.get("solution")
+                errorId = result["errorId"]
             except KeyError:
+                raise Exception("get task error. " + Utils.return_res(captcha_response))
+
+            if errorId != 0:
                 raise Exception(Utils.return_res(captcha_response))
 
             tries -= 1
             time.sleep(1)
 
-        if taskStatus in ["idle", "processing"]:
-            raise Exception("Captcha timed out")
-
         try:
-            return result["solution"]
+            return solution
         except KeyError:
             raise Exception(Utils.return_res(captcha_response))
 
@@ -113,45 +115,10 @@ class CaptchaSolver(Proxy):
         proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port = self.extract_auth_proxies(client.proxies)
         proxy = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
 
-        if self.captcha_service == "anti-captcha":
-            solver = funcaptchaProxyless()
-            solver.set_verbose(0)
-            solver.set_key(self.api_key)
-            solver.set_website_url(website_url)
-            solver.set_website_key(public_key)
-            solver.set_data_blob('{"blob":"' + blob + '"}')
-            solver.set_soft_id(0)
-
-            token = solver.solve_and_return_solution()
-
-            if token == 0:
-                raise Exception("task finished with error " + solver.error_code)
-        elif self.captcha_service == "2captcha":
-            solver = TwoCaptcha(self.api_key)
-
-            result = solver.funcaptcha(
-                sitekey=public_key,
-                url=website_url,
-                userAgent=user_agent,
-                **{"data[blob]": blob}
-            )
-
-            token = result["code"]
-        elif self.captcha_service == "capsolver":
-            capsolver.api_key = self.api_key
-            solution = capsolver.solve({
-                "type": "FunCaptchaTask",
-                "websitePublicKey": public_key,
-                "websiteURL": website_url,
-                "data": f"{{\"blob\":\"{blob}\"}}",
-                "proxy": proxy
-            })
-
-            token = solution["token"]
-        elif self.captcha_service == "capbypass":
+        if self.captcha_service == "capbypass":
             token = self.solve_capbypass(website_url, public_key, website_subdomain, blob, proxy)
         else:
-            raise Exception("Captcha service not supported yet. Supported: anti-captcha, 2captcha, capsolver, capbypass")
+            raise Exception('Only "Capbypass" solver is working. Other services are not supported.')
 
         return token
 
@@ -194,31 +161,19 @@ class CaptchaSolver(Proxy):
         """
         Gets the balance of the captcha service
         """
-        if self.captcha_service == "anti-captcha":
-            solver = funcaptchaProxyless() # or any other class
-            solver.set_verbose(0)
-            solver.set_key(self.api_key)
-            balance = solver.get_balance()
-        elif self.captcha_service == "2captcha":
-            solver = TwoCaptcha(self.api_key)
-            balance = solver.balance()
-        elif self.captcha_service == "capsolver":
-            capsolver.api_key = self.api_key
-            balance = capsolver.balance()["balance"]
-        elif self.captcha_service == "capbypass":
-            req_url = 'https://api.capbypass.com/getBalance'
+        if self.captcha_service == "capbypass":
+            req_url = 'https://capbypass.com/api/getBalance'
             req_data = {
                 'clientKey': self.api_key,
             }
 
             response = httpc.post(req_url, json=req_data)
             try:
-                balance = response.json()["balance"]
+                balance = response.json()["credits"]
             except KeyError:
                 raise Exception(Utils.return_res(response))
-            return balance
         else:
-            raise Exception("Captcha service not found")
+            raise Exception("Captcha service not found. Only Capbypass is supported. Other services don't work.")
 
         return balance
 

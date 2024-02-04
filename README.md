@@ -80,11 +80,9 @@ You can use this template to add your proxies. We currently only support HTTP pr
 Here are some examples of valid proxies lines:
 
 ```
-
 8.8.8.8:5001
 http:8.8.8.8:5001
 8.8.8.8:5003:username:password
-
 ```
 
 ## Star History
@@ -104,7 +102,3 @@ If you want to support the development of Versatools, you can donate to me:
 - Donate to me in Bitcoin: bc1q9pvj2apxpym5yws92y7gd98y7q57hgj9vgeetr
 - Donate to me in Ethereum: 0x8dCb5195cD30ec3fC0bfaF95C7528e8F1254438b
 - Donate to me in Litcoin: LfBUdmmkFbN9vNho3iAv8qowcdjakkT4zZ
-
-```
-
-```

@@ -48,7 +48,7 @@ class CommentBot(Tool):
         """
         Send a comment to an asset
         """
-        captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
+        captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
         proxies = self.get_random_proxy() if self.config["use_proxy"] else None
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:

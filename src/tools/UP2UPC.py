@@ -75,7 +75,7 @@ class UP2UPC(Tool):
         username, password = user_pass.split(":")
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
-            captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
+            captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
             user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(None, client)
 

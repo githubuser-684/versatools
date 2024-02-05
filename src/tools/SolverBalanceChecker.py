@@ -11,7 +11,7 @@ class SolverBalanceChecker(Tool):
 
         for solver_name in solvers:
             if self.exit_flag is False:
-                captcha_solver = CaptchaSolver(solver_name, self.captcha_tokens[solver_name])
+                captcha_solver = CaptchaSolver(solver_name, self.captcha_tokens.get(solver_name))
                 try:
                     balance = captcha_solver.get_balance()
                     click.secho(f"{solver_name.title()}: {balance}$", fg="green")

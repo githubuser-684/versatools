@@ -14,7 +14,7 @@ class CookieGenerator(Tool):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", app)
 
     def run(self):
-        click.secho("Warning: Cookies generated using our tool are flagged and region locked.", fg='yellow')
+        click.secho("Warning: Cookies generated using our tool may be flagged and are region locked.", fg='yellow')
 
         # open cookies.txt for writing in it
         f = open(self.cookies_file_path, 'a')
@@ -121,7 +121,7 @@ class CookieGenerator(Tool):
         proxies = self.get_random_proxy() if use_proxy else None
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
-            captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens[captcha_service])
+            captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
             user_agent = httpc.get_random_user_agent()
             csrf_token = self.get_csrf_token(None, client)
 

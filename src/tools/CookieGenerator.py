@@ -90,7 +90,7 @@ class CookieGenerator(Tool):
         """
         length = 10
         password = ''.join(random.choices(string.ascii_uppercase + string.digits + string.punctuation, k=length))
-        password.replace(":", "v")
+        password = password.replace(":", "v")
 
         return password
 

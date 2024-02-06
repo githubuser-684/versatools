@@ -199,6 +199,7 @@ config = {
     },
     "UsernameSniper": {
         "username_length": 3,
+        "max_generations": 2000,
         "use_proxy": False,
         "max_workers": None,
     },

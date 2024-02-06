@@ -1,6 +1,5 @@
 import httpc
 from utils import Utils
-import re
 
 class Proxy():
     def __init__(self):

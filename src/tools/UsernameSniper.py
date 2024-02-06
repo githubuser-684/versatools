@@ -3,8 +3,7 @@ import concurrent.futures
 import httpc
 from Tool import Tool
 from utils import Utils
-import itertools
-import click
+import random
 
 class UsernameSniper(Tool):
     def __init__(self, app):
@@ -15,21 +14,19 @@ class UsernameSniper(Tool):
 
     def run(self):
         username_length = self.config["username_length"]
+        max_generations = self.config["max_generations"]
 
         if username_length < 3 or username_length > 20:
             raise Exception("Usernames can be between 3 and 20 characters long.")
-
-        click.secho("Please be patient...it may take some time to calculate all username combinations for a given length.", fg='yellow')
-        all_usernames = self.generate_usernames(username_length)
 
         f = open(self.usernames_file_path, 'a')
 
         worked_gen = 0
         failed_gen = 0
-        total_gen = len(all_usernames)
+        total_gen = max_generations
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.config["max_workers"]) as self.executor:
-            self.results = [self.executor.submit(self.check_username, username, self.config["use_proxy"]) for username in all_usernames]
+            self.results = [self.executor.submit(self.check_username, self.config["username_length"], self.config["use_proxy"]) for gen in range(max_generations)]
 
             for future in concurrent.futures.as_completed(self.results):
                 if future.cancelled():
@@ -50,15 +47,20 @@ class UsernameSniper(Tool):
                 self.print_status(worked_gen, failed_gen, total_gen, response_text, is_available, "Available")
         f.close()
 
-    def generate_usernames(self, length):
+    def generate_random_username(self, length):
         characters = 'abcdefghijklmnopqrstuvwxyz0123456789_'
-        all_combinations = itertools.product(characters, repeat=length)
-        usernames = [''.join(combination) for combination in all_combinations if not combination[0] == '_' and not combination[-1] == '_']
-        return usernames
+        username = ''.join(random.choice(characters) for _ in range(length))
+
+        while username[0] == '_' or username[-1] == '_' or username.count('_') > 1:
+            username = ''.join(random.choice(characters) for _ in range(length))
+
+        return username
 
     @Utils.handle_exception(2)
-    def check_username(self, username, use_proxy) -> tuple:
+    def check_username(self, username_length, use_proxy) -> tuple:
         proxies = self.get_random_proxy() if use_proxy else None
+
+        username = self.generate_random_username(username_length)
 
         with httpc.Session(proxies=proxies) as client:
             user_agent = httpc.get_random_user_agent()

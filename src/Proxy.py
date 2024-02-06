@@ -131,7 +131,7 @@ class Proxy():
 
         return proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass
 
-    def get_proxies(self, proxy_type: str, proxy_ip: str, proxy_port: int, proxy_user: str = None, proxy_pass: str = None) -> dict:
+    def get_proxies(self, proxy_type: str, proxy_ip: str, proxy_port: int, proxy_user: str = None, proxy_pass: str = None, **kwargs) -> dict:
         """
         Returns a dict of proxies
         """
@@ -144,28 +144,17 @@ class Proxy():
 
         if auth:
             proxy = f"{proxy_type}://{proxy_user}:{proxy_pass}@{proxy_ip}:{proxy_port}/"
-
+            proxy_line = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
         else:
             proxy = f"{proxy_type}://{proxy_ip}:{proxy_port}/"
+            proxy_line = f"{proxy_ip}:{proxy_port}"
 
         proxies = {
             "http": proxy,
             "https": proxy
         }
 
+        if kwargs.get("line"):
+            return proxies, proxy_line
+
         return proxies
-
-    def extract_auth_proxies(self, proxies:str) -> tuple:
-        """
-        Extracts auth proxies values from a string
-        Should return a tuple of (proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port)
-        """
-        proxies = proxies.get("http") or proxies.get("all://")
-        pattern = r'(\w+):\/\/([^:@]+):([^@]+)@([^:]+):(\d+)\/'
-        matches = re.findall(pattern, proxies)
-
-        if matches:
-            for match in matches:
-                return match
-        else:
-            raise Exception("Invalid proxy format. Authentication is needed")

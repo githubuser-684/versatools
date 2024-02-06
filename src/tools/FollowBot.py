@@ -40,7 +40,7 @@ class FollowBot(Tool):
         """
         Send a follow request to a user
         """
-        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if self.config["use_proxy"] else None
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
@@ -54,6 +54,6 @@ class FollowBot(Tool):
 
             init_res = client.post(req_url, headers=req_headers, cookies=req_cookies)
 
-            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", client)
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_FOLLOW_USER", proxy_line, client)
 
         return (response.status_code == 200), Utils.return_res(response)

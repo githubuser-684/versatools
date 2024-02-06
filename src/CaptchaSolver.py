@@ -13,7 +13,7 @@ class CaptchaSolver(Proxy):
         self.captcha_service = captcha_service.lower()
         self.api_key = api_key
 
-    def solve_captcha(self, response, action_type:str, client):
+    def solve_captcha(self, response, action_type:str, proxy_line:str, client):
         """
         Resolves a Roblox "Challenge is required..." request using the specified captcha service.
         Returns the captcha bypassed response from the request.
@@ -34,7 +34,7 @@ class CaptchaSolver(Proxy):
         website_subdomain = "roblox-api.arkoselabs.com"
 
         # solve captcha using specified service
-        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, client)
+        token = self.send_to_solver(website_url, website_subdomain, public_key, blob, proxy_line)
 
         metadata, metadata_base64 = self.build_metadata(captcha_id, token, meta_action_type)
 
@@ -107,12 +107,9 @@ class CaptchaSolver(Proxy):
 
         return solution
 
-    def send_to_solver(self, website_url, website_subdomain, public_key, blob, client):
-        proxy_type, proxy_user, proxy_pass, proxy_ip, proxy_port = self.extract_auth_proxies(client.proxies)
-        proxy = f"{proxy_ip}:{proxy_port}:{proxy_user}:{proxy_pass}"
-
+    def send_to_solver(self, website_url, website_subdomain, public_key, blob, proxy_line):
         if self.captcha_service == "capbypass":
-            token = self.solve_capbypass(website_url, public_key, website_subdomain, blob, proxy)
+            token = self.solve_capbypass(website_url, public_key, website_subdomain, blob, proxy_line)
         else:
             raise Exception('Only "Capbypass" solver is working. Other services are not supported.')
 

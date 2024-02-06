@@ -118,7 +118,7 @@ class CookieGenerator(Tool):
         Generates a ROBLOSECURITY cookie
         Returns a tuple with the error and the cookie
         """
-        proxies = self.get_random_proxy() if use_proxy else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if use_proxy else None
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
@@ -144,7 +144,7 @@ class CookieGenerator(Tool):
             is_girl = random.choice([True, False])
 
             sign_up_req = self.send_signup_request(user_agent, csrf_token, username, password, birthday, is_girl, client)
-            sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", client)
+            sign_up_res = captcha_solver.solve_captcha(sign_up_req, "ACTION_TYPE_WEB_SIGNUP", proxy_line, client)
 
         try:
             cookie = httpc.extract_cookie(sign_up_res, ".ROBLOSECURITY")

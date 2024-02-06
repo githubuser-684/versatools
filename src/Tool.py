@@ -131,7 +131,7 @@ class Tool(Proxy, ABC):
     def get_random_cookie(self) -> str:
         return self.get_cookies(1)[0]
 
-    def get_random_proxy(self) -> dict:
+    def get_random_proxy(self, **kwargs) -> dict:
         """
         Gets random proxy dict
         """
@@ -152,9 +152,8 @@ class Tool(Proxy, ABC):
         random_line = Utils.clear_line(random_line)
         # get proxies dict for httpc module
         proxy_type_provided, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass = self.get_proxy_values(random_line)
-        proxy = self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass)
 
-        return proxy
+        return self.get_proxies(proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass, line=kwargs.get("line", False))
 
     def print_status(self, req_worked, req_failed, total_req, response_text, has_worked, action_verb):
         """

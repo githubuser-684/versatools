@@ -71,7 +71,7 @@ class UP2UPC(Tool):
 
     @Utils.handle_exception()
     def convert_up(self, captcha_service, use_proxy, user_pass) -> tuple:
-        proxies = self.get_random_proxy() if use_proxy else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if use_proxy else None
         username, password = user_pass.split(":")
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
@@ -81,7 +81,7 @@ class UP2UPC(Tool):
 
             sign_in_req = self.send_signin_request(username, password, user_agent, csrf_token, client)
 
-            sign_in_res = captcha_solver.solve_captcha(sign_in_req, "ACTION_TYPE_WEB_LOGIN", client)
+            sign_in_res = captcha_solver.solve_captcha(sign_in_req, "ACTION_TYPE_WEB_LOGIN", proxy_line, client)
 
         try:
             cookie = httpc.extract_cookie(sign_in_res, ".ROBLOSECURITY")

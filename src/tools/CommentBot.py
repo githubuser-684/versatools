@@ -49,7 +49,7 @@ class CommentBot(Tool):
         Send a comment to an asset
         """
         captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
-        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if self.config["use_proxy"] else None
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             user_agent = httpc.get_random_user_agent()
@@ -61,7 +61,7 @@ class CommentBot(Tool):
             req_data = {"assetId": str(asset_id), "text": self.get_random_message()}
 
             init_res = client.post(req_url, headers=req_headers, data=req_data, cookies=req_cookies)
-            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", client)
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_ASSET_COMMENT", proxy_line, client)
 
         success = response.status_code == 200
 

@@ -41,7 +41,7 @@ class GroupJoinBot(Tool):
         Send a join request to a group
         """
 
-        proxies = self.get_random_proxy() if self.config["use_proxy"] else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if self.config["use_proxy"] else None
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))
@@ -54,6 +54,6 @@ class GroupJoinBot(Tool):
             req_json={"redemptionToken": "", "sessionId": ""}
 
             init_res = client.post(req_url, headers=req_headers, cookies=req_cookies, json=req_json)
-            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", client)
+            response = captcha_solver.solve_captcha(init_res, "ACTION_TYPE_GROUP_JOIN", proxy_line, client)
 
         return (response.status_code == 200), Utils.return_res(response)

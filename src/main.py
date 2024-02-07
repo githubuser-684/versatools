@@ -143,6 +143,7 @@ def last_step(tool_name):
         if option == "1":
             wait_option = False
             launch_tool(tool_name)
+            input("\nPress Enter to come back to the menu...")
         elif option == "2":
             config(tool_name)
         elif option == "3":
@@ -160,7 +161,6 @@ def run_program():
     display_logo()
     tool_name = show_menu()
     last_step(tool_name)
-    input("\nPress Enter to come back to the menu...")
 
 if __name__ == "__main__":
     freeze_support()

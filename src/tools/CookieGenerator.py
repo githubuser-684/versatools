@@ -14,7 +14,7 @@ class CookieGenerator(Tool):
         super().__init__("Cookie Generator", "Generates Roblox Cookies.", app)
 
     def run(self):
-        click.secho("Warning: Cookies generated using our tool may be flagged and are region locked.", fg='yellow')
+        click.secho("Warning: Cookies generated using our tool are region locked.", fg='yellow')
 
         # open cookies.txt for writing in it
         f = open(self.cookies_file_path, 'a')

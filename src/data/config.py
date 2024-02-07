@@ -48,6 +48,10 @@ config = {
         "use_proxy": True,
         "max_workers": None
     },
+    "CookieRegionUnlocker": {
+        "use_proxy": True,
+        "max_workers": None
+    },
     "CookieVerifier": {
         "use_proxy": True,
         "max_workers": None

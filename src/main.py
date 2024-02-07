@@ -66,6 +66,7 @@ def display_logo():
 
 def show_menu():
     tools = app.tools
+    tools.sort(key=lambda x: x.name)
 
     for i, tool in enumerate(tools):
         tool_name_str = click.style(f"   {(' ' if i<9 else '') + str(i+1)} - ", fg='yellow') + tool.name

@@ -41,7 +41,7 @@ class GroupJoinBot(Tool):
         Send a join request to a group
         """
 
-        proxies, proxy_line = self.get_random_proxy(line=True) if self.config["use_proxy"] else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if self.config["use_proxy"] else (None, None)
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:
             captcha_solver = CaptchaSolver(captcha_service, self.captcha_tokens.get(captcha_service))

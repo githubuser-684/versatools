@@ -71,7 +71,7 @@ class UP2UPC(Tool):
 
     @Utils.handle_exception()
     def convert_up(self, captcha_service, use_proxy, user_pass) -> tuple:
-        proxies, proxy_line = self.get_random_proxy(line=True) if use_proxy else None
+        proxies, proxy_line = self.get_random_proxy(line=True) if use_proxy else (None, None)
         username, password = user_pass.split(":")
 
         with httpc.Session(proxies=proxies, spoof_tls=True) as client:

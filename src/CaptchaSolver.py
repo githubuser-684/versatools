@@ -60,7 +60,7 @@ class CaptchaSolver(Proxy):
         captcha_response = httpc.post('https://capbypass.com/api/createTask', json={
             "clientKey": self.api_key,
             "task": {
-                "type": "FunCaptchaTaskProxyLess",
+                "type": "FunCaptchaTask",
                 "websiteURL": website_url,
                 "websitePublicKey": public_key,
                 "funcaptchaApiJSSubdomain": "https://"+website_subdomain,

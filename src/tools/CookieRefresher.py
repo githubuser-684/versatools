@@ -67,11 +67,11 @@ class CookieRefresher(Tool):
 
         with httpc.Session(proxies=proxies) as client:
             user_agent = httpc.get_random_user_agent()
-            xcsrf_token = self.get_csrf_token(cookie, client)
+            csrf_token = self.get_csrf_token(cookie, client)
 
             # Creating a new cookie
             reauthcookieurl = "https://www.roblox.com/authentication/signoutfromallsessionsandreauthenticate"
-            req_headers = httpc.get_roblox_headers(user_agent, xcsrf_token)
+            req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
 
             data = client.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers)
 
@@ -79,7 +79,7 @@ class CookieRefresher(Tool):
             raise Exception(Utils.return_res(data))
 
         try:
-            new_cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
+            new_cookie = httpc.extract_cookie(data, ".ROBLOSECURITY")
         except Exception:
             raise Exception(Utils.return_res(data))
 

@@ -75,6 +75,9 @@ class CookieRefresher(Tool):
 
             data = client.post(reauthcookieurl, cookies={'.ROBLOSECURITY': cookie}, headers=req_headers)
 
+        if data.status_code != 200:
+            raise Exception(Utils.return_res(data))
+
         try:
             new_cookie = data.headers["Set-Cookie"].split(".ROBLOSECURITY=")[1].split(";")[0]
         except Exception:

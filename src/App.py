@@ -73,7 +73,7 @@ class App():
                     else:
                         for subkey in config[key]:
                             if subkey not in file_config[key]:
-                                file_config[key][subkey] = config[key][subkey]
+                                file_config[key] = {subkey: config[key][subkey], **file_config[key]}
 
                             # make sure subkeys starting with // are not overwritten
                             if subkey.startswith("//"):

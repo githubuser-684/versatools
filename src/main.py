@@ -44,6 +44,9 @@ def setup():
         click.secho("No changes made.", fg='bright_black')
 
 def files():
+    click.secho("Cookies and proxies must be put in their respective files, one per line.", fg='bright_black')
+    click.secho("Proxies are in the format: ip:port:username:password", fg='bright_black')
+
     app.start_files_dir()
 
 def version():

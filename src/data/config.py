@@ -1,4 +1,8 @@
 config = {
+    "FunCaptchaSolvers": {
+        "//capbypass_link": "https://capbypass.com/",
+        "capbypass": "your_api_key_here",
+    },
     "AdsScraper": {
         "ad_format": "vertical",
         "max_generations": 20,
@@ -101,10 +105,6 @@ config = {
         "place_id": 0,
         "max_generations": 100,
         "max_workers": 5
-    },
-    "FunCaptchaSolvers": {
-        "//capbypass_link": "https://capbypass.com/",
-        "capbypass": "your_api_key_here",
     },
     "GameVote": {
         "game_id": 0,

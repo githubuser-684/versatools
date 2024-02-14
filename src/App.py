@@ -62,10 +62,9 @@ class App():
         # make sure config file exists
         if not os.path.exists(config_file_path):
             with open(config_file_path, "w") as json_file:
-                ordered_config = dict(sorted(config.items(), key=lambda x: x[0]))
-                json.dump(ordered_config, json_file, indent=4)
+                json.dump(config, json_file, indent=4)
         else:
-            # make sure config file contains all keys
+            # make sure config file contains all keys and not more
             with open(config_file_path, "r+") as json_file:
                 file_config = json.load(json_file)
                 for key in config:
@@ -79,10 +78,9 @@ class App():
                             # make sure subkeys starting with // are not overwritten
                             if subkey.startswith("//"):
                                 file_config[key][subkey] = config[key][subkey]
-                ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
                 json_file.seek(0)
                 json_file.truncate()
-                json.dump(ordered_config, json_file, indent=4)
+                json.dump(file_config, json_file, indent=4)
 
     def update_config_prop(self, prop_name, config):
         with open(self.config_file_path, "r+") as json_file:

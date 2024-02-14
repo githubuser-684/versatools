@@ -17,12 +17,18 @@ def config(tool_name):
 
     edited_config = click.edit(config_json)  # Open the editor with the JSON content
 
-    if edited_config is not None:
-        updated_config = json.loads(edited_config)
-        app.set_tool_config(tool, updated_config)
-        click.secho(f"Configuration for {tool.name} updated.", fg='green')
-    else:
+    if edited_config is None:
         click.secho("No changes made.", fg='bright_black')
+        return
+
+    try:
+        updated_config = json.loads(edited_config)
+    except json.JSONDecodeError:
+        click.secho("Invalid JSON format. Please try again.", fg='red')
+        return
+
+    app.set_tool_config(tool, updated_config)
+    click.secho(f"Configuration for {tool.name} updated.", fg='green')
 
 def setup():
     config = app.get_solver_config()

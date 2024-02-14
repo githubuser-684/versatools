@@ -78,6 +78,16 @@ class App():
                             # make sure subkeys starting with // are not overwritten
                             if subkey.startswith("//"):
                                 file_config[key][subkey] = config[key][subkey]
+
+                # make sure there are no extra keys
+                for key in list(file_config):
+                    if key not in config:
+                        del file_config[key]
+                    else:
+                        for subkey in list(file_config[key]):
+                            if subkey not in config[key]:
+                                del file_config[key][subkey]
+
                 json_file.seek(0)
                 json_file.truncate()
                 json.dump(file_config, json_file, indent=4)
@@ -86,10 +96,9 @@ class App():
         with open(self.config_file_path, "r+") as json_file:
             file_config = json.load(json_file)
             file_config[prop_name.replace(" ", "")] = config
-            ordered_config = dict(sorted(file_config.items(), key=lambda x: x[0]))
             json_file.seek(0)
             json_file.truncate()
-            json.dump(ordered_config, json_file, indent=4)
+            json.dump(file_config, json_file, indent=4)
 
     def set_solver_config(self, config):
         self.update_config_prop("FunCaptchaSolvers", config)

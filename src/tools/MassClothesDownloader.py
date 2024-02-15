@@ -6,9 +6,9 @@ from utils import Utils
 import random
 from PIL import Image
 
-class AssetsDownloader(Tool):
+class MassClothesDownloader(Tool):
     def __init__(self, app):
-        super().__init__("Assets Downloader", "Download most trending assets from Roblox catalog", app)
+        super().__init__("Mass Clothes Downloader", "Download most trending assets from Roblox catalog", app)
 
         self.assets_files_directory = os.path.join(self.files_directory, "./assets")
         self.shirts_files_directory = os.path.join(self.files_directory, "./assets/shirts")

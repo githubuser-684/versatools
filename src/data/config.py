@@ -9,25 +9,6 @@ config = {
         "use_proxy": False,
         "max_workers": None
     },
-    "AssetsDownloader": {
-        "remove_trademark": True,
-        "//sorts": ["relevance", "favouritedalltime", "favouritedallweek", "favouritedallday", "bestsellingalltime", "bestsellingweek", "bestsellingday", "recentlycreated", "pricehightolow", "pricelowtohigh"],
-        "sort": "relevance",
-        "keyword": "red",
-        "asset_type": "shirt",
-        "max_generations": 20,
-        "use_proxy": False,
-        "max_workers": None
-    },
-    "AssetsUploader": {
-        "cookie": "_|WARNING:",
-        "robux_price": 5,
-        "description": "Made by a goat (me)",
-        "group_id": 0,
-        "use_proxy": False,
-        "max_workers": None,
-        "timeout": 45
-    },
     "CommentBot": {
         "asset_id": 0,
         "max_generations": 1000,
@@ -136,6 +117,16 @@ config = {
         "item_id": 0,
         "max_generations": 100,
         "use_proxy": True,
+        "max_workers": None
+    },
+    "MassClothesDownloader": {
+        "remove_trademark": True,
+        "//sorts": ["relevance", "favouritedalltime", "favouritedallweek", "favouritedallday", "bestsellingalltime", "bestsellingweek", "bestsellingday", "recentlycreated", "pricehightolow", "pricelowtohigh"],
+        "sort": "relevance",
+        "keyword": "red",
+        "asset_type": "shirt",
+        "max_generations": 20,
+        "use_proxy": False,
         "max_workers": None
     },
     "MessageBot": {

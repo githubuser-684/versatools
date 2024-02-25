@@ -19,9 +19,6 @@ class FriendRequestBot(Tool):
             self.results = [self.executor.submit(self.send_friend_request, user_id, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_sent, response_text = future.result()
                 except Exception as e:

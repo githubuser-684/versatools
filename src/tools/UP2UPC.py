@@ -28,9 +28,6 @@ class UP2UPC(Tool):
             self.results = [self.executor.submit(self.convert_up, self.config["captcha_solver"], self.config["use_proxy"], user_pass) for user_pass in user_pass_list]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_converted, response_text = future.result()
                 except Exception as e:

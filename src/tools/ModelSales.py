@@ -23,9 +23,6 @@ class ModelSales(Tool):
             self.results = [self.executor.submit(self.buy_product, asset_id, product_id, leave_review_when_bought, review_message, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_bought, response_text = future.result()
                 except Exception as e:

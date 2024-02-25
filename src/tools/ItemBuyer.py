@@ -22,9 +22,6 @@ class ItemBuyer(Tool):
             self.results = [self.executor.submit(self.buy_item, product_id, expected_price, expected_seller_id, expected_currency, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_bought, response_text = future.result()
                 except Exception as e:

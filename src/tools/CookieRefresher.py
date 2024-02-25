@@ -26,9 +26,6 @@ class CookieRefresher(Tool):
             self.results = [self.executor.submit(self.refresh_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_worked, response_text, old_cookie = future.result()
                 except Exception as err:

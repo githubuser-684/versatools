@@ -31,9 +31,6 @@ class GameVisits(Tool):
             self.results = [self.executor.submit(self.visit_game, roblox_player_path, self.get_random_cookie(), place_id, timeout) for i in range(max_generations)]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

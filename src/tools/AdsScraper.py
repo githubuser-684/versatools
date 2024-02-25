@@ -29,9 +29,6 @@ class AdsScraper(Tool):
             self.results = [self.executor.submit(self.scrape_ad) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:

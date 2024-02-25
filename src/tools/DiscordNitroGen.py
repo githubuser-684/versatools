@@ -22,9 +22,6 @@ class DiscordNitroGen(Tool):
             self.results = [self.executor.submit(self.generate_nitro, self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:

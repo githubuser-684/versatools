@@ -23,9 +23,6 @@ class ProxyScraper(Tool):
             self.results = [self.executor.submit(self.scrape_proxies, url) for url in max_proxy_sites]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_working, response_text, proxies = future.result()
                 except Exception as e:

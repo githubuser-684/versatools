@@ -22,9 +22,6 @@ class CommentBot(Tool):
             self.results = [self.executor.submit(self.send_comment, self.config["captcha_solver"], asset_id, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as err:

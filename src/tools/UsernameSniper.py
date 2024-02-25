@@ -29,9 +29,6 @@ class UsernameSniper(Tool):
             self.results = [self.executor.submit(self.check_username, self.config["username_length"], self.config["use_proxy"]) for gen in range(max_generations)]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_available, username, response_text = future.result()
                 except Exception as e:

@@ -28,9 +28,6 @@ class CookieChecker(Tool):
             self.results = [self.executor.submit(self.test_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_working, cookie, response_text = future.result()
                 except Exception as e:

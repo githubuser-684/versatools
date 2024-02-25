@@ -20,9 +20,6 @@ class GroupJoinBot(Tool):
             self.results = [self.executor.submit(self.send_group_join_request, self.config["captcha_solver"], group_id, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_joined, response_text = future.result()
                 except Exception as e:

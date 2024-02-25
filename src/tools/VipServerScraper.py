@@ -21,9 +21,6 @@ class VipServerScraper(Tool):
             self.results = [self.executor.submit(self.get_vip_link, page_game) for page_game in pages_game]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

@@ -21,9 +21,6 @@ class FavoriteBot(Tool):
             self.results = [self.executor.submit(self.send_favorite, asset_id, cookie, unfavorite) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

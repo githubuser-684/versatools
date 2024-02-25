@@ -35,9 +35,6 @@ class MassClothesDownloader(Tool):
             self.results = [self.executor.submit(self.download_asset, asset) for asset in assets]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_downloaded, response_text = future.result()
                 except Exception as err:

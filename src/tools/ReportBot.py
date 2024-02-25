@@ -28,9 +28,6 @@ class ReportBot(Tool):
             self.results = [self.executor.submit(self.send_report, report_type, thing_id, comment, cookie, use_proxy) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_reported, response_text = future.result()
                 except Exception as e:

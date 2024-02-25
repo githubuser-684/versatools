@@ -29,9 +29,6 @@ class CookieRegionUnlocker(Tool):
             results = [self.executor.submit(self.unlock_cookie, cookie, self.config["use_proxy"]) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_worked, response_text, old_cookie = future.result()
                 except Exception as err:

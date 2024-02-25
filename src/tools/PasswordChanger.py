@@ -29,9 +29,6 @@ class PasswordChanger(Tool):
             self.results = [self.executor.submit(self.change_password, upc, new_password) for upc in lines]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as err:

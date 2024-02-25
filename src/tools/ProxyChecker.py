@@ -40,8 +40,6 @@ class ProxyChecker(Tool):
             self.results = [self.executor.submit(self.test_proxy_line, line, self.config["check_timezone"], self.config["ipinfo_api_key"], self.config["timeout"]) for line in lines]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
                 is_working, proxy_type, proxy_ip, proxy_port, proxy_user, proxy_pass, timezone = future.result()
 
                 if is_working:

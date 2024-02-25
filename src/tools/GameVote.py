@@ -32,9 +32,6 @@ class GameVote(Tool):
             self.results = [self.executor.submit(self.send_game_vote, game_id, vote, cookie, roblox_player_path, timeout) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

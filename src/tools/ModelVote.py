@@ -20,9 +20,6 @@ class ModelVote(Tool):
             self.results = [self.executor.submit(self.send_model_vote, model_id, vote, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_success, response_text = future.result()
                 except Exception as e:

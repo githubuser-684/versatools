@@ -19,9 +19,6 @@ class StatusChanger(Tool):
             self.results = [self.executor.submit(self.change_status, new_status, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_changed, response_text = future.result()
                 except Exception as e:

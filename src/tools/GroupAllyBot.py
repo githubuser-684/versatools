@@ -22,9 +22,6 @@ class GroupAllyBot(Tool):
             self.results = [self.executor.submit(self.send_ally_request, your_group_id, cookie, i+int(start_group_id)) for i in range(max_generations)]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_req, response_text = future.result()
                 except Exception as e:

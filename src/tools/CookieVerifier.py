@@ -23,9 +23,6 @@ class CookieVerifier(Tool):
             self.results = [self.executor.submit(self.verify_cookie, cookie) for cookie in cookies]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     is_verified, response_text = future.result()
                 except Exception as e:

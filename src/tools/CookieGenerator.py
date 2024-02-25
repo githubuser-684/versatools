@@ -27,9 +27,6 @@ class CookieGenerator(Tool):
             self.results = [self.executor.submit(self.generate_cookie, self.config["vanity"], self.config["custom_password"], self.config["captcha_solver"], self.config["use_proxy"]) for gen in range(self.config["max_generations"])]
 
             for future in concurrent.futures.as_completed(self.results):
-                if future.cancelled():
-                    continue
-
                 try:
                     has_generated, response_text = future.result()
                 except Exception as e:

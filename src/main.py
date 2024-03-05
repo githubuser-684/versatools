@@ -5,6 +5,7 @@ import json
 import signal
 import traceback
 from os import system, name
+from JsonEditor import JsonEditor
 
 app = App()
 
@@ -12,14 +13,12 @@ global tool
 tool = None
 
 def config(tool_name):
+    # Define styles for editor
     tool = app.get_tool_from(tool_name)
-    config_json = json.dumps(tool.config, indent=2)  # Convert config to a formatted JSON string
+    initial_config = json.dumps(tool.config, indent=2)  # Convert config to a formatted JSON string
 
-    edited_config = click.edit(config_json)  # Open the editor with the JSON content
-
-    if edited_config is None:
-        click.secho("No changes made.", fg='bright_black')
-        return
+    json_editor = JsonEditor()
+    edited_config = json_editor.edit(f"Editing config for {tool.name}", initial_config)
 
     try:
         updated_config = json.loads(edited_config)
@@ -32,16 +31,19 @@ def config(tool_name):
 
 def setup():
     config = app.get_solver_config()
-    config_json = json.dumps(config, indent=2)  # Convert config to a formatted JSON string
+    config_json = json.dumps(config, indent=2)
 
-    edited_config = click.edit(config_json)  # Open the editor with the JSON content
+    json_editor = JsonEditor()
+    edited_config = json_editor.edit("Editing captcha tokens config", config_json)
 
-    if edited_config is not None:
+    try:
         updated_config = json.loads(edited_config)
-        app.set_solver_config(updated_config)
-        click.secho(f"Configuration for captcha tokens updated.", fg='green')
-    else:
-        click.secho("No changes made.", fg='bright_black')
+    except json.JSONDecodeError:
+        click.secho("Invalid JSON format. Please try again.", fg='red')
+        return
+
+    app.set_solver_config(updated_config)
+    click.secho(f"Configuration for captcha tokens updated.", fg='green')
 
 def files():
     click.secho("Cookies and proxies must be put in their respective files, one per line.", fg='bright_black')

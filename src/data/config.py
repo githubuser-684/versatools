@@ -197,9 +197,5 @@ config = {
         "max_generations": 2000,
         "use_proxy": False,
         "max_workers": None,
-    },
-    "VipServerScraper": {
-        "use_proxy": False,
-        "max_workers": None
     }
 }

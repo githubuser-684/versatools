@@ -48,7 +48,12 @@ class Tool(Proxy, ABC):
 
         data = f.read()
         f.close()
-        x = json.loads(data)
+        try:
+            x = json.loads(data)
+        except json.JSONDecodeError:
+            print(f"Config file is not a valid JSON file. Please fix it here and restart the program: {self.app.config_file_path}")
+            input("Press enter to exit...")
+            exit()
         # inject specific tool config
         try:
             props = x[(self.name).replace(" ", "")]

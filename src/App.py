@@ -66,7 +66,12 @@ class App():
         else:
             # make sure config file contains all keys and not more
             with open(config_file_path, "r+") as json_file:
-                file_config = json.load(json_file)
+                try:
+                    file_config = json.load(json_file)
+                except json.JSONDecodeError:
+                    print(f"Config file is not a valid JSON file. Please fix it here and restart the program: {config_file_path}")
+                    input("Press enter to exit...")
+                    exit()
                 for key in config:
                     if key not in file_config:
                         file_config[key] = config[key]

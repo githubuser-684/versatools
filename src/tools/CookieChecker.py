@@ -85,9 +85,9 @@ class CookieChecker(Tool):
             username = result["UserName"]
             robux_balance = result["RobuxBalance"]
 
-            has_premium = False
+            output = f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance} "
 
-            stringConstruct = f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance} "
+            has_premium = False
 
             if self.config["check_premium"]:
                 premium_url = f"https://www.roblox.com/users/{user_id}/profile"
@@ -95,8 +95,7 @@ class CookieChecker(Tool):
 
                 if "data-ispremiumuser=\"true\"" in premium_response.text:
                     has_premium = True
-                    stringConstruct += "| Premium: True"
-                else:
-                    stringConstruct += "| Premium: False"
-                    
-            return True, cookie, f"{stringConstruct}"
+
+                output += f"| Premium: {has_premium}"
+
+            return True, cookie, output

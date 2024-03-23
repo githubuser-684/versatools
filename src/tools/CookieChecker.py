@@ -95,7 +95,5 @@ class CookieChecker(Tool):
 
                 if "data-ispremiumuser=\"true\"" in premium_response.text:
                     has_premium = True
-
-                return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance} | Premium: {'Yes' if has_premium else 'No'}"
-            else:
-                return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance}"
+                    
+            return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance} {self.config['check_premium'] and '| Premium: ' + ('Yes' if has_premium else 'No') or ''}"

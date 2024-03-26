@@ -81,9 +81,21 @@ class CookieChecker(Tool):
                 raise Exception(Utils.return_res(response))
 
             result = response.json()
-
             user_id = result["UserID"]
             username = result["UserName"]
             robux_balance = result["RobuxBalance"]
 
-        return True, cookie, f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance}"
+            output = f"UserID: {user_id} | Username: {username} | Robux Balance: {robux_balance} "
+
+            has_premium = False
+
+            if self.config["check_premium"]:
+                premium_url = f"https://www.roblox.com/users/{user_id}/profile"
+                premium_response = client.get(premium_url, headers=req_headers, cookies=req_cookies)
+
+                if "data-ispremiumuser=\"true\"" in premium_response.text:
+                    has_premium = True
+
+                output += f"| Premium: {has_premium}"
+
+            return True, cookie, output

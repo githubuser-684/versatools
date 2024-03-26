@@ -19,6 +19,7 @@ config = {
     "CookieChecker": {
         "delete_invalid_cookies": False,
         "use_proxy": True,
+        "check_premium": False,
         "max_workers": None
     },
     "CookieGenerator": {

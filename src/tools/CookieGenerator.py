@@ -104,7 +104,25 @@ class CookieGenerator(Tool):
         """
         req_url = "https://auth.roblox.com/v2/signup"
         req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
-        req_json={"birthday": birthday, "gender": 1 if is_girl else 2, "isTosAgreementBoxChecked": True, "password": password, "username": username}
+        req_json = {
+            "username": username,
+            "password": password,
+            "birthday": birthday,
+            "gender": 1 if is_girl else 2,
+
+            # some values here are hardcoded but it helps to avoid flagging
+            "isTosAgreementBoxChecked": True,
+            "agreementIds": [
+                "3f341564-2a8b-4d10-8b1b-fd6e20d0a88a",
+                "c52851e3-faeb-4853-a597-12e374f8aa98"
+            ],
+            "secureAuthenticationIntent": {
+                "clientPublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHk3GEjQ+8PCsdhvnX7w3FzVk7iB2Z4BfAzfzLoNdKrkfZ/VMd5NfSMSZ/KqZKrRDerSGxbaZMojn59mvMrOfWg==",
+                "clientEpochTimestamp": 1714165961,
+                "serverNonce": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IlFSSzJIVlFKM0JHMkpNS1kiLCJuYmYiOjE3MTQxNjU5NTksImV4cCI6MTcxNDE2NjI1OSwiaWF0IjoxNzE0MTY1OTU5LCJpc3MiOiJoYmEtc2VydmljZSJ9.IncRfxheutZCJBH9DZjKHeuUljqqFg50ansSfPxzthE",
+                "saiSignature":"NKCRkOrVb97PY2eO/f7Y+5Kkx9e1AVLo3/WWdFVSpmvBsDarfH8WgydYi20G6RM+24mhvb89HktMO9DBmIZuYA=="
+            }
+        }
         result = client.post(req_url, headers=req_headers, json=req_json)
 
         return result

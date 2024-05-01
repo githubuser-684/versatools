@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://discord.gg/GUMSRr7n3W"><img src="icon.ico" alt="Versatools" height="90" /></a>
+	<a href="https://discord.gg/3uRnMJTFnU"><img src="icon.ico" alt="Versatools" height="90" /></a>
 </p>
 
 <h4 align="center">VERSATOOLS - FREE MULTITOOL | BOT FOLLOWERS/GROUP JOINS & MORE</h4>
@@ -11,11 +11,11 @@
 	<a href="#installation">Installation</a> •
 	<a href="#file-templates">File templates</a> •
   <a href="https://garry.lol/versatools">Website</a> •
-	<a href="https://discord.gg/GUMSRr7n3W">Discord server</a>
+	<a href="https://discord.gg/3uRnMJTFnU">Discord server</a>
 </p>
 <br/>
 
-> <h4>Our Discord server was banned. Here's the new one: <a href="https://discord.gg/GUMSRr7n3W">https://discord.gg/GUMSRr7n3W</a></h4>
+> <h4>Our Discord server was banned. Here's the new one: <a href="https://discord.gg/3uRnMJTFnU">https://discord.gg/3uRnMJTFnU</a></h4>
 
 ## Screenshot
 

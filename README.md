@@ -65,10 +65,6 @@ Versatools uses Capbypass to solve captchas. You can add your Capbypass API key 
 
 Register for a Capbypass API key [here](https://capbypass.com/).
 
-## RAMPAGE
-
-RAMPAGE is the premium version of Versatools. It has more features and is more stable. You can purchase RAMPAGE from [here](https://rampageteam.mysellix.io).
-
 ## File templates
 
 ### files/config.json

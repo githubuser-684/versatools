@@ -72,7 +72,7 @@ def display_logo():
        \_/    \_______/|__/      |_______/  \_______/   \___/   \______/  \______/ |__/|_______/
 
     Version {version()} | Free | Open Source | Made by garryybd#0
-    For better experience, upgrade now at versatools.mysellix.io
+    For better experience, upgrade now at rampageteam.mysellix.io
 """
     click.secho(logo, fg='yellow')
 

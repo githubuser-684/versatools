@@ -15,7 +15,7 @@
 </p>
 <br/>
 
-> <h4>Our Discord server was banned. Here's the new one: <a href="https://discord.gg/3uRnMJTFnU">https://discord.gg/3uRnMJTFnU</a></h4>
+> <h4>Our Discord server was banned. Here's the new one: <a href="https://garry.lol/versatools/discord">https://discord.com/invite/JFeuwfz8gx</a></h4>
 
 ## Screenshot
 

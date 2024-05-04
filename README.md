@@ -86,13 +86,3 @@ Here are some examples of valid proxies lines:
 http:8.8.8.8:5001
 8.8.8.8:5003:username:password
 ```
-
-## Star History
-
-<a href="https://star-history.com/#garryybd/versatools&Timeline">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=garryybd/versatools&type=Timeline" />
-  </picture>
-</a>

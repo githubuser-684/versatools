@@ -59,12 +59,6 @@ To run unit tests:
 python -m unittest discover src
 ```
 
-## Capbypass
-
-Versatools uses Capbypass to solve captchas. You can add your Capbypass API key in the `config.json` file.
-
-Register for a Capbypass API key [here](https://capbypass.com/).
-
 ## File templates
 
 ### files/config.json

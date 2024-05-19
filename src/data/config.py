@@ -1,7 +1,7 @@
 config = {
     "FunCaptchaSolvers": {
-        "//capbypass_link": "https://capbypass.com/",
-        "capbypass": "your_api_key_here",
+        "//capbuster_link": "https://captchabusters.com/",
+        "capbuster": "your_api_key_here",
     },
     "AdsScraper": {
         "ad_format": "vertical",
@@ -12,7 +12,7 @@ config = {
     "CommentBot": {
         "asset_id": 0,
         "max_generations": 1000,
-        "captcha_solver": "capbypass",
+        "captcha_solver": "capbuster",
         "use_proxy": True,
         "max_workers": 50
     },
@@ -26,7 +26,7 @@ config = {
         "vanity": None,
         "custom_password": None,
         "max_generations": 1000,
-        "captcha_solver": "capbypass",
+        "captcha_solver": "capbuster",
         "use_proxy": True,
         "max_workers": 50
     },
@@ -72,7 +72,7 @@ config = {
     "FollowBot": {
         "user_id": 1,
         "max_generations": 100,
-        "captcha_solver": "capbypass",
+        "captcha_solver": "capbuster",
         "use_proxy": True,
         "max_workers": 50
     },
@@ -110,7 +110,7 @@ config = {
     "GroupJoinBot": {
         "group_id": 0,
         "max_generations": 100,
-        "captcha_solver": "capbypass",
+        "captcha_solver": "capbuster",
         "use_proxy": True,
         "max_workers": 50
     },
@@ -189,7 +189,7 @@ config = {
         "image_search_api_key": "xx"
     },
     "UPConverter": {
-        "captcha_solver": "capbypass",
+        "captcha_solver": "capbuster",
         "use_proxy": True,
         "max_workers": None
     },

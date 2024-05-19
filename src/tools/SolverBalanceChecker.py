@@ -7,7 +7,7 @@ class SolverBalanceChecker(Tool):
         super().__init__("Solver Balance Checker", "Check balance of your solvers", app)
 
     def run(self):
-        solvers = ["anti-captcha", "2captcha", "capsolver", "capbypass"]
+        solvers = ["capbuster"]
 
         for solver_name in solvers:
             if self.exit_flag is False:

@@ -7,7 +7,7 @@ class SolverBalanceChecker(Tool):
         super().__init__("Solver Balance Checker", "Check balance of your solvers", app)
 
     def run(self):
-        solvers = ["capbuster"]
+        solvers = ["darksolver"]
 
         for solver_name in solvers:
             if self.exit_flag is False:

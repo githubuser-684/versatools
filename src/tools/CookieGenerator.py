@@ -113,14 +113,14 @@ class CookieGenerator(Tool):
             # some values here are hardcoded but it helps to avoid flagging
             "isTosAgreementBoxChecked": True,
             "agreementIds": [
-                "3f341564-2a8b-4d10-8b1b-fd6e20d0a88a",
-                "c52851e3-faeb-4853-a597-12e374f8aa98"
+                "05878906-9abb-4d5a-9a45-27ec161286aa",
+                "ff5820fa-f4a1-4e7a-991f-46a0f86155f3"
             ],
             "secureAuthenticationIntent": {
-                "clientPublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHk3GEjQ+8PCsdhvnX7w3FzVk7iB2Z4BfAzfzLoNdKrkfZ/VMd5NfSMSZ/KqZKrRDerSGxbaZMojn59mvMrOfWg==",
-                "clientEpochTimestamp": 1714165961,
-                "serverNonce": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IlFSSzJIVlFKM0JHMkpNS1kiLCJuYmYiOjE3MTQxNjU5NTksImV4cCI6MTcxNDE2NjI1OSwiaWF0IjoxNzE0MTY1OTU5LCJpc3MiOiJoYmEtc2VydmljZSJ9.IncRfxheutZCJBH9DZjKHeuUljqqFg50ansSfPxzthE",
-                "saiSignature":"NKCRkOrVb97PY2eO/f7Y+5Kkx9e1AVLo3/WWdFVSpmvBsDarfH8WgydYi20G6RM+24mhvb89HktMO9DBmIZuYA=="
+                "clientPublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETwqkOZEcUV7rrLYHxcqTaimAAyzFU5MHq5cWTi3/qWgim6L++Fdj11QXG0y1izN0qqpmGYHpZEEECApSiiW2Kg==",
+                "clientEpochTimestamp": 1718335163,
+                "serverNonce": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IllUUVYzNjRKWTNNSk1LOVIiLCJuYmYiOjE3MTgzMzUxNjMsImV4cCI6MTcxODMzNTQ2MywiaWF0IjoxNzE4MzM1MTYzLCJpc3MiOiJoYmEtc2VydmljZSJ9.DnOFHK-b-xxB90k66drSqOat3Co-Joak08BCIoeSAj8",
+                "saiSignature":"5ghooB++NwzsMl3QkNnQTpmA8hugRzG9RUTnWkiPAl0hD6VZI97SZZhRetMb0yN3FDEZ2AMwIboo0a0SjZ8F2g=="
             }
         }
         result = client.post(req_url, headers=req_headers, json=req_json)

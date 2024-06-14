@@ -8,7 +8,7 @@ from os import system, name
 from JsonEditor import JsonEditor
 
 app = App()
-
+discord = ".gg/rampageontopfuckversatile"
 global tool
 tool = None
 
@@ -93,7 +93,8 @@ def show_menu():
     invalid_option = True
 
     while invalid_option:
-        choice = input(click.style("\n ► Select an option: ", fg='yellow'))
+        click.secho("\n ! For a full botting experience, please consider upgrading to the premium version. only 15$ "+discord, fg='green')
+        choice = input(click.style(" ► Select an option: ", fg='yellow'))
 
         if choice == "99":
             raise KeyboardInterrupt()

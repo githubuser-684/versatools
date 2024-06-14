@@ -56,8 +56,8 @@ class CaptchaSolver(Proxy):
 
         return blob, unified_captcha_id, action_type
 
-    def solve_capbuster(self, website_url, public_key, website_subdomain, blob, proxy):
-        captcha_response = httpc.post('https://captchabusters.com/api/createTask', json={
+    def solve_darksolver(self, website_url, public_key, website_subdomain, blob, proxy):
+        captcha_response = httpc.post('https://api.darksolver.com/createTask', json={
             "clientKey": self.api_key,
             "task": {
                 "type": "FunCaptchaTask",
@@ -86,7 +86,7 @@ class CaptchaSolver(Proxy):
         solution = None
 
         while not solution and tries > 0:
-            captcha_response = httpc.post('https://captchabusters.com/api/getTaskResult', json={
+            captcha_response = httpc.post('https://api.darksolver.com/getTaskResult', json={
                 "clientKey": self.api_key,
                 "taskId": taskId
             })
@@ -108,10 +108,10 @@ class CaptchaSolver(Proxy):
         return solution
 
     def send_to_solver(self, website_url, website_subdomain, public_key, blob, proxy_line):
-        if self.captcha_service == "capbuster":
-            token = self.solve_capbuster(website_url, public_key, website_subdomain, blob, proxy_line)
+        if self.captcha_service == "darksolver":
+            token = self.solve_darksolver(website_url, public_key, website_subdomain, blob, proxy_line)
         else:
-            raise Exception('Only "Capbuster" solver is working. Other services are not supported.')
+            raise Exception('Only "Darksolver" solver is working. Other services are not supported.')
 
         return token
 
@@ -154,8 +154,8 @@ class CaptchaSolver(Proxy):
         """
         Gets the balance of the captcha service
         """
-        if self.captcha_service == "capbuster":
-            req_url = 'https://captchabusters.com/api/getBalance'
+        if self.captcha_service == "darksolver":
+            req_url = 'https://api.darksolver.com/getBalance'
             req_data = {
                 'clientKey': self.api_key,
             }
@@ -166,7 +166,7 @@ class CaptchaSolver(Proxy):
             except KeyError:
                 raise Exception(Utils.return_res(response))
         else:
-            raise Exception("Captcha service not found. Only Capbuster is supported. Other services don't work.")
+            raise Exception("Captcha service not found. Only Darksolver is supported. Other services don't work.")
 
         return balance
 

@@ -27,6 +27,13 @@ This installation is designed for advanced users. To install Versatools, you can
 
 Download the latest Windows release from [here](https://github.com/GarryyBD/versatools/releases/tag/v3.0.0).
 
+## FunCaptcha Solver
+
+Versatools supports DarkSolver, the cheapest and best FunCaptcha solver on the market.
+Solve FunCaptchas today! https://darksolver.com
+
+![darksolver-ad](https://github.com/garrydevpro/versatools/assets/168931296/cd80fa65-7e60-4842-9990-945b3035c950)
+
 ## Running from source
 
 First clone this repository:

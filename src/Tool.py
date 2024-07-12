@@ -74,7 +74,7 @@ class Tool(Proxy, ABC):
         Retrieve a CSRF token from Roblox
         """
         cookies = {'.ROBLOSECURITY':cookie } if cookie is not None else None
-        response = client.post("https://auth.roblox.com/v2/login", cookies=cookies)
+        response = client.post("https://auth.roblox.com", cookies=cookies)
 
         try:
             csrf_token = response.headers["X-Csrf-Token"]

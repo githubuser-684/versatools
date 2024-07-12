@@ -102,7 +102,7 @@ class CookieGenerator(Tool):
         """
         Sends a signup request to the auth.roblox.com endpoint
         """
-        req_url = "https://auth.roblox.com/v2/signup"
+        req_url = "https://auth.roblox.com"
         req_headers = httpc.get_roblox_headers(user_agent, csrf_token)
         req_json = {
             "username": username,
